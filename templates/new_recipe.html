@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if 'User' in session %}
+
+<h1>Add New Recipe</h1>
+
+<form action="/recipe-confirm" method="POST">
+    <h3> Recipe Title: </h3> <input type="text" name="title" style="width: 300px;"><br><br>
+
+    <div id="ingredient-section">
+        <h3> Ingredients: </h3>
+        Qty: <input type="text" name="qty" placeholder="Ex. 3" style="width: 50px;">
+        Measure: <input type="text" name="measure" placeholder="cans">
+        Item: <input type="text" name="item" placeholder="pinto beans">
+        Prep Notes: <input type="text" name="prepnotes" placeholder="drained and rinsed">
+
+        <div class="new-ingredient-field">
+            Qty: <input type="text" class="1" name="qty" style="width: 50px;">
+            Measure: <input type="text" class="1" name="measure">
+            Item: <input type="text" class="1" name="item">
+            Prep Notes: <input type="text" class="1" name="prepnotes">
+        </div> <!-- div for .new-ingredient-field -->
+    </div> <!-- div for #ingredient-section -->
+    <button type="button" id="add-more">+ Add another ingredient</button>
+
+    <h3> Instructions: </h3>
+    <textarea rows="5" cols="50" name="instructions" placeholder="Write your instructions here."></textarea>
+
+    <h3>Source: (optional) </h3> <input type="text" style="width: 300px;"
+    placeholder="i.e. Mom, The Joy of Cooking, allrecipes.com" name="source">
+
+    <h3>Hashtags: </h3>
+    <h5>All tags must start with '#'. Please separate hashtags with spaces.</h5>
+    <input type="text" name="hashtags" style="width: 400px;"><br><br>
+    <input type="submit" value="Confirm Recipe">
+</form>
+
+<script src="https://code.jquery.com/jquery.js"></script>
+<script>
+    // allows user to add more ingredients to recipe
+    $("#add-more").on('click', function() {
+        var new_ingredient = $(".new-ingredient-field").clone().appendTo("#ingredient-section");
+        //add a [0] to new ingredient field doesn't work?!?!?!
+        new_ingredient.attr('class', 
+    });
+</script>
+
+
+
+
+{% endif %}
+{% endblock %}

@@ -1,13 +1,30 @@
 <!doctype html>
 <html>
 <head>
-  <title>eatable</title>
+    <title>eatable</title>
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon" />
 </head>
 
 <body>
-<a href="/">eatable</a>
+    <a href="/">eatable</a>
 
-  {% block content %} put your content here {% endblock %}
+    {% if 'User' in session %}
+        <div class="dropdown">
+          <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Settings
+          <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li><a href="/editprofile/<int:userid>">Edit Profile</a></li>
+            <li><a href="/cart/<int:userid>">View Cart</a></li>
+            <li><a href="/logout">Log Out</a></li>
+          </ul>
+        </div>
+    {% else %}
+        <a href="/login">Log In</a>
+    {% endif %}
+    <br>
+    <br>
+
+    {% block content %} put your content here {% endblock %}
 
 </body>
 </html>

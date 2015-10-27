@@ -23,6 +23,7 @@ class User(db.Model):
 
     @classmethod
     def get_user_by_email(cls, user_email):
+        """Use to see if an account with a given email address already exists."""
 
         try:
             user_login_info = cls.query.filter_by(email=user_email).one()
@@ -33,6 +34,7 @@ class User(db.Model):
 
     @classmethod
     def create_new_user(cls, user_email, user_password, user_phone):
+        """Add a new user to the database."""
 
         user = User(email=user_email, password=user_password, mobile_phone=user_phone)
 
@@ -43,6 +45,7 @@ class User(db.Model):
 
     @classmethod
     def validate_email_password(cls, user_email, user_password):
+        """Check if user email/password combination is correct."""
 
         try:
             user_login_info = cls.query.filter_by(email=user_email, password=user_password).one()
@@ -66,6 +69,17 @@ class Recipe(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     recipe_title = db.Column(db.String(150), nullable=False)
     instructions = db.Column(db.Text, nullable=False)
+    source = db.Column(db.Text, nullable=True)
+
+    @classmethod
+    def create_new_recipe(cls, user_id, recipe_title, instructions, source=''):
+        """Add a new recipe to the database."""
+
+        new_recipe = Recipe(user_id=user_id, recipe_title=recipe_title, instructions=instructions, source=source)
+
+        db.session.add(new_recipe)
+        db.session.commit()
+        return new_recipe
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -114,6 +128,12 @@ class Hashtag(db.Model):
     hashtag_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
 
+    @classmethod
+    def create_new_hashtag(cls, hashtag_list):
+        for hashtag in hashtag_list:
+            new_hashtag = Hashtag(name=hashtag)
+            return new_hashtag
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 
@@ -137,6 +157,8 @@ class Cart_Ingredient(db.Model):
 
 class Cart(db.Model):
     """Cart for a given user."""
+
+    __tablename__ = "carts"
 
     cart_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)

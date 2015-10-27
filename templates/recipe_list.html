@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if 'User' in session %}
+
+
+<h1>My Recipes</h1>
+
+<a href="/myrecipes/{{ userid }}/addrecipe">+ New Recipe</a>
+
+
+{% endif %}
+{% endblock %}
