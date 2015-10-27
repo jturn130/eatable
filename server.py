@@ -49,6 +49,37 @@ def confirm_account():
     return redirect("/")
 
 
+@app.route("/login")
+def login_user():
+    """Allows user to log into site."""
+
+    return render_template("login.html")
+
+
+@app.route("/login-confirm", methods=["POST"])
+def confirm_user_login():
+    """Confirms user account information is correct."""
+
+    user_email = request.form.get("email")
+    user_password = request.form.get("password")
+
+    confirmed_user = User.validate_email_password(user_email, user_password)
+
+    if confirmed_user:
+        userid = confirmed_user.user_id
+        session["User"] = userid
+        ############### should userid be in the url?
+        return redirect("/myrecipes/%d" % userid)
+    else:
+        flash("Your email and password combination are not correct.")
+        return redirect("/login")
+
+
+#########should userid be in the url?
+@app.route("/myrecipes/<int:userid>")
+def something():
+    pass
+
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
     # that we invoke the DebugToolbarExtension
