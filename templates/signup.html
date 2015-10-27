@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>We're glad you're here</h1>
+<form action="/signup-confirm" id="signup" method="POST">
+    Email: <input type="text" name='email' placeholder="Email address"><br><br>
+    Password: <input type="password" id="password" name="password" placeholder="Password"><br>
+    <p id="tooshort" hidden>Your password needs to be at least 6 characters long.</p><br>
+    Re-enter Password: <input type="password" id="passwordcheck" name="passwordCheck" placeholder="Confirm Password"><br>
+    <p id="matchingerror" hidden>Your passwords don't match. Please try again.</p><br>
+    Mobile Phone: <input type="text" name='phone' placeholder="Mobile Phone"><br><br>
+    <input type="submit" value="Let's Get Cooking"> 
+
+</form>
+
+<script src="https://code.jquery.com/jquery.js"></script>
+<script>
+
+
+function validatePassword(evt) {
+    // Confirms passwords match
+    if ($("#password").val() !== $("#passwordcheck").val()) {
+        $("#matchingerror").show();
+        evt.preventDefault();
+        $("#signup").trigger("reset");
+    }
+    
+    // Confirms password is an appropriate length
+    if ($("#password").val().length < 6) {
+        $("#tooshort").show();
+        evt.preventDefault();
+        $("#signup").trigger("reset");
+    }
+   
+}
+$("#signup").on('submit', validatePassword)
+</script>
+{% endblock %}
