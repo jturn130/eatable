@@ -10,19 +10,23 @@
 
     <div id="ingredient-section">
         <h3> Ingredients: </h3>
-        Qty: <input type="text" name="qty" placeholder="Ex. 3" style="width: 50px;">
-        Measure: <input type="text" name="measure" placeholder="cans">
-        Item: <input type="text" name="item" placeholder="pinto beans">
-        Prep Notes: <input type="text" name="prepnotes" placeholder="drained and rinsed">
+        <!-- Provides example as to how to fill out form-->
+        Qty: <input type="text" class="qty" name="qty1" placeholder="Ex. 3" style="width: 50px;">
+        Measure: <input type="text" class="measure" name="measure1" placeholder="cans">
+        Item: <input type="text" class="item" name="item1" placeholder="pinto beans">
+        Prep Notes: <input type="text" class="prepnotes" name="prepnotes1" placeholder="drained and rinsed">
 
+        <!-- This is the ingredient prototype that will duplicate when the user clicks on the "Add another ingredient" button -->
         <div class="new-ingredient-field">
-            Qty: <input type="text" class="1" name="qty" style="width: 50px;">
-            Measure: <input type="text" class="1" name="measure">
-            Item: <input type="text" class="1" name="item">
-            Prep Notes: <input type="text" class="1" name="prepnotes">
+            Qty: <input type="text" class="qty" name="qty2" style="width: 50px;">
+            Measure: <input type="text" class="measure" name="measure2">
+            Item: <input type="text" class="item" name="item2">
+            Prep Notes: <input type="text" class="prepnotes" name="prepnotes2">
         </div> <!-- div for .new-ingredient-field -->
+    
     </div> <!-- div for #ingredient-section -->
     <button type="button" id="add-more">+ Add another ingredient</button>
+
 
     <h3> Instructions: </h3>
     <textarea rows="5" cols="50" name="instructions" placeholder="Write your instructions here."></textarea>
@@ -38,16 +42,28 @@
 
 <script src="https://code.jquery.com/jquery.js"></script>
 <script>
-    // allows user to add more ingredients to recipe
     $("#add-more").on('click', function() {
-        var new_ingredient = $(".new-ingredient-field").clone().appendTo("#ingredient-section");
-        //add a [0] to new ingredient field doesn't work?!?!?!
-        new_ingredient.attr('class', 
+        // allows user to add more ingredients to recipe 
+        var new_ingredient = $(".new-ingredient-field").clone();
+        $(new_ingredient[new_ingredient.length-1]).appendTo("#ingredient-section");
+        
+        // gets the current value of the attribute "name" for the class "qty"
+        // then gets the last character, makes it an integer, adds 1, then combines that new number back with qty to create a new name
+        // this allows us make unique names for different ingredients
+        var currentQtyName = $('.qty', new_ingredient).attr('name');
+        $('.qty', new_ingredient).attr('name', 'qty' + ((parseInt(currentQtyName[currentQtyName.length-1]))+1)); 
+
+        var currentMeasureName = $('.measure', new_ingredient).attr('name');
+        $('.measure', new_ingredient).attr('name', 'measure' + ((parseInt(currentMeasureName[currentMeasureName.length-1]))+1));
+
+        var currentItemName = $('.item', new_ingredient).attr('name');
+        $('.item', new_ingredient).attr('name', 'item' + ((parseInt(currentItemName[currentItemName.length-1]))+1));
+
+        var currentPrepName = $('.prepnotes', new_ingredient).attr('name');
+        $('.prepnotes', new_ingredient).attr('name', 'prepnotes' + ((parseInt(currentPrepName[currentPrepName.length-1]))+1)); 
+
     });
 </script>
-
-
-
 
 {% endif %}
 {% endblock %}

@@ -36,11 +36,9 @@ class User(db.Model):
     def create_new_user(cls, user_email, user_password, user_phone):
         """Add a new user to the database."""
 
-        user = User(email=user_email, password=user_password, mobile_phone=user_phone)
+        new_user = User(email=user_email, password=user_password, mobile_phone=user_phone)
 
-        ### confirm with staff this is the right place to add/commit
-        ### can or should I do this in the server file?
-        db.session.add(user)
+        db.session.add(new_user)
         db.session.commit()
 
     @classmethod
@@ -99,6 +97,15 @@ class Ingredient(db.Model):
     item = db.Column(db.String(75), nullable=False)
     prep_notes = db.Column(db.String(150), nullable=True)
 
+    @classmethod
+    def add_ingredient_to_recipe(cls, recipe_id, item, quantity='', measure='', prep_notes=''):
+        """Add ingredient in given recipe to the database."""
+
+        new_ingredient = Ingredient(recipe_id=recipe_id, item=item, quantity=quantity, measure=measure, prep_notes=prep_notes)
+
+        db.session.add(new_ingredient)
+        db.session.commit()
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 
@@ -113,6 +120,13 @@ class Recipe_Hashtag(db.Model):
     recipe_hashtag_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'), nullable=False)
     hashtag_id = db.Column(db.Integer, db.ForeignKey('hashtags.hashtag_id'), nullable=False)
+
+    @classmethod
+    def create_new_recipe_hashtag(recipe_id, hashtag_id):
+        new_recipe_hashtag = Recipe_Hashtag(recipe_id=recipe_id, hashtag_id=hashtag_id)
+
+        db.session.add(new_recipe_hashtag)
+        db.session.commit()
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -129,10 +143,25 @@ class Hashtag(db.Model):
     name = db.Column(db.String(100), nullable=False)
 
     @classmethod
-    def create_new_hashtag(cls, hashtag_list):
-        for hashtag in hashtag_list:
-            new_hashtag = Hashtag(name=hashtag)
-            return new_hashtag
+    def create_new_hashtag(cls, hashtag):
+        """Add new hashtag to the database."""
+
+        new_hashtag = Hashtag(name=hashtag)
+
+        db.session.add(new_hashtag)
+        db.session.commit()
+        return new_hashtag
+
+    @classmethod
+    def check_if_hashtag_exists(cls, hashtag):
+        """Check db to see if user's hashtag already exists in the table."""
+
+        try:
+            old_hashtag = cls.query.filter_by(name=hashtag).one()
+            return old_hashtag
+
+        except Exception, error:
+            print error
 
     def __repr__(self):
         """Provide helpful representation when printed."""

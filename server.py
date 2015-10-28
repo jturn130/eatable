@@ -105,26 +105,93 @@ def add_new_recipe():
 
     print request.form
 
+    ###### Recipe Table Section ######
     user_id = session['User']
     recipe_title = request.form.get("title")
     instructions = request.form.get("instructions")
     source = request.form.get("source")
 
-    # hashtags = request.form.get("hashtags")
-    # hashtag_list = [hashtags.strip("#") for hashtag in hashtags.split() if hashtag.startswith("#")]
-
     new_recipe = Recipe.create_new_recipe(user_id, recipe_title, instructions, source)
     recipe_id = new_recipe.recipe_id
 
-    # new_ingredient = Ingredient(quantity=4, measure='tbsp', recipe_id=3, item='oil')
+    ###### Ingredient Table Section ######
+    count = 0
 
-    # hashtag = Hashtag.filter_by(hashtag=Your_Form_Hashtag).first()
-    # if hashtag:
-    #         # this is already in the hashtag table
-    #         rec_hash = RecipeHashtag()
-    # else:
-    #         # add new, get new one's id, pass into RecipeHashtag.create_new_rec_hash()
-    #         new_rec_hash =
+    # use count to find the number of ingredients
+    # the loop looks for "item" because that's a required field
+    for r in request.form:
+        if r[0][0:4] == 'item':
+            count += 1
+    print count
+
+    ingredients_to_add = {}
+
+    for i in range(1, (count+1)):
+        #the range refers to the range of integers that appear in the ingredient names
+        ingredients_to_add[i] = []
+        for r in request.form:
+            # looks for entries that end with an integer
+            if r[0][0:3] == 'ite' or r[0][0:3] == 'pre' or r[0][0:3] == 'mea' or r[0][0:3] == 'qty':
+
+                # checks if the last character of an entry equals the integer we're using
+                # if yes, takes that entry and converts it into a list
+                # appends that entry to the corresponding value in our ingredients dictionary
+                # sorts the value so we know how to index the list later
+                last_char = int(r[0][-1])
+                if last_char == i:
+                    r = list(r)
+                    ingredients_to_add[i].append(r)
+                    ingredients_to_add[i].sort()
+
+        # creates a new list of ingredients
+        # takes out the ingredient heading and unnecessary nested lists
+        # (this is because we just want the actual text)
+        # appends cleaned up ingredient info to a new list
+        # sets new list as the new value in the corresponding dict key
+        new_ingredient_list = []
+        for x in ingredients_to_add[i]:
+
+            del x[0]
+            for y in x:
+                x = y
+                new_ingredient_list.append(x)
+
+        ingredients_to_add[i] = new_ingredient_list
+    print "this is the ingredients dict: %s" % ingredients_to_add
+
+    # Within the value list of a dict entry, the indexes mean:
+    # 0 = item
+    # 1 = measure
+    # 2 = prepnotes
+    # 3 = qty
+    for i in range(1, (count+1)):
+        item = ingredients_to_add[i][0]
+        measure = ingredients_to_add[i][1]
+        prepnotes = ingredients_to_add[i][2]
+        qty = ingredients_to_add[i][3]
+
+        Ingredient.add_ingredient_to_recipe(recipe_id, item, qty, measure, prepnotes)
+
+    ###### Hashtag & Recipe_Hashtag Table Section ######
+    hashtags = request.form.get("hashtags")
+    hashtag_list = [hashtag.strip("#") for hashtag in hashtags.split() if hashtag.startswith("#")]
+
+    for hashtag in hashtag_list:
+
+        #checks if the hashtag already exists in db
+        old_hashtag = Hashtag.check_if_hashtag_exists(hashtag)
+
+        #if yes, then we get the hashtag_id from the old hashtag
+        if old_hashtag:
+            hashtag_id = old_hashtag.hashtag_id
+
+        #if no, we create a new hashtag, then get the hastag_id from it
+        else:
+            new_hashtag = Hashtag.create_new_hashtag(hashtag)
+            hashtag_id = new_hashtag.hashtag_id
+
+        #takes the given recipe_id and hashtag_id and create a recipe_hashtag
+        Recipe_Hashtag.create_new_recipe_hashtag(recipe_id, hashtag_id)
 
     return redirect("/myrecipes/%d" % user_id)
 
