@@ -45,6 +45,7 @@
     $("#add-more").on('click', function() {
         // allows user to add more ingredients to recipe 
         var new_ingredient = $(".new-ingredient-field").clone();
+        $('input', new_ingredient).val('');
         $(new_ingredient[new_ingredient.length-1]).appendTo("#ingredient-section");
         
         // gets the current value of the attribute "name" for the class "qty"

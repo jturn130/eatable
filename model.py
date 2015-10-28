@@ -98,13 +98,71 @@ class Ingredient(db.Model):
     prep_notes = db.Column(db.String(150), nullable=True)
 
     @classmethod
-    def add_ingredient_to_recipe(cls, recipe_id, item, quantity='', measure='', prep_notes=''):
-        """Add ingredient in given recipe to the database."""
+    def get_ingredient_count(cls, requestform):
+        """Find number of ingredients from input form."""
 
-        new_ingredient = Ingredient(recipe_id=recipe_id, item=item, quantity=quantity, measure=measure, prep_notes=prep_notes)
+        count = 0
+        for r in requestform:
+            # print "this is r before if statement: %s" % r
+            if r[0:4] == 'item':
+                # print "this is r after if statement: %s" % r
+                count += 1
+        # print "this is count: %s" % count
+        return count
 
-        db.session.add(new_ingredient)
-        db.session.commit()
+    @classmethod
+    def get_ingredients_to_add(cls, new_count, requestform):
+        """Return a dict of ingredient properties."""
+
+        ingredients_to_add = {}
+
+        for i in range(1, (new_count+1)):
+            #the range refers to the range of integers that appear in the ingredient names
+            print "this is i: %d" % i
+            ingredients_to_add[i] = []
+            for r in requestform:
+                print "this is r in the get ings to add function: %s" % r
+                # looks for entries that end with an integer
+                if r[0:3] == 'ite' or r[0:3] == 'pre' or r[0:3] == 'mea' or r[0:3] == 'qty':
+
+                    # checks if the last character of an entry equals the integer we're using
+                    # if yes, appends key value pair in our ingredients dictionary
+                    # sorts the value so we know how to index the list later
+                    last_char = int(r[-1])
+                    if last_char == i:
+                        ingredients_to_add[i].append([r, requestform[r]])
+                        ingredients_to_add[i].sort()
+
+            # creates a new list of ingredients
+            # takes out the ingredient heading and unnecessary nested lists
+            # (this is because we just want the actual text)
+            # appends cleaned up ingredient info to a new list
+            # sets new list as the new value in the corresponding dict key
+            new_ingredient_list = []
+            for x in ingredients_to_add[i]:
+
+                del x[0]
+                for y in x:
+                    x = y
+                    new_ingredient_list.append(x)
+            ingredients_to_add[i] = new_ingredient_list
+        print ingredients_to_add
+        return ingredients_to_add
+
+    @classmethod
+    def add_ingredient_to_recipe(cls, new_count, ingredients_dict, recipe_id):
+        """Add ingredients in given recipe to the database."""
+
+        for i in range(1, (new_count+1)):
+            item = ingredients_dict[i][0]
+            measure = ingredients_dict[i][1]
+            prepnotes = ingredients_dict[i][2]
+            qty = ingredients_dict[i][3]
+
+            new_ingredient = Ingredient(recipe_id=recipe_id, item=item, quantity=qty, measure=measure, prep_notes=prepnotes)
+
+            db.session.add(new_ingredient)
+            db.session.commit()
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -122,11 +180,15 @@ class Recipe_Hashtag(db.Model):
     hashtag_id = db.Column(db.Integer, db.ForeignKey('hashtags.hashtag_id'), nullable=False)
 
     @classmethod
-    def create_new_recipe_hashtag(recipe_id, hashtag_id):
-        new_recipe_hashtag = Recipe_Hashtag(recipe_id=recipe_id, hashtag_id=hashtag_id)
+    def create_new_recipe_hashtag(cls, recipe_id, hashtag_id_list):
+        """Iterates through list of hashtag_ids and adds to recipe_hashtags table."""
 
-        db.session.add(new_recipe_hashtag)
-        db.session.commit()
+        for hashtag_id in hashtag_id_list:
+
+            new_recipe_hashtag = Recipe_Hashtag(recipe_id=recipe_id, hashtag_id=hashtag_id)
+
+            db.session.add(new_recipe_hashtag)
+            db.session.commit()
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -143,25 +205,33 @@ class Hashtag(db.Model):
     name = db.Column(db.String(100), nullable=False)
 
     @classmethod
-    def create_new_hashtag(cls, hashtag):
-        """Add new hashtag to the database."""
+    def get_hashtag_id(cls, hashtag_list):
+        """Get hashtag from db or create new db entry."""
 
-        new_hashtag = Hashtag(name=hashtag)
+        # creates a list of hashtag ids
+        # we will use this later to create recipe_hashtag_ids
+        hashtag_id_list = []
 
-        db.session.add(new_hashtag)
-        db.session.commit()
-        return new_hashtag
+        for hashtag in hashtag_list:
 
-    @classmethod
-    def check_if_hashtag_exists(cls, hashtag):
-        """Check db to see if user's hashtag already exists in the table."""
+            #checks if the hashtag already exists in db
+            old_hashtag = cls.query.filter_by(name=hashtag).first()
 
-        try:
-            old_hashtag = cls.query.filter_by(name=hashtag).one()
-            return old_hashtag
+            # if yes, then we get the hashtag_id from the old hashtag
+            if old_hashtag is not None:
+                hashtag_id = old_hashtag.hashtag_id
+                hashtag_id_list.append(hashtag_id)
 
-        except Exception, error:
-            print error
+            # if no, we create a new hashtag, then get the hastag_id from it
+            else:
+                new_hashtag = Hashtag(name=hashtag)
+
+                db.session.add(new_hashtag)
+                db.session.commit()
+
+                hashtag_id = new_hashtag.hashtag_id
+                hashtag_id_list.append(hashtag_id)
+        return hashtag_id_list
 
     def __repr__(self):
         """Provide helpful representation when printed."""
