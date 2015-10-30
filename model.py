@@ -79,10 +79,17 @@ class Recipe(db.Model):
         db.session.commit()
         return new_recipe
 
+    @classmethod
+    def get_recipe(cls, recipeid):
+        """Get a recipe given the recipeid."""
+
+        recipe = Recipe.query.filter_by(recipe_id=recipeid).one()
+        return recipe
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Recipe recipe_id=%d user_id=%d recipe_title=%s>" % (self.recipe_id, self.user_id, self.recipe_title)
+        return "<Recipe recipe_id=%d user_id=%d recipe_title=%s instructions=%s>" % (self.recipe_id, self.user_id, self.recipe_title, self.instructions)
 
 
 class Ingredient(db.Model):
@@ -121,7 +128,7 @@ class Ingredient(db.Model):
             print "this is i: %d" % i
             ingredients_to_add[i] = []
             for r in requestform:
-                print "this is r in the get ings to add function: %s" % r
+                # print "this is r in the get ings to add function: %s" % r
                 # looks for entries that end with an integer
                 if r[0:3] == 'ite' or r[0:3] == 'pre' or r[0:3] == 'mea' or r[0:3] == 'qty':
 
@@ -164,10 +171,17 @@ class Ingredient(db.Model):
             db.session.add(new_ingredient)
             db.session.commit()
 
+    @classmethod
+    def get_recipe_ingredients(cls, recipeid):
+        """Get a list of ingredients in a given recipe."""
+
+        recipe_ingredients = Ingredient.query.filter_by(recipe_id=recipeid).all()
+        return recipe_ingredients
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Ingredient ingredient_id=%d recipe_id=%d item=%s>" % (self.ingredient_id, self.recipe_id, self.item)
+        return "<Ingredient ingredient_id=%d recipe_id=%d quantity=%s measure=%s item=%s prep_notes=%s>" % (self.ingredient_id, self.recipe_id, self.quantity, self.measure, self.item, self.prep_notes)
 
 
 class Recipe_Hashtag(db.Model):
@@ -179,6 +193,8 @@ class Recipe_Hashtag(db.Model):
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'), nullable=False)
     hashtag_id = db.Column(db.Integer, db.ForeignKey('hashtags.hashtag_id'), nullable=False)
 
+    hashtags = db.relationship('Hashtag')
+
     @classmethod
     def create_new_recipe_hashtag(cls, recipe_id, hashtag_id_list):
         """Iterates through list of hashtag_ids and adds to recipe_hashtags table."""
@@ -189,6 +205,23 @@ class Recipe_Hashtag(db.Model):
 
             db.session.add(new_recipe_hashtag)
             db.session.commit()
+
+    @classmethod
+    def get_recipe_hashtags(cls, recipeid):
+        """Get the recipe_hashtags given the recipe_id."""
+
+        recipe_hashtags = Recipe_Hashtag.query.filter_by(recipe_id=recipeid).all()
+        return recipe_hashtags
+
+    @classmethod
+    def get_hashtag_names_for_recipe(cls, recipe_hashtags):
+        """Get a list of hashtag names given the recipe hashtags."""
+
+        list_of_hashtags = []
+        for recipe_hashtag in recipe_hashtags:
+            hashtag_name = recipe_hashtag.hashtags.name
+            list_of_hashtags.append(hashtag_name)
+        return list_of_hashtags
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -233,6 +266,26 @@ class Hashtag(db.Model):
                 hashtag_id_list.append(hashtag_id)
         return hashtag_id_list
 
+    @classmethod
+    def get_readable_hashtags(cls, hashtag_list):
+        """Put hashtag names in a traditional format with #."""
+
+        list_of_readable_hashtags = []
+        for hashtag in hashtag_list:
+            hashtag = '#' + hashtag + " "
+            list_of_readable_hashtags.append(hashtag)
+        return list_of_readable_hashtags
+
+    @classmethod
+    def recreate_hashtag_input(cls, list_of_readable_hashtags):
+        """Format the readable hashtags like they would appear in the form input."""
+
+        complete_input = ''
+
+        for hashtag in list_of_readable_hashtags:
+            complete_input += hashtag
+        return complete_input
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 
@@ -276,6 +329,7 @@ def connect_to_db(app):
 
     # Configure to use our SQLite database
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///eatable.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
     db.init_app(app)
 

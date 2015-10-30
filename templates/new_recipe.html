@@ -5,8 +5,8 @@
 
 <h1>Add New Recipe</h1>
 
-<form action="/recipe-confirm" method="POST">
-    <h3> Recipe Title: </h3> <input type="text" name="title" style="width: 300px;"><br><br>
+<form action="/recipe-confirm" method="POST" id="new-recipe-form">
+    <h3> Recipe Title: </h3> <input type="text" name="recipetitle" style="width: 300px;"><br><br>
 
     <div id="ingredient-section">
         <h3> Ingredients: </h3>
@@ -37,7 +37,7 @@
     <h3>Hashtags: </h3>
     <h5>All tags must start with '#'. Please separate hashtags with spaces.</h5>
     <input type="text" name="hashtags" style="width: 400px;"><br><br>
-    <input type="submit" value="Confirm Recipe">
+    <input type="submit" class="confirmrecipe" value="Confirm Recipe">
 </form>
 
 <script src="https://code.jquery.com/jquery.js"></script>
@@ -64,6 +64,21 @@
         $('.prepnotes', new_ingredient).attr('name', 'prepnotes' + ((parseInt(currentPrepName[currentPrepName.length-1]))+1)); 
 
     });
+    
+    // for later: get js to register new lines
+    // $("textarea").focusout( function() {
+    //     $("textarea").val().replace(/\r?\n/g, '<br />');
+    // });
+    // $("#new-recipe-form").on('submit', function(event) {
+    //     event.preventDefault;
+    //     var instructionsText = $("textarea").val();
+    //     console.log('This is instructionsText before: ' + instructionsText)
+    //     // console.log("text before the function")
+    //     instructionsText = instructionsText.replace(/\r?\n/g, '<br />');
+    //     console.log('This is instructionsText after: ' + instructionsText)
+    //     $("#new-recipe-form").submit();
+    // });
+
 </script>
 
 {% endif %}

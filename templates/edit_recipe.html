@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if 'User' in session %}
+    {% if session['User'] == userid %}
+        <a href="/myrecipes/{{ userid }}"> Back to My Recipes </a><br>
+
+        <h1> Edit recipe </h1>
+
+        <form action="/recipe-confirm" method="POST" id="edit-recipe-form">
+            <h3> Recipe Title: </h3> <input type="text" name="recipetitle" value="{{ recipe.recipe_title }}" style="width: 300px;"><br><br>
+
+            <div id="ingredient-section">
+                <h3> Ingredients: </h3>
+
+                {% for ingredient in ingredients %}
+
+                <div class="new-ingredient-field">
+                    Qty: <input type="text" class="qty" name="qty1" value="{{ ingredient.quantity }}" style="width: 50px;">
+                    Measure: <input type="text" class="measure" name="measure2" value="{{ ingredient.measure }}">
+                    Item: <input type="text" class="item" name="item2" value="{{ ingredient.item }}">
+                    Prep Notes: <input type="text" class="prepnotes" name="prepnotes2" value="{{ ingredient.prep_notes }}">
+                </div> <!-- div for .new-ingredient-field -->  
+                {% endfor %}
+            </div> <!-- div for #ingredient-section -->
+            <button type="button" id="add-more">+ Add another ingredient</button>
+
+
+            <h3> Instructions: </h3>
+            <textarea rows="5" cols="50" name="instructions" placeholder="Write your instructions here.">
+                {{ recipe.instructions }}
+            </textarea>
+
+            <h3>Source: (optional) </h3>
+            {% if recipe.source != '' %}
+                <input type="text" style="width: 300px;" placeholder="i.e. Mom, The Joy of Cooking, allrecipes.com" value="{{ recipe.source }}" name="source">
+            {% else %}
+                <input type="text" style="width: 300px;" placeholder="i.e. Mom, The Joy of Cooking, allrecipes.com" name="source">
+            {% endif %}
+
+            <h3>Hashtags: </h3>
+            <h5>All tags must start with '#'. Please separate hashtags with spaces.</h5>
+            <input type="text" name="hashtags" style="width: 400px;" value="{{ recreated_hashtag_input }}"><br><br>
+            
+
+            <!-- Submit edited form -->
+            <input type="submit" class="confirmrecipe" value="Confirm Recipe">
+        </form>
+
+
+        <script src="https://code.jquery.com/jquery.js"></script>
+        <script>
+            $("#add-more").on('click', function() {
+                // allows user to add more ingredients to recipe 
+                var new_ingredient = $(".new-ingredient-field").clone();
+                $('input', new_ingredient).val('');
+                $(new_ingredient[new_ingredient.length-1]).appendTo("#ingredient-section");
+                
+                // gets the current value of the attribute "name" for the class "qty"
+                // then gets the last character, makes it an integer, adds 1, then combines that new number back with qty to create a new name
+                // this allows us make unique names for different ingredients
+                // var currentQtyName = $('.qty', new_ingredient).attr('name');
+                // $('.qty', new_ingredient).attr('name', 'qty' + ((parseInt(currentQtyName[currentQtyName.length-1]))+1)); 
+
+                // var currentMeasureName = $('.measure', new_ingredient).attr('name');
+                // $('.measure', new_ingredient).attr('name', 'measure' + ((parseInt(currentMeasureName[currentMeasureName.length-1]))+1));
+
+                // var currentItemName = $('.item', new_ingredient).attr('name');
+                // $('.item', new_ingredient).attr('name', 'item' + ((parseInt(currentItemName[currentItemName.length-1]))+1));
+
+                // var currentPrepName = $('.prepnotes', new_ingredient).attr('name');
+                // $('.prepnotes', new_ingredient).attr('name', 'prepnotes' + ((parseInt(currentPrepName[currentPrepName.length-1]))+1)); 
+
+            });
+
+        </script>
+    {% endif %}
+{% else %}
+        <h1>You can't edit this recipe!!</h1>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if 'User' in session %}
+    {% if session['User'] == userid %}
+        <a href="/myrecipes/{{ userid }}"> Back to My Recipes </a><br>
+        <a href="/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}/edit">Edit Recipe</a><br>
+    {% endif %}
+{% endif %}
+
+<h1>{{ recipe.recipe_title }}</h1>
+
+
+<h3>Ingredients: </h3>
+<ul>
+{% for ingredient in ingredients %}
+    <li>
+        {{ ingredient.quantity }} {{ ingredient.measure }}
+
+        {% if ingredient.prep_notes != '' %}
+            {{ ingredient.item }}, {{ ingredient.prep_notes }} 
+        {% else %}
+            {{ ingredient.item }}
+        {% endif %}
+    </li>
+{% endfor %} 
+</ul>
+
+<h3>Instructions: </h3>
+<p> {{ recipe.instructions }}</p>
+
+{% if recipe.source != '' %}
+    <h3> Source: </h3>
+    <p> {{ recipe.source }} </p>
+{% endif %}
+
+<h3> Hashtags: </h3>
+{% for recipe_hashtag in recipe_hashtags %}
+    <p> #{{recipe_hashtag.hashtags.name}} </p>
+{% endfor %}
+
+
+
+{% endblock %}

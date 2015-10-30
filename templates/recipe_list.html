@@ -8,6 +8,15 @@
 
 <a href="/myrecipes/{{ userid }}/addrecipe">+ New Recipe</a>
 
+<ul>
+{% for recipe in user_recipes %}
+    <li>
+        <a href="/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}">
+            {{recipe.recipe_title}}
+        </a>
+    </li>
+{% endfor %} 
+</ul>
 
 {% endif %}
 {% endblock %}

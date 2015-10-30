@@ -89,7 +89,42 @@ def logout_user():
 def display_recipe_list(userid):
     """Display a list of recipes for a given user."""
 
-    return render_template("recipe_list.html", userid=userid)
+    user_recipes = Recipe.query.filter_by(user_id=userid).all()
+
+    return render_template("recipe_list.html", userid=userid, user_recipes=user_recipes)
+
+
+@app.route("/myrecipes/<int:userid>/recipe/<int:recipeid>")
+def display_recipe(userid, recipeid):
+
+    recipe = Recipe.get_recipe(recipeid)
+
+    ingredients = Ingredient.get_recipe_ingredients(recipeid)
+
+    recipe_hashtags = Recipe_Hashtag.get_recipe_hashtags(recipeid)
+
+    return render_template("recipe_info.html", recipe=recipe, ingredients=ingredients, recipe_hashtags=recipe_hashtags, userid=userid)
+
+
+@app.route("/myrecipes/<int:userid>/recipe/<int:recipeid>/edit")
+def edit_recipe(userid, recipeid):
+
+    recipe = Recipe.get_recipe(recipeid)
+
+    ingredients = Ingredient.get_recipe_ingredients(recipeid)
+
+    ingredient_count = len(ingredients)
+
+    recipe_hashtags = Recipe_Hashtag.get_recipe_hashtags(recipeid)
+
+    hashtag_list = Recipe_Hashtag.get_hashtag_names_for_recipe(recipe_hashtags)
+
+    readable_hashtags = Hashtag.get_readable_hashtags(hashtag_list)
+
+    recreated_hashtag_input = Hashtag.recreate_hashtag_input(readable_hashtags)
+
+    return render_template("edit_recipe.html", recipe=recipe, ingredients=ingredients, ingredient_count=ingredient_count,
+                           recipe_hashtags=recipe_hashtags, hashtag_list=hashtag_list, userid=userid, recreated_hashtag_input=recreated_hashtag_input)
 
 
 @app.route("/myrecipes/<int:userid>/addrecipe")
@@ -107,7 +142,7 @@ def add_new_recipe():
 
     ###### Recipe Table Section ######
     user_id = session['User']
-    recipe_title = request.form.get("title")
+    recipe_title = request.form.get("recipetitle")
     instructions = request.form.get("instructions")
     source = request.form.get("source")
 
