@@ -132,11 +132,10 @@ class Ingredient(db.Model):
                 # looks for entries that end with an integer
                 if r[0:3] == 'ite' or r[0:3] == 'pre' or r[0:3] == 'mea' or r[0:3] == 'qty':
 
-                    # checks if the last character of an entry equals the integer we're using
+                    # checks if the last character(s) of an entry equals the integer we're using
                     # if yes, appends key value pair in our ingredients dictionary
                     # sorts the value so we know how to index the list later
-                    last_char = int(r[-1])
-                    if last_char == i:
+                    if int(r[-1]) == i or int(r[-2:]) == i:
                         ingredients_to_add[i].append([r, requestform[r]])
                         ingredients_to_add[i].sort()
 

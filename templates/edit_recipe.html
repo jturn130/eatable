@@ -5,6 +5,17 @@
     {% if session['User'] == userid %}
         <a href="/myrecipes/{{ userid }}"> Back to My Recipes </a><br>
 
+        <div id="template-input" style="display: none;">
+         <!-- This is the ingredient prototype that will duplicate when the user clicks on the "Add another ingredient" button -->
+             <div>
+                 Qty: <input type="text" class="qty" name="qty" style="width: 50px;">
+                 Measure: <input type="text" class="measure" name="measure">
+                 Item: <input type="text" class="item" name="item">
+                 Prep Notes: <input type="text" class="prepnotes" name="prepnotes">
+             </div>
+         </div> <!-- div for .new-ingredient-field -->
+
+
         <h1> Edit recipe </h1>
 
         <form action="/recipe-confirm" method="POST" id="edit-recipe-form">
@@ -16,13 +27,15 @@
                 {% for ingredient in ingredients %}
 
                 <div class="new-ingredient-field">
-                    Qty: <input type="text" class="qty" name="qty1" value="{{ ingredient.quantity }}" style="width: 50px;">
-                    Measure: <input type="text" class="measure" name="measure2" value="{{ ingredient.measure }}">
-                    Item: <input type="text" class="item" name="item2" value="{{ ingredient.item }}">
-                    Prep Notes: <input type="text" class="prepnotes" name="prepnotes2" value="{{ ingredient.prep_notes }}">
+                    Qty: <input type="text" class="qty" name="qty{{ loop.index }}" value="{{ ingredient.quantity }}" style="width: 50px;">
+                    Measure: <input type="text" class="measure" name="measure{{ loop.index }}" value="{{ ingredient.measure }}">
+                    Item: <input type="text" class="item" name="item{{ loop.index }}" value="{{ ingredient.item }}">
+                    Prep Notes: <input type="text" class="prepnotes" name="prepnotes{{ loop.index }}" value="{{ ingredient.prep_notes }}">
                 </div> <!-- div for .new-ingredient-field -->  
                 {% endfor %}
             </div> <!-- div for #ingredient-section -->
+
+
             <button type="button" id="add-more">+ Add another ingredient</button>
 
 
@@ -51,25 +64,19 @@
         <script src="https://code.jquery.com/jquery.js"></script>
         <script>
             $("#add-more").on('click', function() {
-                // allows user to add more ingredients to recipe 
-                var new_ingredient = $(".new-ingredient-field").clone();
-                $('input', new_ingredient).val('');
-                $(new_ingredient[new_ingredient.length-1]).appendTo("#ingredient-section");
-                
-                // gets the current value of the attribute "name" for the class "qty"
-                // then gets the last character, makes it an integer, adds 1, then combines that new number back with qty to create a new name
-                // this allows us make unique names for different ingredients
-                // var currentQtyName = $('.qty', new_ingredient).attr('name');
-                // $('.qty', new_ingredient).attr('name', 'qty' + ((parseInt(currentQtyName[currentQtyName.length-1]))+1)); 
+               // allows user to add more ingredients to recipe 
+               var new_ingredient_field = $("#template-input").clone();
+               new_ingredient_field.removeAttr('id').removeAttr('style');
+               new_ingredient_field.appendTo("#ingredient-section");
+               index = $("#ingredient-section").children().length;
 
-                // var currentMeasureName = $('.measure', new_ingredient).attr('name');
-                // $('.measure', new_ingredient).attr('name', 'measure' + ((parseInt(currentMeasureName[currentMeasureName.length-1]))+1));
 
-                // var currentItemName = $('.item', new_ingredient).attr('name');
-                // $('.item', new_ingredient).attr('name', 'item' + ((parseInt(currentItemName[currentItemName.length-1]))+1));
-
-                // var currentPrepName = $('.prepnotes', new_ingredient).attr('name');
-                // $('.prepnotes', new_ingredient).attr('name', 'prepnotes' + ((parseInt(currentPrepName[currentPrepName.length-1]))+1)); 
+               // this allows us make unique names for different ingredients
+           
+               $('.qty', new_ingredient_field).attr('name', 'qty' + index); 
+               $('.measure', new_ingredient_field).attr('name', 'measure' + index); 
+               $('.item', new_ingredient_field).attr('name', 'item' + index); 
+               $('.prepnotes', new_ingredient_field).attr('name', 'prepnotes' + index); 
 
             });
 
