@@ -127,15 +127,13 @@ def edit_recipe(userid, recipeid):
 @app.route("/myrecipes/<int:userid>/recipe/<int:recipeid>/edit-confirm", methods=["POST"])
 def confirm_recipe_edit(userid, recipeid):
 
-    print "this is request.form ", request.form
     ####### Change Recipes Table ######
     recipe_title = request.form.get("recipetitle")
     instructions = request.form.get("instructions")
     source = request.form.get("source")
 
     #update recipe table
-    edited_rec = Recipe.edit_recipe(recipeid, recipe_title, instructions, source)
-    print "edited recipe: ", edited_rec
+    Recipe.edit_recipe(recipeid, recipe_title, instructions, source)
 
     ###### Change Tngredients Table ######
 
@@ -144,11 +142,8 @@ def confirm_recipe_edit(userid, recipeid):
 
     #add new ingredients
     new_ingredient_count = Ingredient.get_ingredient_count(request.form)
-    print "new_ingredient_count ", new_ingredient_count
     ingredients_dict = Ingredient.get_ingredients_to_add(new_ingredient_count, request.form)
-    print "ingredients_dict ", ingredients_dict
-    new_ings = Ingredient.add_ingredient_to_recipe(new_ingredient_count, ingredients_dict, recipeid)
-    print "new_ings ", new_ings
+    Ingredient.add_ingredient_to_recipe(new_ingredient_count, ingredients_dict, recipeid)
 
     ###### Change Hashtag Table ######
 
@@ -183,8 +178,6 @@ def create_new_recipe(userid):
 def add_new_recipe():
     """Add new recipe to the database."""
 
-    print request.form
-
     ###### Recipe Table Section ######
     user_id = session['User']
     recipe_title = request.form.get("recipetitle")
@@ -196,15 +189,12 @@ def add_new_recipe():
 
     ###### Ingredient Table Section ######
     new_ingredient_count = Ingredient.get_ingredient_count(request.form)
-    print new_ingredient_count
     ingredients_dict = Ingredient.get_ingredients_to_add(new_ingredient_count, request.form)
-    print ingredients_dict
     Ingredient.add_ingredient_to_recipe(new_ingredient_count, ingredients_dict, recipe_id)
 
     ###### Hashtag Table Section ######
     hashtags = request.form.get("hashtags")
     hashtag_list = [hashtag.strip("#") for hashtag in hashtags.split() if hashtag.startswith("#")]
-    print hashtag_list
 
     hashtag_id_list = Hashtag.get_hashtag_id(hashtag_list)
 
