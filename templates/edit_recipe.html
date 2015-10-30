@@ -18,20 +18,21 @@
 
         <h1> Edit recipe </h1>
 
-        <form action="/recipe-confirm" method="POST" id="edit-recipe-form">
+        <form action="/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}/edit-confirm" method="POST" id="edit-recipe-form">
             <h3> Recipe Title: </h3> <input type="text" name="recipetitle" value="{{ recipe.recipe_title }}" style="width: 300px;"><br><br>
 
             <div id="ingredient-section">
                 <h3> Ingredients: </h3>
 
                 {% for ingredient in ingredients %}
-
-                <div class="new-ingredient-field">
-                    Qty: <input type="text" class="qty" name="qty{{ loop.index }}" value="{{ ingredient.quantity }}" style="width: 50px;">
-                    Measure: <input type="text" class="measure" name="measure{{ loop.index }}" value="{{ ingredient.measure }}">
-                    Item: <input type="text" class="item" name="item{{ loop.index }}" value="{{ ingredient.item }}">
-                    Prep Notes: <input type="text" class="prepnotes" name="prepnotes{{ loop.index }}" value="{{ ingredient.prep_notes }}">
-                </div> <!-- div for .new-ingredient-field -->  
+                    {% if ingredient.item != '' %}
+                        <div class="new-ingredient-field">
+                            Qty: <input type="text" class="qty" name="qty{{ loop.index }}" value="{{ ingredient.quantity }}" style="width: 50px;">
+                            Measure: <input type="text" class="measure" name="measure{{ loop.index }}" value="{{ ingredient.measure }}">
+                            Item: <input type="text" class="item" name="item{{ loop.index }}" value="{{ ingredient.item }}">
+                            Prep Notes: <input type="text" class="prepnotes" name="prepnotes{{ loop.index }}" value="{{ ingredient.prep_notes }}">
+                        </div> <!-- div for .new-ingredient-field -->  
+                    {% endif %}
                 {% endfor %}
             </div> <!-- div for #ingredient-section -->
 
@@ -57,22 +58,23 @@
             
 
             <!-- Submit edited form -->
-            <input type="submit" class="confirmrecipe" value="Confirm Recipe">
+            <input type="submit" class="confirmrecipe" value="Submit Changes">
         </form>
 
 
         <script src="https://code.jquery.com/jquery.js"></script>
         <script>
             $("#add-more").on('click', function() {
-               // allows user to add more ingredients to recipe 
-               var new_ingredient_field = $("#template-input").clone();
-               new_ingredient_field.removeAttr('id').removeAttr('style');
-               new_ingredient_field.appendTo("#ingredient-section");
-               index = $("#ingredient-section").children().length;
+                console.log("this logged");
+               // allows user to add more ingredients to recipe
 
+
+                var new_ingredient_field = $("#template-input").clone();
+                new_ingredient_field.removeAttr('id').removeAttr('style');
+                new_ingredient_field.appendTo("#ingredient-section");
+                index = $("#ingredient-section").children().length-1;
 
                // this allows us make unique names for different ingredients
-           
                $('.qty', new_ingredient_field).attr('name', 'qty' + index); 
                $('.measure', new_ingredient_field).attr('name', 'measure' + index); 
                $('.item', new_ingredient_field).attr('name', 'item' + index); 

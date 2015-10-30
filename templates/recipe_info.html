@@ -13,7 +13,10 @@
 
 <h3>Ingredients: </h3>
 <ul>
+<!-- Doesn't display empty ingredient fields -->
+<!-- Formats fields correctly depending on if they have prep notes -->
 {% for ingredient in ingredients %}
+    {% if ingredient.item != '' %}
     <li>
         {{ ingredient.quantity }} {{ ingredient.measure }}
 
@@ -23,6 +26,7 @@
             {{ ingredient.item }}
         {% endif %}
     </li>
+    {% endif %}
 {% endfor %} 
 </ul>
 
@@ -35,10 +39,11 @@
 {% endif %}
 
 <h3> Hashtags: </h3>
-{% for recipe_hashtag in recipe_hashtags %}
-    <p> #{{recipe_hashtag.hashtags.name}} </p>
-{% endfor %}
-
+<p>
+    {% for recipe_hashtag in recipe_hashtags %}
+     #{{recipe_hashtag.hashtags.name}} 
+    {% endfor %}
+</p>
 
 
 {% endblock %}

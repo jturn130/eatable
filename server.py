@@ -113,8 +113,6 @@ def edit_recipe(userid, recipeid):
 
     ingredients = Ingredient.get_recipe_ingredients(recipeid)
 
-    ingredient_count = len(ingredients)
-
     recipe_hashtags = Recipe_Hashtag.get_recipe_hashtags(recipeid)
 
     hashtag_list = Recipe_Hashtag.get_hashtag_names_for_recipe(recipe_hashtags)
@@ -123,8 +121,55 @@ def edit_recipe(userid, recipeid):
 
     recreated_hashtag_input = Hashtag.recreate_hashtag_input(readable_hashtags)
 
-    return render_template("edit_recipe.html", recipe=recipe, ingredients=ingredients, ingredient_count=ingredient_count,
-                           recipe_hashtags=recipe_hashtags, hashtag_list=hashtag_list, userid=userid, recreated_hashtag_input=recreated_hashtag_input)
+    return render_template("edit_recipe.html", recipe=recipe, ingredients=ingredients, userid=userid, recreated_hashtag_input=recreated_hashtag_input)
+
+
+@app.route("/myrecipes/<int:userid>/recipe/<int:recipeid>/edit-confirm", methods=["POST"])
+def confirm_recipe_edit(userid, recipeid):
+
+    print "this is request.form ", request.form
+    ####### Change Recipes Table ######
+    recipe_title = request.form.get("recipetitle")
+    instructions = request.form.get("instructions")
+    source = request.form.get("source")
+
+    #update recipe table
+    edited_rec = Recipe.edit_recipe(recipeid, recipe_title, instructions, source)
+    print "edited recipe: ", edited_rec
+
+    ###### Change Tngredients Table ######
+
+    #delete old ingredients
+    Ingredient.delete_old_recipe_ingredients(recipeid)
+
+    #add new ingredients
+    new_ingredient_count = Ingredient.get_ingredient_count(request.form)
+    print "new_ingredient_count ", new_ingredient_count
+    ingredients_dict = Ingredient.get_ingredients_to_add(new_ingredient_count, request.form)
+    print "ingredients_dict ", ingredients_dict
+    new_ings = Ingredient.add_ingredient_to_recipe(new_ingredient_count, ingredients_dict, recipeid)
+    print "new_ings ", new_ings
+
+    ###### Change Hashtag Table ######
+
+    # no need to delete from hashtags table
+    # just need to delete from the recipe_hashtags association table
+    hashtags = request.form.get("hashtags")
+    hashtag_list = [hashtag.strip("#") for hashtag in hashtags.split() if hashtag.startswith("#")]
+
+    # will add another row in hashtags table if a new hashtag
+    # will get the hashtag_id if the hashtag already exists
+    hashtag_id_list = Hashtag.get_hashtag_id(hashtag_list)
+
+    ###### Recipe_Hashtag Table Section ######
+
+    #delete old recipe_hashtags
+    Recipe_Hashtag.delete_old_recipe_hashtags(recipeid)
+
+    # generate new recipe_hashtags
+    Recipe_Hashtag.create_new_recipe_hashtag(recipeid, hashtag_id_list)
+
+    return redirect("/myrecipes/%d/recipe/%d" % (userid, recipeid))
 
 
 @app.route("/myrecipes/<int:userid>/addrecipe")

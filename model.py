@@ -84,7 +84,24 @@ class Recipe(db.Model):
         """Get a recipe given the recipeid."""
 
         recipe = Recipe.query.filter_by(recipe_id=recipeid).one()
+
         return recipe
+
+    @classmethod
+    def edit_recipe(cls, recipeid, recipe_title, instructions, source=''):
+        """Update the DB to reflect changes in recipe."""
+
+        recipe_to_edit = Recipe.query.filter_by(recipe_id=recipeid).one()
+
+        recipe_to_edit.recipe_title = recipe_title
+        print recipe_to_edit.recipe_title
+        recipe_to_edit.instructions = instructions
+        print recipe_to_edit.instructions
+        recipe_to_edit.source = source
+        print recipe_to_edit.source
+
+        db.session.commit()
+        return recipe_to_edit
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -110,11 +127,8 @@ class Ingredient(db.Model):
 
         count = 0
         for r in requestform:
-            # print "this is r before if statement: %s" % r
             if r[0:4] == 'item':
-                # print "this is r after if statement: %s" % r
                 count += 1
-        # print "this is count: %s" % count
         return count
 
     @classmethod
@@ -125,19 +139,23 @@ class Ingredient(db.Model):
 
         for i in range(1, (new_count+1)):
             #the range refers to the range of integers that appear in the ingredient names
-            print "this is i: %d" % i
             ingredients_to_add[i] = []
             for r in requestform:
-                # print "this is r in the get ings to add function: %s" % r
                 # looks for entries that end with an integer
                 if r[0:3] == 'ite' or r[0:3] == 'pre' or r[0:3] == 'mea' or r[0:3] == 'qty':
 
                     # checks if the last character(s) of an entry equals the integer we're using
                     # if yes, appends key value pair in our ingredients dictionary
                     # sorts the value so we know how to index the list later
-                    if int(r[-1]) == i or int(r[-2:]) == i:
-                        ingredients_to_add[i].append([r, requestform[r]])
-                        ingredients_to_add[i].sort()
+
+                    if i < 10:
+                        if int(r[-1]) == i:
+                            ingredients_to_add[i].append([r, requestform[r]])
+                            ingredients_to_add[i].sort()
+                    if i >= 10:
+                        if int(r[-2:]) == i:
+                            ingredients_to_add[i].append([r, requestform[r]])
+                            ingredients_to_add[i].sort()
 
             # creates a new list of ingredients
             # takes out the ingredient heading and unnecessary nested lists
@@ -152,7 +170,6 @@ class Ingredient(db.Model):
                     x = y
                     new_ingredient_list.append(x)
             ingredients_to_add[i] = new_ingredient_list
-        print ingredients_to_add
         return ingredients_to_add
 
     @classmethod
@@ -176,6 +193,14 @@ class Ingredient(db.Model):
 
         recipe_ingredients = Ingredient.query.filter_by(recipe_id=recipeid).all()
         return recipe_ingredients
+
+    @classmethod
+    def delete_old_recipe_ingredients(cls, recipeid):
+        """Delete existing recipe ingredients."""
+
+        deleted_ingredients = Ingredient.query.filter_by(recipe_id=recipeid).delete()
+
+        return deleted_ingredients
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -221,6 +246,14 @@ class Recipe_Hashtag(db.Model):
             hashtag_name = recipe_hashtag.hashtags.name
             list_of_hashtags.append(hashtag_name)
         return list_of_hashtags
+
+    @classmethod
+    def delete_old_recipe_hashtags(cls, recipeid):
+        """Delete the old recipe_hashtags when editing recipe."""
+
+        recipe_hashtags_to_delete = Recipe_Hashtag.query.filter_by(recipe_id=recipeid).delete()
+
+        return recipe_hashtags_to_delete
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -328,6 +361,7 @@ def connect_to_db(app):
 
     # Configure to use our SQLite database
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///eatable.db'
+    # app.config['SQLALCHEMY_DATABASE_URI'] ='postgresql://localhost/eatable.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
     db.init_app(app)
