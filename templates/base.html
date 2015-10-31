@@ -2,29 +2,160 @@
 <html>
 <head>
     <title>eatable</title>
-    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon" />
+    <!-- <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon" /> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        @font-face {
+            font-family: 'ChunkFive';
+            src: url('/static/fonts/Chunkfive.otf');
+        }
+
+        @font-face {
+            font-family: 'Bitter-Bold';
+            src: url('/static/fonts/Bitter-Bold.otf');
+        }
+
+        @font-face {
+            font-family: 'Bitter-Regular';
+            src: url('/static/fonts/Bitter-Regular.otf');
+        }
+
+        .navbar-default .navbar-brand {
+            font-family: 'ChunkFive';
+            font-size: 3em;
+            color: #2ba4a6;
+            margin-top: 5px;
+        }
+
+        button.btn.btn-primary.dropdown-toggle {
+            background-color: #2ba4a6;
+            border: none;
+            margin: 10px;
+            padding-left: 24px;
+            padding-right: 24px;
+            padding-top: 9px;
+            padding-bottom: 9px;
+        }
+
+        div.container-fluid {
+            background-color: #81e5ae;
+            padding-bottom: 0px;
+            margin-bottom: 0px;
+
+        }
+
+        #get-started-button {
+            background-color: #81e5ae;
+            border: none;
+            display: block;
+            margin: 0 auto;
+            padding-left: 35px;
+            padding-right: 35px;
+            border-radius: 25px;
+        }
+
+        a {
+            color: white;
+            padding: 4px;
+        }
+
+        #takerecipes {
+            background-image: url("/static/images/table.jpg");
+            padding-top: 110px;
+            padding-bottom: 110px;
+            background-size: 100%;
+            margin-top: 0px;
+        }
+
+        h1.titletext {
+            font-size: 5em;
+            text-align: center;
+            font-family: 'Bitter-Bold';
+            color: white;
+        }
+
+        h2.titletext {
+            margin-top: 0px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-family: 'Bitter-Bold';
+            color: white;
+        }
+
+        ul.dropdown-menu {
+            background-color: #2ba4a6;
+        }
+
+        .dropdown-menu>li>a {
+            color: white;
+            text-align: center
+        }
+
+        .newrecipe {
+            background-color: #81e5ae;
+            border: none;
+            padding: 7px;
+        }
+
+        .fa.fa-search {
+            color: white;
+        }
+
+        button.searchbutton {
+            background-color: #2ba4a6;
+            border: none;
+            padding-left: 7px;
+            padding-right: 7px;
+        }
+
+        h1.myrecipes {
+            font-family: 'Bitter-Bold';
+            color: #2ba4a6;
+            text-align: center;
+            font-size: 4em;
+            padding: 15px;
+        }
+
+    </style>
 </head>
 
 <body>
-    <a href="/">eatable</a>
-
-    {% if 'User' in session %}
-        <div class="dropdown">
-          <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Settings
-          <span class="caret"></span></button>
-          <ul class="dropdown-menu">
-            <li><a href="/editprofile/<int:userid>">Edit Profile</a></li>
-            <li><a href="/cart/<int:userid>">View Cart</a></li>
-            <li><a href="/logout">Log Out</a></li>
-          </ul>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">eatable</a>
+            </div>
+            <div id="navbar">
+                <ul class="nav navbar-nav navbar-right">
+                    {% if 'User' in session %}
+                        <div <!-- class="dropdown">
+                          <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class='fa fa-gear'></i>&nbsp;&nbsp;Settings
+                          <span class="caret"></span></button>
+                          <ul class="dropdown-menu">
+                            <li><a href="/editprofile/<int:userid>"><i class='fa fa-pencil'></i>&nbsp;&nbsp;Edit Profile</a></li>
+                            <li class="divider"></li>
+                            <li><a href="/cart/<int:userid>"><i class='fa fa-shopping-cart'></i>&nbsp;&nbsp;View Cart</a></li>
+                            <li class="divider"></li>
+                            <li><a href="/logout"><i class='fa fa-power-off'></i>&nbsp;&nbsp;Log Out</a></li>
+                          </ul>
+                        </div>
+                    
+                    {% else %}
+                        <button>
+                            <a href="/login">Log In</a>
+                        </button>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
-    {% else %}
-        <a href="/login">Log In</a>
-    {% endif %}
-    <br>
-    <br>
-
+    </nav>
     {% block content %} put your content here {% endblock %}
 
 </body>
+<script src="https://code.jquery.com/jquery.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+
 </html>

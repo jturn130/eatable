@@ -4,9 +4,17 @@
 {% if 'User' in session %}
 
 
-<h1>My Recipes</h1>
+<h1 class="myrecipes">My Recipes</h1>
 
-<a href="/myrecipes/{{ userid }}/addrecipe">+ New Recipe</a>
+
+<button class="newrecipe">
+    <a href="/myrecipes/{{ userid }}/addrecipe"><i class="fa fa-plus"></i>&nbsp;&nbsp;&nbsp;New Recipe</a>
+</button>
+
+<form>
+    <input type='text' id='searchbox' style="width: 300px;" placeholder='Search by recipe title, ingredient, or #hashtag'>
+    <button class='searchbutton' type='submit'><i class='fa fa-search'></i></button>
+</form>
 
 <ul>
 {% for recipe in user_recipes %}
