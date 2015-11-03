@@ -89,7 +89,7 @@ def logout_user():
 def display_recipe_list(userid):
     """Display a list of recipes for a given user."""
 
-    user_recipes = Recipe.query.filter_by(user_id=userid).all()
+    user_recipes = Recipe.get_user_recipe_list(userid)
 
     return render_template("recipe_list.html", userid=userid, user_recipes=user_recipes)
 
@@ -182,6 +182,9 @@ def confirm_recipe_edit(userid, recipeid):
     # generate new recipe_hashtags
     Recipe_Hashtag.create_new_recipe_hashtag(recipeid, hashtag_id_list)
 
+    ###### Tsvector Generation ######
+    Recipe.update_search_vector(recipeid)
+
     return redirect("/myrecipes/%d/recipe/%d" % (userid, recipeid))
 
 
@@ -220,6 +223,9 @@ def add_new_recipe():
 
     ###### Recipe_Hashtag Table Section ######
     Recipe_Hashtag.create_new_recipe_hashtag(recipe_id, hashtag_id_list)
+
+    ###### Tsvector Generation ######
+    Recipe.update_search_vector(recipe_id)
 
     return redirect("/myrecipes/%d" % user_id)
 

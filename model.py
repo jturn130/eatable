@@ -62,7 +62,6 @@ class Recipe(db.Model):
     """Eatable recipe for a given user."""
 
     __tablename__ = "recipes"
-
     recipe_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     recipe_title = db.Column(db.String(150), nullable=False)
@@ -78,6 +77,35 @@ class Recipe(db.Model):
         db.session.add(new_recipe)
         db.session.commit()
         return new_recipe
+
+    @classmethod
+    def update_search_vector(cls, recipeid):
+        """Adds a tsvector for recipe."""
+
+        QUERY = """
+        UPDATE recipes SET searchdata = setweight(to_tsvector(coalesce(tags_line, '')), 'A')
+        || setweight(to_tsvector(coalesce(raw_Search.recipe_title, '')), 'B') ||
+        setweight(to_tsvector(coalesce(item_line, '')), 'C') FROM raw_Search WHERE raw_Search.recipe_id = recipes.recipe_id
+        """
+
+        db.session.execute(QUERY)
+        db.session.commit()
+
+        recipe = Recipe.query.filter_by(recipe_id=recipeid).one()
+        return recipe
+
+    @classmethod
+    def get_user_recipe_list(cls, userid):
+
+        QUERY = """
+        SELECT recipe_title, recipe_id FROM recipes WHERE user_id = :userid ORDER BY recipe_title
+        """
+
+        cursor = db.session.execute(QUERY, {'userid': userid})
+
+        user_recipes = cursor.fetchall()
+
+        return user_recipes
 
     @classmethod
     def get_recipe(cls, recipeid):
