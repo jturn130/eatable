@@ -1,38 +1,55 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>We're glad you're here</h1>
+<h1 class="myrecipes">We're glad you're here</h1>
+<h3 class="tagline">Just a few short questions and you'll be good to go!</h3>
 <form action="/signup-confirm" id="signup" method="POST">
-    Email: <input type="text" name='email' placeholder="Email address"><br><br>
-    Password: <input type="password" id="password" name="password" placeholder="Password"><br>
-    <p id="tooshort" hidden>Your password needs to be at least 6 characters long.</p><br>
-    Re-enter Password: <input type="password" id="passwordcheck" name="passwordCheck" placeholder="Confirm Password"><br>
-    <p id="matchingerror" hidden>Your passwords don't match. Please try again.</p><br>
-    Mobile Phone: <input type="text" name='phone' placeholder="Mobile Phone"><br><br>
-    <input type="submit" value="Let's Get Cooking"> 
+    <div class='signup-form'>
+        <button class="signup-icons" ><i class="fa fa-envelope-o"></i></button>
+        <input type="text" class="signup" id="email" name='email' placeholder="Email address"><br><br>
+
+        <button class="signup-icons"><i class="fa fa-key"></i></button>
+        <input type="password" class="signup" id="password1" name="password" placeholder="Password"><br>
+        
+        <!-- Appears if password is too short -->
+        <p id="tooshort" hidden> Your password needs to be at least 6 characters long. </p><br>
+        
+        <button class="signup-icons" ><i class="fa fa-plus"></i></button>
+        <input type="password" class="signup" id="passwordcheck" name="passwordcheck" placeholder="Confirm Password"><br>
+
+        <!-- Appears if passwords don't match -->
+        <p id="matchingerror" hidden> Your passwords don't match. Please try again. </p><br>
+
+        <button class="signup-icons" ><i class="fa fa-mobile-phone"></i></button>
+        <input type="text" class="signup" name='phone' placeholder="Mobile Phone"><br><br>
+
+        <h4><input type="submit" value="Let's Get Cooking" class="get-started-button"></h4>
+    </div> 
 
 </form>
-
-<script src="https://code.jquery.com/jquery.js"></script>
+{% endblock %}
+{% block script %}
 <script>
 
 
 function validatePassword(evt) {
     // Confirms passwords match
-    if ($("#password").val() !== $("#passwordcheck").val()) {
+    console.log($("#password1").val());
+    if ($("#password1").val() !== $("#passwordcheck").val()) {
         $("#matchingerror").show();
         evt.preventDefault();
         $("#signup").trigger("reset");
     }
     
     // Confirms password is an appropriate length
-    if ($("#password").val().length < 6) {
+    if ($("#password1").val().length < 6) {
         $("#tooshort").show();
         evt.preventDefault();
         $("#signup").trigger("reset");
     }
    
 }
-$("#signup").on('submit', validatePassword)
+
+$("#signup").on('submit', validatePassword);
 </script>
 {% endblock %}

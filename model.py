@@ -103,6 +103,15 @@ class Recipe(db.Model):
         db.session.commit()
         return recipe_to_edit
 
+    @classmethod
+    def delete_recipe(cls, recipeid):
+        """Deletes a recipe from the DB."""
+
+        deleted_recipe = Recipe.query.filter_by(recipe_id=recipeid).delete()
+
+        db.session.commit()
+        return deleted_recipe
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 
@@ -130,6 +139,7 @@ class Ingredient(db.Model):
             if r[0:4] == 'item':
                 count += 1
         return count
+        print count
 
     @classmethod
     def get_ingredients_to_add(cls, new_count, requestform):
@@ -141,6 +151,8 @@ class Ingredient(db.Model):
             #the range refers to the range of integers that appear in the ingredient names
             ingredients_to_add[i] = []
             for r in requestform:
+                print r
+                print i
                 # looks for entries that end with an integer
                 if r[0:3] == 'ite' or r[0:3] == 'pre' or r[0:3] == 'mea' or r[0:3] == 'qty':
 
@@ -148,12 +160,13 @@ class Ingredient(db.Model):
                     # if yes, appends key value pair in our ingredients dictionary
                     # sorts the value so we know how to index the list later
 
-                    if i < 10:
-                        if int(r[-1]) == i:
+                    try:
+                        int(r[-2:])
+                        if int(r[-2:]) == i:
                             ingredients_to_add[i].append([r, requestform[r]])
                             ingredients_to_add[i].sort()
-                    if i >= 10:
-                        if int(r[-2:]) == i:
+                    except Exception:
+                        if int(r[-1]) == i:
                             ingredients_to_add[i].append([r, requestform[r]])
                             ingredients_to_add[i].sort()
 
@@ -170,6 +183,7 @@ class Ingredient(db.Model):
                     x = y
                     new_ingredient_list.append(x)
             ingredients_to_add[i] = new_ingredient_list
+        print ingredients_to_add
         return ingredients_to_add
 
     @classmethod

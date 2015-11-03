@@ -60,8 +60,12 @@
             <!-- Submit edited form -->
             <input type="submit" class="confirmrecipe" value="Submit Changes">
         </form>
-
-
+    {% endif %}
+{% else %}
+        <h1>You can't edit this recipe!!</h1>
+{% endif %}
+{% endblock %}
+{% block script %}
         <script src="https://code.jquery.com/jquery.js"></script>
         <script>
             $("#add-more").on('click', function() {
@@ -83,9 +87,5 @@
             });
 
         </script>
-    {% endif %}
-{% else %}
-        <h1>You can't edit this recipe!!</h1>
-{% endif %}
 
 {% endblock %}

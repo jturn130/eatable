@@ -106,6 +106,24 @@ def display_recipe(userid, recipeid):
     return render_template("recipe_info.html", recipe=recipe, ingredients=ingredients, recipe_hashtags=recipe_hashtags, userid=userid)
 
 
+@app.route("/myrecipes/<int:userid>/recipe/<int:recipeid>/delete")
+def delete_recipe(userid, recipeid):
+
+    #delete old recipe_hashtags
+    Recipe_Hashtag.delete_old_recipe_hashtags(recipeid)
+
+    #delete old ingredients
+    Ingredient.delete_old_recipe_ingredients(recipeid)
+
+    #delete old recipe
+    Recipe.delete_recipe(recipeid)
+
+    #flash message
+    flash("You have successfully delete your recipe.")
+
+    return redirect("/myrecipes/%d" % userid)
+
+
 @app.route("/myrecipes/<int:userid>/recipe/<int:recipeid>/edit")
 def edit_recipe(userid, recipeid):
 
@@ -177,6 +195,8 @@ def create_new_recipe(userid):
 @app.route("/recipe-confirm", methods=["POST"])
 def add_new_recipe():
     """Add new recipe to the database."""
+
+    print request.form
 
     ###### Recipe Table Section ######
     user_id = session['User']

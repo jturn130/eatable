@@ -5,6 +5,7 @@
     {% if session['User'] == userid %}
         <a href="/myrecipes/{{ userid }}"> Back to My Recipes </a><br>
         <a href="/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}/edit">Edit Recipe</a><br>
+        <button id="deleterecipe">Delete Recipe</button><br>
     {% endif %}
 {% endif %}
 
@@ -31,7 +32,7 @@
 </ul>
 
 <h3>Instructions: </h3>
-<p> {{ recipe.instructions }}</p>
+<p style="white-space:pre-wrap;"> {{ recipe.instructions }}</p>
 
 {% if recipe.source != '' %}
     <h3> Source: </h3>
@@ -46,4 +47,17 @@
 </p>
 
 
+{% endblock %}
+{% block script %}
+<script>
+
+$("#deleterecipe").on('click', function() {
+    var reallyDelete = confirm("Are you sure you want to delete this recipe? You can't get it back.");
+    if (reallyDelete) {
+        window.location.href = "/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}/delete";
+    }
+
+});
+
+</script>
 {% endblock %}
