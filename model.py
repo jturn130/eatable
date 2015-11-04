@@ -80,7 +80,7 @@ class Recipe(db.Model):
 
     @classmethod
     def update_search_vector(cls, recipeid):
-        """Adds a tsvector for recipe."""
+        """Adds a a ranked tsvector for recipe."""
 
         QUERY = """
         UPDATE recipes SET searchdata = setweight(to_tsvector(coalesce(tags_line, '')), 'A')
@@ -93,6 +93,22 @@ class Recipe(db.Model):
 
         recipe = Recipe.query.filter_by(recipe_id=recipeid).one()
         return recipe
+
+    @classmethod
+    def run_search_query(cls, userid, searchquery):
+        """Get relevant recipes given search query."""
+
+        QUERY = """
+        SELECT recipe_id, recipe_title, ts_rank(searchdata, to_tsquery('english', :searchquery)) as rank FROM recipes
+        WHERE user_id = :userid AND searchdata @@ to_tsquery('english', :searchquery)
+        ORDER BY rank DESC
+        """
+
+        cursor = db.session.execute(QUERY, {'userid': userid, 'searchquery': searchquery})
+        search_recipes = cursor.fetchall()
+
+        print search_recipes
+        return search_recipes
 
     @classmethod
     def get_user_recipe_list(cls, userid):

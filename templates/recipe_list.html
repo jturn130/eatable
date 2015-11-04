@@ -6,17 +6,19 @@
 
 <h1 class="myrecipes">My Recipes</h1>
 
+<!-- puts userid in a hidden input so javascript can access it later -->
+<input type="hidden" id="userinfo" value="{{ userid }}">
 
 <button class="newrecipe">
     <a href="/myrecipes/{{ userid }}/addrecipe"><div id="newrecipe"><i class="fa fa-plus"></i>&nbsp;&nbsp;&nbsp;New Recipe</div></a>
 </button>
 
-<form>
+<form id="searchform" action="/myrecipes/{{ userid }}/searchresults" method="GET">
     <input type='text' id='searchbox' style="width: 300px;" placeholder='Search by recipe title, ingredient, or #hashtag'>
-    <button class='searchbutton' type='submit'><i class='fa fa-search'></i></button>
+    <button type="submit" id='searchbutton'><i class='fa fa-search'></i></button>
 </form>
 
-<ul>
+<ul id="recipelist">
 {% for recipe in user_recipes %}
     <li>
         <a href="/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}">
@@ -27,4 +29,60 @@
 </ul>
 
 {% endif %}
+{% endblock %}
+{% block script %}
+<script>
+
+function showSearchResults(results) {
+    // Display recipes relevant to search query
+    
+    
+    // takes json-safe string and makes it a weird array
+    var array = JSON.parse("[" + results + "]");
+
+    // ex of array:  
+        // array[0] = 2,Pineapple Fried Rice,0.121585,10,Couscous Salad,0.0607927,1,Hummus,0.0607927
+        // array[0][0] = 2,Pineapple Fried Rice,0.607927
+        // array[0][0][1] = Pineapple Fried Rice
+
+    var resultListLength = array[0].length;
+
+    $("#recipelist").empty();
+
+    var recipeListString = "";
+
+    for (var i=0; i < resultListLength; i++) {
+                
+            recipeListString = recipeListString + "<li><a href='/myrecipes/" + $("#userinfo").val() + 
+                               "/recipe/" + array[0][i][0] + "'>" + array[0][i][1]
+                               + "</a></li>";
+            }
+
+    $("#recipelist").html(recipeListString);
+
+}
+
+function getSearchResults(evt) {
+    // Make an AJAX to get results from user search query
+
+    evt.preventDefault();
+
+    userid = $("#userinfo").val();
+
+    var searchQuery = $("#searchbox").val();
+
+    // strips any hashtags from search query so it doesn't mess up URL
+    searchQuery = searchQuery.replace(/\#/g, '');
+
+    // adds '&' between words for multi-word queries
+    searchQuery = searchQuery.replace(/\s/g, ' | ');
+
+    $.get("/myrecipes/"+userid+"/searchresults?searchQuery="+searchQuery, showSearchResults);
+
+}
+
+
+$("#searchform").on("submit", getSearchResults);
+
+</script>
 {% endblock %}

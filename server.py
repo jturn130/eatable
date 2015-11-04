@@ -4,6 +4,8 @@ from flask import Flask, render_template, redirect, request, flash, session
 
 from flask_debugtoolbar import DebugToolbarExtension
 
+import json
+
 from model import User, Recipe, Ingredient, Recipe_Hashtag, Hashtag, Cart_Ingredient, Cart, connect_to_db, db
 
 
@@ -92,6 +94,29 @@ def display_recipe_list(userid):
     user_recipes = Recipe.get_user_recipe_list(userid)
 
     return render_template("recipe_list.html", userid=userid, user_recipes=user_recipes)
+
+
+@app.route("/myrecipes/<int:userid>/searchresults", methods=["GET"])
+def get_search_results(userid):
+
+    search_query = request.args.get("searchQuery")
+
+    ##returns list of tuples
+    ##index[0] = recipe_id
+    ##index[1] = recipe_title
+    ##index[2] = rank
+    search_recipes = Recipe.run_search_query(userid, search_query)
+
+    #creates dictionary from search results
+    #key = recipeid
+    #value = {dictionary of recipe title and userid}
+    recipes_list = []
+
+    for recipe in search_recipes:
+        recipe = list(recipe)
+        recipes_list.append(recipe)
+
+    return json.dumps(recipes_list)
 
 
 @app.route("/myrecipes/<int:userid>/recipe/<int:recipeid>")
