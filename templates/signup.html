@@ -9,7 +9,7 @@
         <input type="text" class="signup" id="email" name='email' placeholder="Email address"><br><br>
 
         <button class="signup-icons"><i class="fa fa-key"></i></button>
-        <input type="password" class="signup" id="password1" name="password" placeholder="Password"><br>
+        <input type="password" class="signup" id="password1" name="password1" placeholder="Password"><br>
         
         <!-- Appears if password is too short -->
         <p id="tooshort" hidden> Your password needs to be at least 6 characters long. </p><br>
@@ -21,7 +21,7 @@
         <p id="matchingerror" hidden> Your passwords don't match. Please try again. </p><br>
 
         <button class="signup-icons" ><i class="fa fa-mobile-phone"></i></button>
-        <input type="text" class="signup" name='phone' placeholder="Mobile Phone"><br><br>
+        <input type="text" class="signup" id="phone" name='phone' placeholder="Mobile Phone"><br><br>
 
         <h4><input type="submit" value="Let's Get Cooking" class="get-started-button"></h4>
     </div> 
@@ -29,8 +29,31 @@
 </form>
 {% endblock %}
 {% block script %}
+<!-- <script src="http://jqueryvalidation.org/files/dist/jquery.validate.min.js"></script>
+<script src="http://jqueryvalidation.org/files/dist/additional-methods.min.js"></script> -->
 <script>
 
+// $( "#signup" ).validate({
+//   rules: {
+//     email: {
+//       required: true,
+//       email: true
+//         }
+//     password1: {
+//         required: true,
+//         minlength: 6,
+//         maxlength: 12
+//         }
+//     passwordcheck: {
+//         required: true,
+//         equalTo: "#password1"
+//         }
+//     phone {
+//         phoneUS: true
+//         }
+
+//     }
+// }};
 
 function validatePassword(evt) {
     // Confirms passwords match

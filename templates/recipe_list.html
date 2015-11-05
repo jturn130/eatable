@@ -31,58 +31,99 @@
 {% endif %}
 {% endblock %}
 {% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 <script>
 
-function showSearchResults(results) {
-    // Display recipes relevant to search query
-    
-    
-    // takes json-safe string and makes it a weird array
-    var array = JSON.parse("[" + results + "]");
+    function showSearchResults(results) {
+        // Display recipes relevant to search query
 
-    // ex of array:  
-        // array[0] = 2,Pineapple Fried Rice,0.121585,10,Couscous Salad,0.0607927,1,Hummus,0.0607927
-        // array[0][0] = 2,Pineapple Fried Rice,0.607927
-        // array[0][0][1] = Pineapple Fried Rice
+        
+        // takes json-safe string and makes it a weird array
+        var array = JSON.parse("[" + results + "]");
 
-    var resultListLength = array[0].length;
+        // example of array:  
+            // array[0] = 2,Pineapple Fried Rice,0.121585,10,Couscous Salad,0.0607927,1,Hummus,0.0607927
+            // array[0][0] = 2,Pineapple Fried Rice,0.607927
+            // array[0][0][1] = Pineapple Fried Rice
 
-    $("#recipelist").empty();
+        var resultListLength = array[0].length;
 
-    var recipeListString = "";
+        $("#recipelist").empty();
 
-    for (var i=0; i < resultListLength; i++) {
-                
-            recipeListString = recipeListString + "<li><a href='/myrecipes/" + $("#userinfo").val() + 
-                               "/recipe/" + array[0][i][0] + "'>" + array[0][i][1]
-                               + "</a></li>";
-            }
+        var recipeListString = "";
 
-    $("#recipelist").html(recipeListString);
+        for (var i=0; i < resultListLength; i++) {
+                    
+                recipeListString = recipeListString + "<li><a href='/myrecipes/" + $("#userinfo").val() + 
+                                   "/recipe/" + array[0][i][0] + "'>" + array[0][i][1]
+                                   + "</a></li>";
+                }
 
-}
+        $("#recipelist").html(recipeListString);
 
-function getSearchResults(evt) {
-    // Make an AJAX to get results from user search query
+    }
 
-    evt.preventDefault();
+    function getSearchResults(evt) {
+        // Make an AJAX to get results from user search query
 
-    userid = $("#userinfo").val();
+        evt.preventDefault();
 
-    var searchQuery = $("#searchbox").val();
+        userid = $("#userinfo").val();
 
-    // strips any hashtags from search query so it doesn't mess up URL
-    searchQuery = searchQuery.replace(/\#/g, '');
+        var searchQuery = $("#searchbox").val();
 
-    // adds '&' between words for multi-word queries
-    searchQuery = searchQuery.replace(/\s/g, ' | ');
+        // strips any hashtags/other punctuation from search query
+        // so it doesn't mess up URL
+        searchQuery = searchQuery.replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"")
+        // searchQuery = searchQuery.replace(/\#/g, '');
 
-    $.get("/myrecipes/"+userid+"/searchresults?searchQuery="+searchQuery, showSearchResults);
+        // adds '|' between words for multi-word queries
+        searchQuery = searchQuery.replace(/\s/g, ' | ');
 
-}
+        $.get("/myrecipes/"+userid+"/searchresults?searchQuery="+searchQuery, showSearchResults);
+
+    }
+
+    //matches query to search input
+    var substringMatcher = function(strs) {
+      return function findMatches(q, cb) {
+        var matches, substringRegex;
+
+        // an array that will be populated with substring matches
+        matches = [];
+
+        // regex used to determine if a string contains the substring `q`
+        substrRegex = new RegExp(q, 'i');
+
+        // iterate through the pool of strings and for any string that
+        // contains the substring `q`, add it to the `matches` array
+        $.each(strs, function(i, str) {
+          if (substrRegex.test(str)) {
+            matches.push(str);
+          }
+        });
+
+        cb(matches);
+      };
+    };
 
 
-$("#searchform").on("submit", getSearchResults);
+
+    $.get("/typeahead", function(results) { 
+        var userdata = results.userdata; 
+        console.log("this is hashtags: "+userdata);
+
+        $("#searchbox").typeahead({},
+        {
+            name: 'hashtags',
+            source: substringMatcher(userdata)
+        }
+        );
+
+    });
+
+
+    $("#searchform").on("submit", getSearchResults);
 
 </script>
 {% endblock %}

@@ -13,7 +13,7 @@
                  Item: <input type="text" class="item" name="item">
                  Prep Notes: <input type="text" class="prepnotes" name="prepnotes">
              </div>
-         </div> <!-- div for .new-ingredient-field -->
+         </div> 
 
 
         <h1> Edit recipe </h1>
@@ -26,12 +26,12 @@
 
                 {% for ingredient in ingredients %}
                     {% if ingredient.item != '' %}
-                        <div class="new-ingredient-field">
+                        <div class="ingredient-field">
                             Qty: <input type="text" class="qty" name="qty{{ loop.index }}" value="{{ ingredient.quantity }}" style="width: 50px;">
                             Measure: <input type="text" class="measure" name="measure{{ loop.index }}" value="{{ ingredient.measure }}">
                             Item: <input type="text" class="item" name="item{{ loop.index }}" value="{{ ingredient.item }}">
                             Prep Notes: <input type="text" class="prepnotes" name="prepnotes{{ loop.index }}" value="{{ ingredient.prep_notes }}">
-                        </div> <!-- div for .new-ingredient-field -->  
+                        </div> <!-- div for ingredient-field -->  
                     {% endif %}
                 {% endfor %}
             </div> <!-- div for #ingredient-section -->

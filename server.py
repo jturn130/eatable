@@ -1,6 +1,6 @@
 from jinja2 import StrictUndefined
 
-from flask import Flask, render_template, redirect, request, flash, session
+from flask import Flask, render_template, redirect, request, flash, session, jsonify
 
 from flask_debugtoolbar import DebugToolbarExtension
 
@@ -98,6 +98,7 @@ def display_recipe_list(userid):
 
 @app.route("/myrecipes/<int:userid>/searchresults", methods=["GET"])
 def get_search_results(userid):
+    """Run search query and return results."""
 
     search_query = request.args.get("searchQuery")
 
@@ -121,6 +122,7 @@ def get_search_results(userid):
 
 @app.route("/myrecipes/<int:userid>/recipe/<int:recipeid>")
 def display_recipe(userid, recipeid):
+    """Retrieves recipe data from db for display."""
 
     recipe = Recipe.get_recipe(recipeid)
 
@@ -131,8 +133,31 @@ def display_recipe(userid, recipeid):
     return render_template("recipe_info.html", recipe=recipe, ingredients=ingredients, recipe_hashtags=recipe_hashtags, userid=userid)
 
 
+@app.route("/typeahead")
+def get_suggestions():
+    """Get user data for typeahead suggestions."""
+
+    userid = session['User']
+
+    hashtag_data = Hashtag.get_hashtags_by_user(userid)
+    hashtag_list = [h[0] for h in hashtag_data]
+
+    recipe_data = Recipe.get_user_recipe_list(userid)
+    recipe_list = [r[0] for r in recipe_data]
+
+    ingredient_data = Ingredient.get_ingredients_by_user(userid)
+    ## convert to set then back to list to remove duplicates
+    ingredient_list = list(set([i[0] for i in ingredient_data]))
+
+    data_list = hashtag_list + recipe_list + ingredient_list
+    print data_list
+
+    return jsonify({"userdata": data_list})
+
+
 @app.route("/myrecipes/<int:userid>/recipe/<int:recipeid>/delete")
 def delete_recipe(userid, recipeid):
+    """Delete recipe from the db."""
 
     #delete old recipe_hashtags
     Recipe_Hashtag.delete_old_recipe_hashtags(recipeid)
@@ -151,6 +176,7 @@ def delete_recipe(userid, recipeid):
 
 @app.route("/myrecipes/<int:userid>/recipe/<int:recipeid>/edit")
 def edit_recipe(userid, recipeid):
+    """Get a recipe from the db, and display it so the user can edit."""
 
     recipe = Recipe.get_recipe(recipeid)
 
@@ -169,6 +195,7 @@ def edit_recipe(userid, recipeid):
 
 @app.route("/myrecipes/<int:userid>/recipe/<int:recipeid>/edit-confirm", methods=["POST"])
 def confirm_recipe_edit(userid, recipeid):
+    """Make changes to the db to reflect the recipe edits."""
 
     ####### Change Recipes Table ######
     recipe_title = request.form.get("recipetitle")

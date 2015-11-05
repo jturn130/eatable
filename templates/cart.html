@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    {% if 'User' in session %}
+        {% if session['User'] == userid %}
+                <h1>My Cart</h1>
+                {% if 'Cart' in session %}
+                    <ul>
+                        {% for c in session['Cart'] %}
+                            <li>  </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <h3> You don't have any items in your cart yet. </h3>
+                {% endif %}
+        {% endif %}
+    {% else %}
+
+        <h1>You are not authorized to view this page. Mind your own beeswax!</h1>
+
+    {%% endif }
+
+{% endblock %}
+
+{% block script %}
+{% endblock %}

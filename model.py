@@ -195,8 +195,7 @@ class Ingredient(db.Model):
             #the range refers to the range of integers that appear in the ingredient names
             ingredients_to_add[i] = []
             for r in requestform:
-                print r
-                print i
+
                 # looks for entries that end with an integer
                 if r[0:3] == 'ite' or r[0:3] == 'pre' or r[0:3] == 'mea' or r[0:3] == 'qty':
 
@@ -259,6 +258,24 @@ class Ingredient(db.Model):
         deleted_ingredients = Ingredient.query.filter_by(recipe_id=recipeid).delete()
 
         return deleted_ingredients
+
+    @classmethod
+    def get_ingredients_by_user(cls, userid):
+        """Get a list of ingredients that a user has inputted in all their recipes."""
+
+        QUERY = """
+        SELECT item
+        FROM ingredients
+        WHERE recipe_id IN (SELECT recipe_id FROM recipes WHERE user_id= :userid)
+        """
+
+        cursor = db.session.execute(QUERY, {'userid': userid})
+        ingredients = cursor.fetchall()
+
+        ###remove duplicate ingredients
+        # ingredient_data = list(set(ingredients))
+
+        return ingredients
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -375,6 +392,24 @@ class Hashtag(db.Model):
         for hashtag in list_of_readable_hashtags:
             complete_input += hashtag
         return complete_input
+
+    @classmethod
+    def get_hashtags_by_user(cls, userid):
+        """Get the hashtags for a given user."""
+
+        QUERY = """
+        SELECT name FROM hashtags
+        WHERE hashtag_id IN (SELECT hashtag_id
+        FROM recipe_hashtags
+        WHERE recipe_id IN (select recipe_id
+        FROM recipes
+        WHERE user_id= :userid))
+        """
+
+        cursor = db.session.execute(QUERY, {'userid': userid})
+        hashtag_data = cursor.fetchall()
+
+        return hashtag_data
 
     def __repr__(self):
         """Provide helpful representation when printed."""
