@@ -6,6 +6,8 @@ from flask_debugtoolbar import DebugToolbarExtension
 
 import json
 
+import re
+
 from model import User, Recipe, Ingredient, Recipe_Hashtag, Hashtag, Cart_Ingredient, Cart, connect_to_db, db
 
 
@@ -130,7 +132,9 @@ def display_recipe(userid, recipeid):
 
     recipe_hashtags = Recipe_Hashtag.get_recipe_hashtags(recipeid)
 
-    return render_template("recipe_info.html", recipe=recipe, ingredients=ingredients, recipe_hashtags=recipe_hashtags, userid=userid)
+    return render_template("recipe_info.html", recipe=recipe,
+                           ingredients=ingredients, recipe_hashtags=recipe_hashtags,
+                           userid=userid)
 
 
 @app.route("/typeahead")
@@ -190,7 +194,8 @@ def edit_recipe(userid, recipeid):
 
     recreated_hashtag_input = Hashtag.recreate_hashtag_input(readable_hashtags)
 
-    return render_template("edit_recipe.html", recipe=recipe, ingredients=ingredients, userid=userid, recreated_hashtag_input=recreated_hashtag_input)
+    return render_template("edit_recipe.html", recipe=recipe, ingredients=ingredients,
+                           userid=userid, recreated_hashtag_input=recreated_hashtag_input)
 
 
 @app.route("/myrecipes/<int:userid>/recipe/<int:recipeid>/edit-confirm", methods=["POST"])
@@ -220,7 +225,7 @@ def confirm_recipe_edit(userid, recipeid):
     # no need to delete from hashtags table
     # just need to delete from the recipe_hashtags association table
     hashtags = request.form.get("hashtags")
-    hashtag_list = [hashtag.strip("#") for hashtag in hashtags.split() if hashtag.startswith("#")]
+    hashtag_list = re.sub('#', '', hashtags.lower()).split()
 
     # will add another row in hashtags table if a new hashtag
     # will get the hashtag_id if the hashtag already exists
@@ -269,7 +274,9 @@ def add_new_recipe():
 
     ###### Hashtag Table Section ######
     hashtags = request.form.get("hashtags")
-    hashtag_list = [hashtag.strip("#") for hashtag in hashtags.split() if hashtag.startswith("#")]
+
+    # stardardizes format for hashtags
+    hashtag_list = re.sub('#', '', hashtags.lower()).split()
 
     hashtag_id_list = Hashtag.get_hashtag_id(hashtag_list)
 
@@ -280,6 +287,11 @@ def add_new_recipe():
     Recipe.update_search_vector(recipe_id)
 
     return redirect("/myrecipes/%d" % user_id)
+
+
+@app.route("/myrecipes/<int:userid>/recipe/<int:recipeid>", methods=["POST"])
+def add_recipe_to_cart(recipeid):
+    pass
 
 ################################################################################
 if __name__ == "__main__":

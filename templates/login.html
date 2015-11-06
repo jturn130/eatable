@@ -1,14 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Welcome back!</h1>
-<form action="/login-confirm" id="login" method="POST">
-    Email: <input type="text" name='email' placeholder="Email address"><br><br>
-    Password: 
-    <input type="password" id="password" name="password" placeholder="Password"><br>
-    <input type="submit"> 
+    <h1>Welcome back!</h1>
+    
+    <form action="/login-confirm" id="login" method="POST">
+        Email:
+            <input type="text" name='email' placeholder="Email address"><br><br>
+        Password: 
+            <input type="password" id="password" name="password" placeholder="Password"><br>
+            <input type="submit"> 
 
-</form>
+    </form>
 
 
 {% endblock %}

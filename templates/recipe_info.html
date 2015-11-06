@@ -1,63 +1,76 @@
 {% extends 'base.html' %}
 {% block content %}
 
-{% if 'User' in session %}
-    {% if session['User'] == userid %}
-        <a href="/myrecipes/{{ userid }}"> Back to My Recipes </a><br>
-        <a href="/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}/edit">Edit Recipe</a><br>
-        <button id="deleterecipe">Delete Recipe</button><br>
-    {% endif %}
-{% endif %}
+    {% if 'User' in session %}
+        {% if session['User'] == userid %}
+            <a href="/myrecipes/{{ userid }}">
+                <i class="fa fa-angle-double-left"></i>&nbsp;&nbsp;Back to My Recipes
+            </a><br>
 
-<h1>{{ recipe.recipe_title }}</h1>
+            <button><a href="/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}/edit">
+                <i class="fa fa-pencil"></i>&nbsp;&nbsp;&nbsp;Edit Recipe
+            </a></button><br>
 
+            <button id="deleterecipe">
+                <i class="fa fa-trash-o"></i>&nbsp;&nbsp;&nbsp;Delete Recipe
+            </button><br>
 
-<h3>Ingredients: </h3>
-<ul>
-<!-- Doesn't display empty ingredient fields -->
-<!-- Formats fields correctly depending on if they have prep notes -->
-{% for ingredient in ingredients %}
-    {% if ingredient.item != '' %}
-    <li>
-        {{ ingredient.quantity }} {{ ingredient.measure }}
+            <button id="cartadd"><a href="/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}/addtocart">
+                <i class="fa fa-plus"></i>&nbsp;&nbsp;&nbsp;Add to Cart
+            </a></button><br>
 
-        {% if ingredient.prep_notes != '' %}
-            {{ ingredient.item }}, {{ ingredient.prep_notes }} 
-        {% else %}
-            {{ ingredient.item }}
         {% endif %}
-    </li>
     {% endif %}
-{% endfor %} 
-</ul>
 
-<h3>Instructions: </h3>
-<p style="white-space:pre-wrap;"> {{ recipe.instructions }}</p>
+    <h1>{{ recipe.recipe_title }}</h1>
 
-{% if recipe.source != '' %}
-    <h3> Source: </h3>
-    <p> {{ recipe.source }} </p>
-{% endif %}
 
-<h3> Hashtags: </h3>
-<p>
-    {% for recipe_hashtag in recipe_hashtags %}
-     #{{recipe_hashtag.hashtags.name}} 
-    {% endfor %}
-</p>
+    <h3>Ingredients: </h3>
+    <ul>
+    <!-- Doesn't display empty ingredient fields -->
+    <!-- Formats fields correctly depending on if they have prep notes -->
+        {% for ingredient in ingredients %}
+            {% if ingredient.item != '' %}
+                <li>
+                    {{ ingredient.quantity }} {{ ingredient.measure }}
+
+                        {% if ingredient.prep_notes != '' %}
+                            {{ ingredient.item }}, {{ ingredient.prep_notes }} 
+                        {% else %}
+                            {{ ingredient.item }}
+                        {% endif %}
+                </li>
+            {% endif %}
+        {% endfor %} 
+    </ul>
+
+    <h3>Instructions: </h3>
+        <p style="white-space:pre-wrap;"> {{ recipe.instructions }}</p>
+
+    {% if recipe.source != '' %}
+        <h3> Source: </h3>
+            <p id="recipe-source"> {{ recipe.source|urlize }} </p>
+    {% endif %}
+
+    <h3> Hashtags: </h3>
+        <p>
+            {% for recipe_hashtag in recipe_hashtags %}
+                #{{recipe_hashtag.hashtags.name}} 
+            {% endfor %}
+        </p>
 
 
 {% endblock %}
 {% block script %}
-<script>
+    <script>
 
-$("#deleterecipe").on('click', function() {
-    var reallyDelete = confirm("Are you sure you want to delete this recipe? You can't get it back.");
-    if (reallyDelete) {
-        window.location.href = "/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}/delete";
-    }
+        $("#deleterecipe").on('click', function() {
+            var reallyDelete = confirm("Are you sure you want to delete this recipe? You can't get it back.");
+            if (reallyDelete) {
+                window.location.href = "/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}/delete";
+            }
 
-});
+        });
 
-</script>
+    </script>
 {% endblock %}

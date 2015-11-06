@@ -85,7 +85,8 @@ class Recipe(db.Model):
         QUERY = """
         UPDATE recipes SET searchdata = setweight(to_tsvector(coalesce(tags_line, '')), 'A')
         || setweight(to_tsvector(coalesce(raw_Search.recipe_title, '')), 'B') ||
-        setweight(to_tsvector(coalesce(item_line, '')), 'C') FROM raw_Search WHERE raw_Search.recipe_id = recipes.recipe_id
+        setweight(to_tsvector(coalesce(item_line, '')), 'C')
+        FROM raw_Search WHERE raw_Search.recipe_id = recipes.recipe_id
         """
 
         db.session.execute(QUERY)
@@ -107,7 +108,6 @@ class Recipe(db.Model):
         cursor = db.session.execute(QUERY, {'userid': userid, 'searchquery': searchquery})
         search_recipes = cursor.fetchall()
 
-        print search_recipes
         return search_recipes
 
     @classmethod
@@ -138,11 +138,8 @@ class Recipe(db.Model):
         recipe_to_edit = Recipe.query.filter_by(recipe_id=recipeid).one()
 
         recipe_to_edit.recipe_title = recipe_title
-        print recipe_to_edit.recipe_title
         recipe_to_edit.instructions = instructions
-        print recipe_to_edit.instructions
         recipe_to_edit.source = source
-        print recipe_to_edit.source
 
         db.session.commit()
         return recipe_to_edit
@@ -183,7 +180,6 @@ class Ingredient(db.Model):
             if r[0:4] == 'item':
                 count += 1
         return count
-        print count
 
     @classmethod
     def get_ingredients_to_add(cls, new_count, requestform):
@@ -226,7 +222,6 @@ class Ingredient(db.Model):
                     x = y
                     new_ingredient_list.append(x)
             ingredients_to_add[i] = new_ingredient_list
-        print ingredients_to_add
         return ingredients_to_add
 
     @classmethod
@@ -239,7 +234,8 @@ class Ingredient(db.Model):
             prepnotes = ingredients_dict[i][2]
             qty = ingredients_dict[i][3]
 
-            new_ingredient = Ingredient(recipe_id=recipe_id, item=item, quantity=qty, measure=measure, prep_notes=prepnotes)
+            new_ingredient = Ingredient(recipe_id=recipe_id, item=item, quantity=qty,
+                                        measure=measure, prep_notes=prepnotes)
 
             db.session.add(new_ingredient)
             db.session.commit()
@@ -271,9 +267,6 @@ class Ingredient(db.Model):
 
         cursor = db.session.execute(QUERY, {'userid': userid})
         ingredients = cursor.fetchall()
-
-        ###remove duplicate ingredients
-        # ingredient_data = list(set(ingredients))
 
         return ingredients
 
@@ -371,6 +364,7 @@ class Hashtag(db.Model):
 
                 hashtag_id = new_hashtag.hashtag_id
                 hashtag_id_list.append(hashtag_id)
+
         return hashtag_id_list
 
     @classmethod
@@ -378,9 +372,11 @@ class Hashtag(db.Model):
         """Put hashtag names in a traditional format with #."""
 
         list_of_readable_hashtags = []
+
         for hashtag in hashtag_list:
             hashtag = '#' + hashtag + " "
             list_of_readable_hashtags.append(hashtag)
+
         return list_of_readable_hashtags
 
     @classmethod
@@ -391,6 +387,7 @@ class Hashtag(db.Model):
 
         for hashtag in list_of_readable_hashtags:
             complete_input += hashtag
+
         return complete_input
 
     @classmethod
@@ -451,9 +448,6 @@ class Cart(db.Model):
 
 def connect_to_db(app):
     """Connect the database to our Flask app."""
-
-    # Configure to use our SQLite database
-    # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///eatable.db'
 
     #Switching the PostgreSQL
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/eatabledb'

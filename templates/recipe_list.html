@@ -1,34 +1,36 @@
 {% extends 'base.html' %}
 {% block content %}
 
-{% if 'User' in session %}
+    {% if 'User' in session %}
 
 
-<h1 class="myrecipes">My Recipes</h1>
+        <h1 class="myrecipes">My Recipes</h1>
 
-<!-- puts userid in a hidden input so javascript can access it later -->
-<input type="hidden" id="userinfo" value="{{ userid }}">
+        <!-- puts userid in a hidden input so javascript can access it later -->
+        <input type="hidden" id="userinfo" value="{{ userid }}">
 
-<button class="newrecipe">
-    <a href="/myrecipes/{{ userid }}/addrecipe"><div id="newrecipe"><i class="fa fa-plus"></i>&nbsp;&nbsp;&nbsp;New Recipe</div></a>
-</button>
+        <button class="newrecipe">
+            <a href="/myrecipes/{{ userid }}/addrecipe"><div id="newrecipe"><i class="fa fa-plus">
+            </i>&nbsp;&nbsp;&nbsp;New Recipe</div></a>
+        </button>
 
-<form id="searchform" action="/myrecipes/{{ userid }}/searchresults" method="GET">
-    <input type='text' id='searchbox' style="width: 300px;" placeholder='Search by recipe title, ingredient, or #hashtag'>
-    <button type="submit" id='searchbutton'><i class='fa fa-search'></i></button>
-</form>
+        <form id="searchform" action="/myrecipes/{{ userid }}/searchresults" method="GET">
+            <input type='text' id='searchbox' style="width: 300px;"
+             placeholder='Search by recipe title, ingredient, or #hashtag'>
+            <button type="submit" id='searchbutton'><i class='fa fa-search'></i></button>
+        </form>
 
-<ul id="recipelist">
-{% for recipe in user_recipes %}
-    <li>
-        <a href="/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}">
-            {{recipe.recipe_title}}
-        </a>
-    </li>
-{% endfor %} 
-</ul>
+        <ul id="recipelist">
+        {% for recipe in user_recipes %}
+            <li>
+                <a href="/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}">
+                    {{recipe.recipe_title}}
+                </a>
+            </li>
+        {% endfor %} 
+        </ul>
 
-{% endif %}
+    {% endif %}
 {% endblock %}
 {% block script %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
@@ -75,7 +77,6 @@
         // strips any hashtags/other punctuation from search query
         // so it doesn't mess up URL
         searchQuery = searchQuery.replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"")
-        // searchQuery = searchQuery.replace(/\#/g, '');
 
         // adds '|' between words for multi-word queries
         searchQuery = searchQuery.replace(/\s/g, ' | ');

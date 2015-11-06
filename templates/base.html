@@ -27,6 +27,7 @@
 </head>
 
 <body>
+    <!-- Navbar -->
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -35,20 +36,36 @@
             <div id="navbar">
                 <ul class="nav navbar-nav navbar-right">
                     {% if 'User' in session %}
-                        <div <!-- class="dropdown">
+                        <!-- User settings -->
+                        <div class="dropdown">
                           <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><div id="settings"><i class='fa fa-gear'></i></div>&nbsp;&nbsp;Settings
                           <span class="caret"></span></button>
+
                           <ul class="dropdown-menu">
-                            <li><a href="/editprofile/<int:userid>"><i class='fa fa-pencil'></i>&nbsp;&nbsp;Edit Profile</a></li>
+                            <li><a href="/editprofile/{{ session['User'] }}">
+                                <i class='fa fa-pencil'></i>&nbsp;&nbsp;Edit Profile
+                            </a></li>
                             <li class="divider"></li>
-                            <li><a href="/cart/<int:userid>"><i class='fa fa-shopping-cart'></i>&nbsp;&nbsp;View Cart</a></li>
+
+                            <li><a href="/myrecipes/{{ session['User'] }}">
+                                <i class='fa fa-cutlery'></i>&nbsp;&nbsp;My Recipes
+                            </a></li>
                             <li class="divider"></li>
-                            <li><a href="/logout"><i class='fa fa-power-off'></i>&nbsp;&nbsp;Log Out</a></li>
+                            
+                            <li><a href="/cart/{{ session['User'] }}">
+                                <i class='fa fa-shopping-cart'></i>&nbsp;&nbsp;View Cart
+                            </a></li>
+                            <li class="divider"></li>
+
+                            <li><a href="/logout">
+                                <i class='fa fa-power-off'></i>&nbsp;&nbsp;Log Out
+                            </a></li>
+
                           </ul>
-                        </div>
+                        </div> <!-- closes dropdown div class -->
                     
                     {% else %}
-
+                        <!-- Login window -->
                         <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Login</button>
 
                         <!-- Modal-->
