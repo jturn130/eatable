@@ -3,23 +3,25 @@
 
     {% if 'User' in session %}
 
-
         <h1 class="myrecipes">My Recipes</h1>
 
         <!-- puts userid in a hidden input so javascript can access it later -->
         <input type="hidden" id="userinfo" value="{{ userid }}">
 
+        <!-- Add a new recipe -->
         <button class="newrecipe">
             <a href="/myrecipes/{{ userid }}/addrecipe"><div id="newrecipe"><i class="fa fa-plus">
             </i>&nbsp;&nbsp;&nbsp;New Recipe</div></a>
         </button>
 
+        <!-- Search recipes -->
         <form id="searchform" action="/myrecipes/{{ userid }}/searchresults" method="GET">
             <input type='text' id='searchbox' style="width: 300px;"
              placeholder='Search by recipe title, ingredient, or #hashtag'>
             <button type="submit" id='searchbutton'><i class='fa fa-search'></i></button>
         </form>
 
+        <!-- List of user recipes -->
         <ul id="recipelist">
         {% for recipe in user_recipes %}
             <li>
@@ -32,6 +34,7 @@
 
     {% endif %}
 {% endblock %}
+
 {% block script %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 <script>
@@ -40,7 +43,7 @@
         // Display recipes relevant to search query
 
         
-        // takes json-safe string and makes it a weird array
+        // takes json-safe string and makes it into an array
         var array = JSON.parse("[" + results + "]");
 
         // example of array:  
@@ -54,6 +57,7 @@
 
         var recipeListString = "";
 
+        // takes relevant data and recreates the user homepage of recipe titles/urls
         for (var i=0; i < resultListLength; i++) {
                     
                 recipeListString = recipeListString + "<li><a href='/myrecipes/" + $("#userinfo").val() + 
@@ -66,7 +70,7 @@
     }
 
     function getSearchResults(evt) {
-        // Make an AJAX to get results from user search query
+        // Make an AJAX request to get results from user search query
 
         evt.preventDefault();
 

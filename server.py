@@ -39,7 +39,7 @@ def confirm_account():
     """Confirm new account"""
 
     user_email = request.form.get("email")
-    user_password = request.form.get("password")
+    user_password = request.form.get("password1")
     user_phone = request.form.get("phone")
 
     confirmed_user = User.get_user_by_email(user_email)
@@ -104,11 +104,16 @@ def get_search_results(userid):
 
     search_query = request.args.get("searchQuery")
 
-    ##returns list of tuples
-    ##index[0] = recipe_id
-    ##index[1] = recipe_title
-    ##index[2] = rank
-    search_recipes = Recipe.run_search_query(userid, search_query)
+    if search_query != '':
+        ##returns list of tuples
+        ##index[0] = recipe_id
+        ##index[1] = recipe_title
+        ##index[2] = rank
+        search_recipes = Recipe.run_search_query(userid, search_query)
+
+    else:
+        #gets all user recipes if the search query field is blank
+        search_recipes = Recipe.get_user_recipe_list(userid)
 
     #creates dictionary from search results
     #key = recipeid
@@ -143,11 +148,12 @@ def get_suggestions():
 
     userid = session['User']
 
+    #### Hashtag Data ####
     hashtag_data = Hashtag.get_hashtags_by_user(userid)
     hashtag_list = [h[0] for h in hashtag_data]
 
     recipe_data = Recipe.get_user_recipe_list(userid)
-    recipe_list = [r[0] for r in recipe_data]
+    recipe_list = [r[1] for r in recipe_data]
 
     ingredient_data = Ingredient.get_ingredients_by_user(userid)
     ## convert to set then back to list to remove duplicates

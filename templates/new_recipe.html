@@ -17,45 +17,108 @@
         <h1>Add New Recipe</h1>
 
         <form action="/recipe-confirm" method="POST" id="new-recipe-form">
-            <h3> Recipe Title: </h3> <input type="text" name="recipetitle" style="width: 300px;"><br><br>
+            <h3> Recipe Title: </h3> <input type="text" id="recipetitle" style="width: 300px;">
+            <!-- <p id="title-msg" hidden> Your title is too long. Keep it short but sweet. </p><br><br> -->
 
             <h3> Ingredients: </h3>
                 <div id="ingredient-section">
                     <!-- Provides example as to how to fill out form-->
                     <div>
-                        Qty: <input type="text" class="qty" name="qty1" placeholder="Ex. 3" style="width: 50px;">
-                        Measure: <input type="text" class="measure" name="measure1" placeholder="cans">
-                        Item: <input type="text" class="item" name="item1" placeholder="pinto beans">
-                        Prep Notes: <input type="text" class="prepnotes" name="prepnotes1" placeholder="drained and rinsed">
+                        Qty: <input type="text" class="ingredients" class="qty" name="qty1" placeholder="Ex. 3" style="width: 50px;">
+                        Measure: <input type="text" class="ingredients" class="measure" name="measure1" placeholder="cans">
+                        Item: <input type="text" class="ingredients" class="item" name="item1" placeholder="pinto beans">
+                        Prep Notes: <input type="text" class="ingredients" class="prepnotes" name="prepnotes1" placeholder="drained and rinsed">
                     </div>
                 </div> <!-- div for #ingredient-section -->
                 
                 <!-- Add Ingredients -->
                 <button type="button" id="add-more">+ Add another ingredient</button>
-                <p id="ingredient-msg" hidden> You can't add any more ingredients. Calm down. </p>
+                <!-- <p id="ingredient-msg" hidden> You can't add any more ingredients. Calm down. </p> -->
 
 
             <h3> Instructions: </h3>
-                <textarea rows="5" cols="50" name="instructions" style="white-space:pre-wrap;" placeholder="Write your instructions here."></textarea>
+                <textarea rows="5" cols="50" id="instructions" style="white-space:pre-wrap;" placeholder="Write your instructions here."></textarea>
+            <!-- <p id="instructions-msg" hidden> This is for instructions, not a novel. Keep it under 1000 characters. </p> -->
 
             <h3>Source: (optional) </h3> 
-                <input type="text" style="width: 300px;"
+                <input type="text" id="recipesource" style="width: 300px;"
                 placeholder="i.e. Mom, The Joy of Cooking, allrecipes.com" name="source">
+                <!-- <p id="source-msg" hidden> Your source is too long. Keep it short but sweet. </p> -->
 
             <h3>Hashtags: </h3>
             <h5>All tags must start with '#'. Please separate hashtags with spaces.</h5>
-                <input type="text" name="hashtags" style="width: 400px;"><br><br>
-                <input type="submit" class="confirmrecipe" value="Confirm Recipe">
+                <input type="text" id="hashtags" style="width: 400px;"><br><br>
+                <!-- <p id="hashtag-msg" hidden> No one wants to read this many hashtags. </p> -->
+
+            <input type="submit" class="confirmrecipe" value="Confirm Recipe">
         </form>
         <br><br>
     {% endif %}
 {% endblock %}
+
 {% block script %}
-<script src="https://code.jquery.com/jquery.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/additional-methods.min.js"></script>
 <script>
+
+    // form validation
+    // $(function() {
+
+    //     // Setup form validation on the new recipe form element
+    //     $("#new-recipe-form").validate({
+
+    //       // Specify validation rules 
+    //       rules: {
+
+    //             recipetitle: {
+    //               required: true,
+    //               maxlength: 150
+    //             },
+
+    //             instructions: {
+    //                 required: true,
+    //                 maxlength: 2000
+    //             },
+    //             recipesource: {
+    //                 maxlength: 200
+    //             },
+    //             hashtags: {
+    //                 required: true,
+    //                 maxlength: 200
+    //             }
+    //         },
+
+    //         // Specify validation error messages
+    //         messages: {
+    //               recipetitle: {
+    //                 required: "We need to know what you're cooking.",
+    //                 maxlength: "Too long! Keep it short and sweet."
+    //               },
+    //               instructions: {
+    //                 required: "You can't cook a recipe without some guidance on how to do it.",
+    //                 maxlength: "Write some instructions, not a novel. Keep under 2000 characters."
+    //               },
+    //               recipesource: {
+    //                 maxlength: "A brief shout out is all that's needed."
+    //               },
+    //               hashtags: {
+    //                   required: "Enter some hashtags. You'll thank us later.",
+    //                   maxlength: "No one wants to read this many tags."
+    //               }
+    //         },
+
+    //         submitHandler: function(form) {
+    //             form.submit();
+    //         }
+
+    //     });
+    // });
+
+    
+    // allows user to add more ingredients to recipe 
     $("#add-more").on('click', function() {
 
-        // allows user to add more ingredients to recipe 
+        // clones ingredient prototype
         var new_ingredient_field = $("#template-input").clone();
         new_ingredient_field.removeAttr('id').removeAttr('style');
         new_ingredient_field.appendTo("#ingredient-section");

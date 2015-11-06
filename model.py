@@ -114,7 +114,7 @@ class Recipe(db.Model):
     def get_user_recipe_list(cls, userid):
 
         QUERY = """
-        SELECT recipe_title, recipe_id FROM recipes WHERE user_id = :userid ORDER BY recipe_title
+        SELECT recipe_id, recipe_title FROM recipes WHERE user_id = :userid ORDER BY recipe_title
         """
 
         cursor = db.session.execute(QUERY, {'userid': userid})

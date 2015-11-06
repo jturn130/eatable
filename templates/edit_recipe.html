@@ -65,27 +65,27 @@
         <h1>You can't edit this recipe!!</h1>
 {% endif %}
 {% endblock %}
+
 {% block script %}
-        <script src="https://code.jquery.com/jquery.js"></script>
-        <script>
-            $("#add-more").on('click', function() {
-                console.log("this logged");
-               // allows user to add more ingredients to recipe
+    <script>
+        $("#add-more").on('click', function() {
+            console.log("this logged");
+           // allows user to add more ingredients to recipe
 
 
-                var new_ingredient_field = $("#template-input").clone();
-                new_ingredient_field.removeAttr('id').removeAttr('style');
-                new_ingredient_field.appendTo("#ingredient-section");
-                index = $("#ingredient-section").children().length-1;
+            var new_ingredient_field = $("#template-input").clone();
+            new_ingredient_field.removeAttr('id').removeAttr('style');
+            new_ingredient_field.appendTo("#ingredient-section");
+            index = $("#ingredient-section").children().length-1;
 
-               // this allows us make unique names for different ingredients
-               $('.qty', new_ingredient_field).attr('name', 'qty' + index); 
-               $('.measure', new_ingredient_field).attr('name', 'measure' + index); 
-               $('.item', new_ingredient_field).attr('name', 'item' + index); 
-               $('.prepnotes', new_ingredient_field).attr('name', 'prepnotes' + index); 
+           // this allows us make unique names for different ingredients
+           $('.qty', new_ingredient_field).attr('name', 'qty' + index); 
+           $('.measure', new_ingredient_field).attr('name', 'measure' + index); 
+           $('.item', new_ingredient_field).attr('name', 'item' + index); 
+           $('.prepnotes', new_ingredient_field).attr('name', 'prepnotes' + index); 
 
-            });
+        });
 
-        </script>
+    </script>
 
 {% endblock %}

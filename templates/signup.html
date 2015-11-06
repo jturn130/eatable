@@ -10,15 +10,9 @@
 
         <button class="signup-icons"><i class="fa fa-key"></i></button>
         <input type="password" class="signup" id="password1" name="password1" placeholder="Password"><br>
-        
-        <!-- Appears if password is too short -->
-        <p id="tooshort" hidden> Your password needs to be at least 6 characters long. </p><br>
-        
+                
         <button class="signup-icons" ><i class="fa fa-plus"></i></button>
         <input type="password" class="signup" id="passwordcheck" name="passwordcheck" placeholder="Confirm Password"><br>
-
-        <!-- Appears if passwords don't match -->
-        <p id="matchingerror" hidden> Your passwords don't match. Please try again. </p><br>
 
         <button class="signup-icons" ><i class="fa fa-mobile-phone"></i></button>
         <input type="text" class="signup" id="phone" name='phone' placeholder="Mobile Phone"><br><br>
@@ -28,51 +22,60 @@
 
 </form>
 {% endblock %}
+
 {% block script %}
-<!-- <script src="http://jqueryvalidation.org/files/dist/jquery.validate.min.js"></script>
-<script src="http://jqueryvalidation.org/files/dist/additional-methods.min.js"></script> -->
-<script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/additional-methods.min.js"></script>
+    <script>
 
-// $( "#signup" ).validate({
-//   rules: {
-//     email: {
-//       required: true,
-//       email: true
-//         }
-//     password1: {
-//         required: true,
-//         minlength: 6,
-//         maxlength: 12
-//         }
-//     passwordcheck: {
-//         required: true,
-//         equalTo: "#password1"
-//         }
-//     phone {
-//         phoneUS: true
-//         }
+        // When browser is ready
+        $(function() {
 
-//     }
-// }};
+            // Setup form validation on the signup form element
+            $("#signup").validate({
 
-function validatePassword(evt) {
-    // Confirms passwords match
-    console.log($("#password1").val());
-    if ($("#password1").val() !== $("#passwordcheck").val()) {
-        $("#matchingerror").show();
-        evt.preventDefault();
-        $("#signup").trigger("reset");
-    }
-    
-    // Confirms password is an appropriate length
-    if ($("#password1").val().length < 6) {
-        $("#tooshort").show();
-        evt.preventDefault();
-        $("#signup").trigger("reset");
-    }
-   
-}
+              // Specify validation rules 
+              rules: {
+                    email: {
+                      required: true,
+                      email: true
+                    },
+                    password1: {
+                        required: true,
+                        minlength: 6,
+                        maxlength: 12
+                    },
+                    passwordcheck: {
+                        required: true,
+                        equalTo: "#password1"
+                    },
+                    phone: {
+                        phoneUS: true
+                    }
+                },
 
-$("#signup").on('submit', validatePassword);
-</script>
+                // Specify validation error messages
+                messages: {
+                      email: {
+                        required: "We need a real life email address."
+                      },
+                      password1: {
+                        minlength: "Password must be at least 6 characters. You know, that whole security thing."
+                      },
+                      passwordcheck: {
+                        equalTo: "Your passwords don't match. Type carefully."
+                      },
+                      phone: {
+                          phoneUS: "Don't be a troll. Enter a valid US phone number."
+                      }
+                },
+
+                submitHandler: function(form) {
+                    form.submit();
+                }
+
+            });
+        });
+
+    </script>
 {% endblock %}
