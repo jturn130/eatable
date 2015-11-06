@@ -47,9 +47,9 @@
 
             <h3>Source: (optional) </h3>
             {% if recipe.source != '' %}
-                <input type="text" style="width: 300px;" placeholder="i.e. Mom, The Joy of Cooking, allrecipes.com" value="{{ recipe.source }}" name="source">
+                <input type="text" style="width: 300px;" placeholder="i.e. Mom, The Joy of Cooking, allrecipes.com" value="{{ recipe.source }}" name="recipesource">
             {% else %}
-                <input type="text" style="width: 300px;" placeholder="i.e. Mom, The Joy of Cooking, allrecipes.com" name="source">
+                <input type="text" style="width: 300px;" placeholder="i.e. Mom, The Joy of Cooking, allrecipes.com" name="recipesource">
             {% endif %}
 
             <h3>Hashtags: </h3>
@@ -67,7 +67,63 @@
 {% endblock %}
 
 {% block script %}
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/additional-methods.min.js"></script>
     <script>
+
+        // form validation
+        $(function() {
+
+            // Setup form validation on the new recipe form element
+            $("#edit-recipe-form").validate({
+
+              // Specify validation rules 
+              rules: {
+
+                    recipetitle: {
+                      required: true,
+                      maxlength: 150
+                    },
+
+                    instructions: {
+                        required: true,
+                        maxlength: 2000
+                    },
+                    recipesource: {
+                        maxlength: 200
+                    },
+                    hashtags: {
+                        required: true,
+                        maxlength: 200
+                    }
+                },
+
+                // Specify validation error messages
+                messages: {
+                      recipetitle: {
+                        required: "We need to know what you're cooking.",
+                        maxlength: "Too long! Keep it short and sweet."
+                      },
+                      instructions: {
+                        required: "You can't cook a recipe without some guidance on how to do it.",
+                        maxlength: "Write some instructions, not a novel. Keep under 2000 characters."
+                      },
+                      recipesource: {
+                        maxlength: "A brief shout out is all that's needed."
+                      },
+                      hashtags: {
+                          required: "Enter some hashtags. You'll thank us later.",
+                          maxlength: "No one wants to read this many tags."
+                      }
+                },
+
+                submitHandler: function(form) {
+                    form.submit();
+                }
+
+            });
+        });
+
         $("#add-more").on('click', function() {
             console.log("this logged");
            // allows user to add more ingredients to recipe
