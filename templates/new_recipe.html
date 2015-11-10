@@ -2,52 +2,54 @@
 {% block content %}
 
     {% if 'User' in session %}
+        {% if session['User'] == userid %}
     
-        <!-- This is the ingredient prototype that will duplicate when the user clicks on the "Add another ingredient" button -->
-       <div id="template-input" style="display: none;">
-            <div>
-                Qty: <input type="text" class="qty" name="qty" style="width: 50px;">
-                Measure: <input type="text" class="measure" name="measure">
-                Item: <input type="text" class="item" name="item">
-                Prep Notes: <input type="text" class="prepnotes" name="prepnotes">
-            </div>
-        </div> 
+            <!-- This is the ingredient prototype that will duplicate when the user clicks on the "Add another ingredient" button -->
+           <div id="template-input" style="display: none;">
+                <div>
+                    Qty: <input type="text" class="qty" name="qty" style="width: 50px;">
+                    Measure: <input type="text" class="measure" name="measure">
+                    Item: <input type="text" class="item" name="item">
+                    Prep Notes: <input type="text" class="prepnotes" name="prepnotes">
+                </div>
+            </div> 
 
 
-        <h1>Add New Recipe</h1>
+            <h1>Add New Recipe</h1>
 
-        <form action="/recipe-confirm" method="POST" id="new-recipe-form">
-            <h3> Recipe Title: </h3> <input type="text" name="recipetitle" id="recipetitle" style="width: 300px;">
-            <!-- <p id="title-msg" hidden> Your title is too long. Keep it short but sweet. </p><br><br> -->
+            <form action="/recipe-confirm" method="POST" id="new-recipe-form">
+                <h3> Recipe Title: </h3> <input type="text" name="recipetitle" id="recipetitle" style="width: 300px;">
 
-            <h3> Ingredients: </h3>
-                <div id="ingredient-section">
-                    <!-- Provides example as to how to fill out form-->
-                    <div>
-                        Qty: <input type="text" class="ingredients" class="qty" name="qty1" placeholder="Ex. 3" style="width: 50px;">
-                        Measure: <input type="text" class="ingredients" class="measure" name="measure1" placeholder="cans">
-                        Item: <input type="text" class="ingredients" class="item" name="item1" placeholder="pinto beans">
-                        Prep Notes: <input type="text" class="ingredients" class="prepnotes" name="prepnotes1" placeholder="drained and rinsed">
-                    </div>
-                </div> <!-- div for #ingredient-section -->
-                
-                <!-- Add Ingredients -->
-                <button type="button" id="add-more">+ Add another ingredient</button>
+                <h3> Ingredients: </h3>
+                    <div id="ingredient-section">
+                        <!-- Provides example as to how to fill out form-->
+                        <div>
+                            Qty: <input type="text" class="ingredients" class="qty" name="qty1" placeholder="Ex. 3" style="width: 50px;">
+                            Measure: <input type="text" class="ingredients" class="measure" name="measure1" placeholder="cans">
+                            Item: <input type="text" class="ingredients" class="item" name="item1" placeholder="pinto beans">
+                            Prep Notes: <input type="text" class="ingredients" class="prepnotes" name="prepnotes1" placeholder="drained and rinsed">
+                        </div>
+                    </div> <!-- div for #ingredient-section -->
+                    
+                    <!-- Add Ingredients -->
+                    <button type="button" id="add-more">+ Add another ingredient</button>
+                    <p id="ingredient-msg" hidden>You can't any more ingredients. Find something easier to cook!</p>
 
-            <h3> Instructions: </h3>
-                <textarea rows="5" cols="50" name="instructions" class="instructions" id="instructions" style="white-space:pre-wrap;" placeholder="Write your instructions here."></textarea>
+                <h3> Instructions: </h3>
+                    <textarea rows="5" cols="50" name="instructions" class="instructions" id="instructions" style="white-space:pre-wrap;" placeholder="Write your instructions here."></textarea>
 
-            <h3>Source: (optional) </h3> 
-                <input type="text" name="recipesource" id="recipesource" style="width: 300px;"
-                placeholder="i.e. Mom, The Joy of Cooking, allrecipes.com" name="source">
+                <h3>Source: (optional) </h3> 
+                    <input type="text" name="recipesource" id="recipesource" style="width: 300px;"
+                    placeholder="i.e. Mom, The Joy of Cooking, allrecipes.com" name="source">
 
-            <h3>Hashtags: </h3>
-            <h5>All tags must start with '#'. Please separate hashtags with spaces.</h5>
-                <input type="text" name="hashtags" id="hashtags" style="width: 400px;"><br><br>
+                <h3>Hashtags: </h3>
+                <h5>All tags must start with '#'. Please separate hashtags with spaces.</h5>
+                    <input type="text" name="hashtags" id="hashtags" style="width: 400px;"><br><br>
 
-            <input type="submit" class="confirmrecipe" value="Confirm Recipe">
-        </form>
-        <br><br>
+                <input type="submit" class="confirmrecipe" value="Confirm Recipe">
+            </form>
+            <br><br>
+        {% endif %}
     {% endif %}
 {% endblock %}
 
@@ -128,7 +130,7 @@
 
 
         // limits the number of ingredients to 50
-        if (index >= 50) {
+        if (index >= 30) {
             $("#add-more").prop('disabled', true);
             $("#ingredient-msg").show();
         }

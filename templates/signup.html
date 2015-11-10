@@ -43,13 +43,14 @@
                     password1: {
                         required: true,
                         minlength: 6,
-                        maxlength: 12
+                        maxlength: 16
                     },
                     passwordcheck: {
                         required: true,
                         equalTo: "#password1"
                     },
                     phone: {
+                        required: true,
                         phoneUS: true
                     }
                 },
@@ -66,7 +67,8 @@
                         equalTo: "Your passwords don't match. Type carefully."
                       },
                       phone: {
-                          phoneUS: "Don't be a troll. Enter a valid US phone number."
+                          phoneUS: "Don't be a troll. Enter a valid US phone number.",
+                          required: "Please enter a mobile phone number so you can do cool things later."
                       }
                 },
 

@@ -55,7 +55,7 @@
     <h3> Hashtags: </h3>
         <p>
             {% for recipe_hashtag in recipe_hashtags %}
-                <a href="/myrecipes/{{ userid }}/searchresults?{{recipe_hashtag.hashtags.name}}">#{{recipe_hashtag.hashtags.name}}</a> 
+                #{{recipe_hashtag.hashtags.name}}
             {% endfor %}
         </p>
 

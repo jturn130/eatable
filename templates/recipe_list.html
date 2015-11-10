@@ -41,7 +41,6 @@
 
     function showSearchResults(results) {
         // Display recipes relevant to search query
-
         
         // takes json-safe string and makes it into an array
         var array = JSON.parse("[" + results + "]");
@@ -113,18 +112,15 @@
     };
 
 
-
     $.get("/typeahead", function(results) { 
         var userdata = results.userdata; 
-        console.log("this is hashtags: "+userdata);
 
         $("#searchbox").typeahead({},
         {
-            name: 'hashtags',
+            name: 'userdata',
             source: substringMatcher(userdata)
         }
         );
-
     });
 
 

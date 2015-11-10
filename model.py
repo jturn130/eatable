@@ -52,10 +52,20 @@ class User(db.Model):
         except Exception, error:
             print error
 
+    @classmethod
+    def get_user_phone(cls, userid):
+        """Get user phone number given user id."""
+
+        user = User.query.filter_by(user_id=userid).one()
+
+        user_phone = user.mobile_phone
+
+        return user_phone
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<User user_id=%d email=%s>" % (self.user_id, self.email)
+        return "<User user_id=%d email=%s phone=%s>" % (self.user_id, self.email, self.mobile_phone)
 
 
 class Recipe(db.Model):
@@ -323,6 +333,22 @@ class Recipe_Hashtag(db.Model):
 
         return recipe_hashtags_to_delete
 
+    @classmethod
+    def get_user_recipes_given_hashtag(cls, userid, hashtag):
+        """Gets a list of every user recipe with a certain hashtag."""
+
+        QUERY = """
+            SELECT recipe_title, recipe_id FROM recipes
+            WHERE user_id= :userid AND recipe_id IN
+            (SELECT recipe_id FROM recipe_hashtags WHERE hashtag_id IN
+            (SELECT hashtag_id FROM hashtags WHERE name= :hashtag))
+        """
+
+        cursor = db.session.execute(QUERY, {'userid': userid, 'hashtag': hashtag})
+        hashtag_recipes = cursor.fetchall()
+
+        return hashtag_recipes
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 
@@ -423,6 +449,27 @@ class Cart_Ingredient(db.Model):
     cart_id = db.Column(db.Integer, db.ForeignKey('carts.cart_id'), nullable=False)
     ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredients.ingredient_id'), nullable=False)
 
+    ingredient = db.relationship("Ingredient")
+
+    @classmethod
+    def create_new_cart_ingredient(cls, cartid, ingredientid):
+        """Add a cart ingredient to the db."""
+
+        new_cart_ingredient = Cart_Ingredient(cart_id=cartid, ingredient_id=ingredientid)
+
+        db.session.add(new_cart_ingredient)
+        db.session.commit()
+
+        return new_cart_ingredient
+
+    @classmethod
+    def get_cart_ingredients(cls, cartid):
+        """Get ingredients in a cart."""
+
+        cart_ings = Cart_Ingredient.query.filter_by(cart_id=cartid).all()
+
+        return cart_ings
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 
@@ -437,10 +484,29 @@ class Cart(db.Model):
     cart_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
 
+    @classmethod
+    def create_new_cart(cls, user_id):
+        """Add a new cart to the database."""
+
+        new_cart = Cart(user_id=user_id)
+
+        db.session.add(new_cart)
+        db.session.commit()
+
+        return new_cart
+
+    @classmethod
+    def get_cart_by_id(cls, cart_id):
+        """Get a cart from the db given the cart_id."""
+
+        cart = Cart.query.filter_by(cart_id=cart_id).one()
+
+        return cart
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Cart cart_id=%d user_id=%d>" % (self.cart_ingredient_id, self.cart_id, self.user_id)
+        return "<Cart cart_id=%d user_id=%d>" % (self.cart_id, self.user_id)
 
 
 ##############################################################################

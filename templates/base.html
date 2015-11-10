@@ -52,7 +52,7 @@
                             </a></li>
                             <li class="divider"></li>
                             
-                            <li><a href="/cart/{{ session['User'] }}">
+                            <li><a href="/myrecipes/{{ userid }}/cart/{{ session['Cart'] }}">
                                 <i class='fa fa-shopping-cart'></i>&nbsp;&nbsp;View Cart
                             </a></li>
                             <li class="divider"></li>
@@ -81,13 +81,14 @@
                               <div class="modal-body">
                                 <h2 class="login-welcome">Welcome Back!</h2>
 
-                                <form action="/login-confirm" id="login" method="POST">
+                                <form action="/login-confirm" id="loginform" method="POST">
                                     <button class="signup-icons"><i class="fa fa-envelope-o"></i></button>
-                                    <input type="text" name='email' placeholder="Email address"><br><br>
+                                    <input type="text" id="loginemail" name='email' placeholder="Email address"><br><br>
 
                                     <button class="signup-icons"><i class="fa fa-key"></i></button>
-                                    <input type="password" id="password" name="password" placeholder="Password">
-                                    
+                                    <input type="password" id="loginpassword" name="password" placeholder="Password">
+                                    <p id="login-error" hidden>Your username and password combination are not correct.</p>
+
                                     <br><br><br>
                                     <input type="submit" class="get-started-button"> 
                                 </form>
@@ -101,9 +102,59 @@
         </div>
     </nav>
 
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flashes">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+
+
     {% block content %} put your content here {% endblock %}
 
 </body>
+<script>
 
-    {% block script %} {% endblock %}
+    function confirmUserLogin(evt) {
+        // Make an AJAX request to confirm login info
+
+        evt.preventDefault();
+
+        var loginInfo = {
+            "email" : $("#loginemail").val(),
+            "password" : $("#loginpassword").val()
+        };
+
+        $.post("/login-confirm", loginInfo, displayLoginCheck);
+
+    }
+
+    function displayLoginCheck(results) {
+        // Shows login error message or redirects to user home
+
+        if (results['confirmed_user'] === false) {
+            $("#login-error").show();
+        } else if (results['confirmed_user'] === true) {
+            window.location.href = "/myrecipes/" + results['user_id'];
+        }
+    }
+
+    function hideFlash() {
+        $(".flashes").hide();
+    }
+
+
+    $("#loginform").on("submit", confirmUserLogin);
+
+
+    // Hide flashed messages after 5 seconds
+    setTimeout(hideFlash, 5000);
+
+</script>
+{% block script %}
+{% endblock %}
 </html>

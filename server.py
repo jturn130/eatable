@@ -8,6 +8,12 @@ import json
 
 import re
 
+import os
+
+from twilio.rest import TwilioRestClient
+
+import twilio.twiml
+
 from model import User, Recipe, Ingredient, Recipe_Hashtag, Hashtag, Cart_Ingredient, Cart, connect_to_db, db
 
 
@@ -46,18 +52,11 @@ def confirm_account():
 
     if not confirmed_user:
         User.create_new_user(user_email, user_password, user_phone)
-        flash("You successfully created an account! Please log in to get started.")
+        flash("You successfully created an account! Please log in to get started.", "create_account")
     else:
-        flash("You already have an account. Please sign in.")
+        flash("You already have an account. Please sign in.", "account_already")
 
     return redirect("/")
-
-
-@app.route("/login")
-def login_user():
-    """Allow user to log into site."""
-
-    return render_template("login.html")
 
 
 @app.route("/login-confirm", methods=["POST"])
@@ -72,19 +71,23 @@ def confirm_user_login():
     if confirmed_user:
         userid = confirmed_user.user_id
         session["User"] = userid
-        return redirect("/myrecipes/%d" % userid)
+
+        if 'Cart' not in session:
+            new_cart = Cart.create_new_cart(userid)
+            session['Cart'] = new_cart.cart_id
+        return jsonify({"confirmed_user": True, "user_id": userid})
+
     else:
-        flash("Your email and password combination are not correct.")
-        return redirect("/login")
+        return jsonify({"confirmed_user": False})
 
 
 @app.route("/logout")
 def logout_user():
-    """Log out the user"""
+    """Log out the user."""
 
     del session['User']
 
-    flash("You are logged out")
+    flash("You are logged out.", "logged_out")
 
     return redirect("/")
 
@@ -152,15 +155,17 @@ def get_suggestions():
     hashtag_data = Hashtag.get_hashtags_by_user(userid)
     hashtag_list = [h[0] for h in hashtag_data]
 
+    #### Recipe Data ####
     recipe_data = Recipe.get_user_recipe_list(userid)
     recipe_list = [r[1] for r in recipe_data]
 
+    #### Ingredient Data ####
     ingredient_data = Ingredient.get_ingredients_by_user(userid)
-    ## convert to set then back to list to remove duplicates
+    # convert to set then back to list to remove duplicates
     ingredient_list = list(set([i[0] for i in ingredient_data]))
 
+    #### Combined Data ####
     data_list = hashtag_list + recipe_list + ingredient_list
-    print data_list
 
     return jsonify({"userdata": data_list})
 
@@ -179,7 +184,7 @@ def delete_recipe(userid, recipeid):
     Recipe.delete_recipe(recipeid)
 
     #flash message
-    flash("You have successfully delete your recipe.")
+    flash("You have successfully deleted your recipe.", "delete_recipe")
 
     return redirect("/myrecipes/%d" % userid)
 
@@ -248,6 +253,8 @@ def confirm_recipe_edit(userid, recipeid):
     ###### Tsvector Generation ######
     Recipe.update_search_vector(recipeid)
 
+    flash("You have successfully edited your recipe.", "edit_recipe")
+
     return redirect("/myrecipes/%d/recipe/%d" % (userid, recipeid))
 
 
@@ -255,14 +262,12 @@ def confirm_recipe_edit(userid, recipeid):
 def create_new_recipe(userid):
     """Allow user to create a new recipe."""
 
-    return render_template("new_recipe.html")
+    return render_template("new_recipe.html", userid=userid)
 
 
 @app.route("/recipe-confirm", methods=["POST"])
 def add_new_recipe():
     """Add new recipe to the database."""
-
-    print request.form
 
     ###### Recipe Table Section ######
     user_id = session['User']
@@ -292,12 +297,86 @@ def add_new_recipe():
     ###### Tsvector Generation ######
     Recipe.update_search_vector(recipe_id)
 
+    flash("You have successfully created your recipe. Hooray!", "create_recipe")
+
     return redirect("/myrecipes/%d" % user_id)
 
 
-@app.route("/myrecipes/<int:userid>/recipe/<int:recipeid>", methods=["POST"])
-def add_recipe_to_cart(recipeid):
-    pass
+@app.route("/myrecipes/<int:userid>/recipe/<int:recipeid>/addtocart")
+def add_recipe_to_cart(recipeid, userid):
+    """Add ingredients from a given recipe to grocery cart."""
+
+    recipe_ingredients = Ingredient.get_recipe_ingredients(recipeid)
+
+    for ingredient in recipe_ingredients:
+        Cart_Ingredient.create_new_cart_ingredient(session['Cart'], ingredient.ingredient_id)
+
+    flash("You have successfully added your recipe to your grocery cart.", "cart_add")
+
+    return redirect("/myrecipes/%d/cart/%d" % (userid, session['Cart']))
+
+
+@app.route("/myrecipes/<int:userid>/cart/<int:cartid>")
+def display_cart(userid, cartid):
+    """Display items in a user's cart."""
+
+    cart_ings = Cart_Ingredient.get_cart_ingredients(cartid)
+
+    return render_template("cart.html", userid=userid, cart_ings=cart_ings)
+
+
+@app.route("/myrecipes/<int:userid>/cart/<int:cartid>/editcart")
+def edit_cart(userid, cartid):
+    """Display form fields so user can edit their cart."""
+
+    cart_ings = Cart_Ingredient.get_cart_ingredients(cartid)
+
+    return render_template("edit_cart.html", userid=userid, cart_ings=cart_ings)
+
+
+@app.route("/myrecipes/<int:userid>/cart/<int:cartid>/edit-confirm", methods=["POST"])
+def update_edited_cart(userid, cartid):
+    print request.form
+
+    return redirect("/myrecipes/%d/cart/%d" % (userid, cartid))
+
+
+@app.route("/sms")
+def send_text():
+    """Send a SMS with user grocery cart."""
+
+    # gets the phone number we're sending a text to
+    user_phone = User.get_user_phone(session['User'])
+    user_phone = "+1" + (str(user_phone))
+    print user_phone
+
+    # gets the ingredients in the cart
+    cart_ings = Cart_Ingredient.get_cart_ingredients(session['Cart'])
+    print cart_ings
+
+    cart_text = "My Cart:"
+
+    # formats the cart ingredients
+    for c in cart_ings:
+        if c.ingredient.measure == '' and c.ingredient.quantity != '':
+            cart_text += '\n +' + c.ingredient.quantity + ' ' + c.ingredient.item
+        else:
+            cart_text += '\n +' + c.ingredient.item
+
+    #sends text via twilio
+    account_sid = os.environ['TWILIO_ACCOUNT_SID']
+    auth_token = os.environ['TWILIO_AUTH_TOKEN']
+    client = TwilioRestClient(account_sid, auth_token)
+
+    message = client.messages.create(to=user_phone, from_=os.environ['TWILIO_NUMBER'],
+                                     body=cart_text)
+
+    resp = twilio.twiml.Response()
+    resp.sms(message)
+
+    flash("Your grocery cart was texted to you. Happy shopping!", "text_message")
+
+    return redirect("/myrecipes/%d" % session['User'])
 
 ################################################################################
 if __name__ == "__main__":

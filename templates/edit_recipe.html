@@ -38,6 +38,7 @@
 
 
             <button type="button" id="add-more">+ Add another ingredient</button>
+            <p id="ingredient-msg" hidden>You can't any more ingredients. Find something easier to cook!</p>
 
 
             <h3> Instructions: </h3>
@@ -74,7 +75,7 @@
         // form validation
         $(function() {
 
-            // Setup form validation on the new recipe form element
+            // Setup form validation on the edited recipe form element
             $("#edit-recipe-form").validate({
 
               // Specify validation rules 
@@ -125,7 +126,6 @@
         });
 
         $("#add-more").on('click', function() {
-            console.log("this logged");
            // allows user to add more ingredients to recipe
 
 
@@ -138,7 +138,12 @@
            $('.qty', new_ingredient_field).attr('name', 'qty' + index); 
            $('.measure', new_ingredient_field).attr('name', 'measure' + index); 
            $('.item', new_ingredient_field).attr('name', 'item' + index); 
-           $('.prepnotes', new_ingredient_field).attr('name', 'prepnotes' + index); 
+           $('.prepnotes', new_ingredient_field).attr('name', 'prepnotes' + index);
+
+           if (index >= 30) {
+               $("#add-more").prop('disabled', true);
+               $("#ingredient-msg").show();
+           }
 
         });
 

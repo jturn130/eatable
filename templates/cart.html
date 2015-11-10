@@ -3,22 +3,40 @@
 
     {% if 'User' in session %}
         {% if session['User'] == userid %}
+
+            <button><a href="/myrecipes/{{ userid }}/cart/{{ session['Cart'] }}/editcart">
+                <i class="fa fa-pencil"></i>&nbsp;&nbsp;&nbsp;Edit Cart
+            </a></button><br>
+
+            <button id="deleterecipe">
+                <a href="/myrecipes/{{ userid }}/cart/{{ session['Cart'] }}/deletecart">
+                    <i class="fa fa-trash-o"></i>&nbsp;&nbsp;&nbsp;Delete Cart
+            </a></button><br>
+
+            <button id="textcart"><a href="/sms">
+                <i class="fa fa-paper-plane-o"></i>&nbsp;&nbsp;&nbsp;Text Cart
+            </a></button><br>
+
                 <h1>My Cart</h1>
-                {% if 'Cart' in session %}
-                    <ul>
-                        {% for c in session['Cart'] %}
-                            <li>  </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <h3> You don't have any items in your cart yet. </h3>
+                    {% if cart_ings != [] %}
+                        <ul>
+                            {% for c in cart_ings %}
+                                {% if c.ingredient.measure == '' and c.ingredient.quantity != '' %}
+                                        <li> {{ c.ingredient.quantity }} {{ c.ingredient.item }} </li>  
+                                {% else %}
+                                    <li> {{ c.ingredient.item }} </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <h3> You don't have any items in your cart yet. </h3>
                 {% endif %}
         {% endif %}
     {% else %}
 
         <h1>You are not authorized to view this page. Mind your own beeswax!</h1>
 
-    {%% endif }
+    {% endif %}
 
 {% endblock %}
 
