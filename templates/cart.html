@@ -8,7 +8,7 @@
                 <i class="fa fa-pencil"></i>&nbsp;&nbsp;&nbsp;Edit Cart
             </a></button><br>
 
-            <button id="deleterecipe">
+            <button id="deletcart">
                 <a href="/myrecipes/{{ userid }}/cart/{{ session['Cart'] }}/deletecart">
                     <i class="fa fa-trash-o"></i>&nbsp;&nbsp;&nbsp;Delete Cart
             </a></button><br>
@@ -18,13 +18,16 @@
             </a></button><br>
 
                 <h1>My Cart</h1>
-                    {% if cart_ings != [] %}
+                    {% if cart_ings %}
                         <ul>
                             {% for c in cart_ings %}
-                                {% if c.ingredient.measure == '' and c.ingredient.quantity != '' %}
+                                {% if not c.ingredient.measure or c.ingredient.measure == '' %}
+                                    {% if c.ingredient.quantity %}
                                         <li> {{ c.ingredient.quantity }} {{ c.ingredient.item }} </li>  
-                                {% else %}
-                                    <li> {{ c.ingredient.item }} </li>
+                                    
+                                    {% else %}
+                                        <li> {{ c.ingredient.item }} </li>
+                                    {% endif %}
                                 {% endif %}
                             {% endfor %}
                         </ul>

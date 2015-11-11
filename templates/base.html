@@ -52,7 +52,7 @@
                             </a></li>
                             <li class="divider"></li>
                             
-                            <li><a href="/myrecipes/{{ userid }}/cart/{{ session['Cart'] }}">
+                            <li><a href="/myrecipes/{{ session['User'] }}/cart/{{ session['Cart'] }}">
                                 <i class='fa fa-shopping-cart'></i>&nbsp;&nbsp;View Cart
                             </a></li>
                             <li class="divider"></li>
@@ -104,11 +104,16 @@
 
     {% with messages = get_flashed_messages() %}
       {% if messages %}
-        <ul class="flashes">
-        {% for message in messages %}
-          <li>{{ message }}</li>
-        {% endfor %}
-        </ul>
+        <div class="col-md-5 col-sm-6 col-sm-offset-3 col-xs-8 col-xs-offset-2 col-md-offset-0">
+            <div class="alert alert-success alert-dismissable" style="padding-right: 35px;">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <ul class="flashes">
+                {% for message in messages %}
+                  <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
       {% endif %}
     {% endwith %}
 
@@ -151,8 +156,8 @@
     $("#loginform").on("submit", confirmUserLogin);
 
 
-    // Hide flashed messages after 5 seconds
-    setTimeout(hideFlash, 5000);
+    // // Hide flashed messages after 5 seconds
+    // setTimeout(hideFlash, 5000);
 
 </script>
 {% block script %}

@@ -166,7 +166,7 @@ class Recipe(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Recipe recipe_id=%d user_id=%d recipe_title=%s instructions=%s>" % (self.recipe_id, self.user_id, self.recipe_title, self.instructions)
+        return "<Recipe recipe_id=% user_id=%d recipe_title=%s instructions=%s>" % (self.recipe_id, self.user_id, self.recipe_title, self.instructions)
 
 
 class Ingredient(db.Model):
@@ -175,7 +175,7 @@ class Ingredient(db.Model):
     __tablename__ = "ingredients"
 
     ingredient_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'), nullable=False)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'), nullable=True)
     quantity = db.Column(db.String(10), nullable=True)
     measure = db.Column(db.String(50), nullable=True)
     item = db.Column(db.String(75), nullable=False)
@@ -251,10 +251,60 @@ class Ingredient(db.Model):
             db.session.commit()
 
     @classmethod
+    def get_edited_cart_ings(cls, form):
+        """Get edited ingredients in a user's cart."""
+
+        ings_dict = {}
+
+        for r in form:
+            try:
+                i = int(r[-2:])
+                if i in ings_dict:
+                    ings_dict[i].append([r, form[r]])
+                else:
+                    ings_dict[i] = [[r, form[r]]]
+            except Exception:
+                i = int(r[-1:])
+                if i in ings_dict:
+                    ings_dict[i].append([r, form[r]])
+                else:
+                    ings_dict[i] = [[r, form[r]]]
+            ings_dict[i].sort()
+
+        ings_to_add = ings_dict.values()
+
+        return ings_to_add
+
+    @classmethod
+    def add_edited_cart_ings_to_db(cls, ings_to_add, cartid):
+        """Add edited cart ingredients to db."""
+
+        for i in range(0, (len(ings_to_add))):
+
+            item = ings_to_add[i][0][1]
+
+            try:
+                qty = int(ings_to_add[i][1][1])
+                new_ing = Ingredient(item=item, quantity=qty)
+            except Exception:
+                new_ing = Ingredient(item=item)
+
+            db.session.add(new_ing)
+            db.session.commit()
+
+            new_cart_ing = Cart_Ingredient(ingredient_id=new_ing.ingredient_id, cart_id=cartid)
+
+            db.session.add(new_cart_ing)
+            db.session.commit()
+
+        return ings_to_add
+
+    @classmethod
     def get_recipe_ingredients(cls, recipeid):
         """Get a list of ingredients in a given recipe."""
 
         recipe_ingredients = Ingredient.query.filter_by(recipe_id=recipeid).all()
+
         return recipe_ingredients
 
     @classmethod
@@ -283,7 +333,7 @@ class Ingredient(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Ingredient ingredient_id=%d recipe_id=%d quantity=%s measure=%s item=%s prep_notes=%s>" % (self.ingredient_id, self.recipe_id, self.quantity, self.measure, self.item, self.prep_notes)
+        return "<Ingredient ingredient_id=%d recipe_id=%s quantity=%s measure=%s item=%s prep_notes=%s>" % (self.ingredient_id, self.recipe_id, self.quantity, self.measure, self.item, self.prep_notes)
 
 
 class Recipe_Hashtag(db.Model):
@@ -469,6 +519,15 @@ class Cart_Ingredient(db.Model):
         cart_ings = Cart_Ingredient.query.filter_by(cart_id=cartid).all()
 
         return cart_ings
+
+    @classmethod
+    def delete_old_cart_ingredients(cls, cartid):
+        """Delete old cart ingredients after user has edited cart."""
+
+        deleted_cart_ingredients = Cart_Ingredient.query.filter_by(cart_id=cartid).delete()
+
+        db.session.commit()
+        return deleted_cart_ingredients
 
     def __repr__(self):
         """Provide helpful representation when printed."""

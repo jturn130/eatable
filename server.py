@@ -336,9 +336,33 @@ def edit_cart(userid, cartid):
 
 @app.route("/myrecipes/<int:userid>/cart/<int:cartid>/edit-confirm", methods=["POST"])
 def update_edited_cart(userid, cartid):
-    print request.form
+    """Updates the cart_ingredients table to reflect edited changes."""
+
+    # delete old cart ingredients
+    Cart_Ingredient.delete_old_cart_ingredients(cartid)
+
+    # get and format the new cart ingredients
+    edited_cart_ings = Ingredient.get_edited_cart_ings(request.form)
+
+    # add new cart ingredients to the ingredients table and cart_ingredients table
+    Ingredient.add_edited_cart_ings_to_db(edited_cart_ings, cartid)
 
     return redirect("/myrecipes/%d/cart/%d" % (userid, cartid))
+
+
+@app.route("/myrecipes/<int:userid>/cart/<int:cartid>/deletecart")
+def delete_cart(userid, cartid):
+    """Create new cart and reassign session cart."""
+
+    # create new cart
+    new_cart = Cart.create_new_cart(userid)
+
+    # update session info to reflect new cart
+    session['Cart'] = new_cart.cart_id
+
+    flash("You successfully deleted your cart. Parting is such sweet sorrow.", "delete_cart")
+
+    return redirect("/myrecipes/%d/cart/%d" % (session['User'], session['Cart']))
 
 
 @app.route("/sms")
@@ -348,20 +372,18 @@ def send_text():
     # gets the phone number we're sending a text to
     user_phone = User.get_user_phone(session['User'])
     user_phone = "+1" + (str(user_phone))
-    print user_phone
 
     # gets the ingredients in the cart
     cart_ings = Cart_Ingredient.get_cart_ingredients(session['Cart'])
-    print cart_ings
 
     cart_text = "My Cart:"
 
     # formats the cart ingredients
     for c in cart_ings:
         if c.ingredient.measure == '' and c.ingredient.quantity != '':
-            cart_text += '\n +' + c.ingredient.quantity + ' ' + c.ingredient.item
+            cart_text += '\n + ' + c.ingredient.quantity + ' ' + c.ingredient.item
         else:
-            cart_text += '\n +' + c.ingredient.item
+            cart_text += '\n + ' + c.ingredient.item
 
     #sends text via twilio
     account_sid = os.environ['TWILIO_ACCOUNT_SID']

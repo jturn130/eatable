@@ -4,12 +4,19 @@
 {% if 'User' in session %}
     {% if session['User'] == userid %}
 
+    <!-- This is the ingredient prototype that will duplicate when the user clicks on the "Add another ingredientsent" button -->
         <div id="template-input" style="display: none;">
-         <!-- This is the ingredient prototype that will duplicate when the user clicks on the "Add another ingredient" button -->
              <div>
-                 Qty: <input type="text" class="qty" name="qty" style="width: 50px;">
-                 Item: <input type="text" class="item" name="item">
-                 <button class="deleteing" name="del"><i class="fa fa-trash-o"></i></button><br>
+                <!-- Ingredient Quantity -->
+                 <span> Qty: </span>
+                 <input type="text" class="qty" name="qty" style="width: 50px;">
+                 
+                 <!-- Ingredient Item -->
+                 <span> Item: </span> 
+                 <input type="text" class="item" name="item">
+
+                 <!-- Delete Ingredient -->
+                 <button type="button" class="deleteing" name="del"><i class="fa fa-trash-o"></i></button><br>
              </div>
          </div> 
 
@@ -21,42 +28,47 @@
             <div id="ingredient-section">
                 <h3> Cart Items </h3>
 
+                <p id="one-ing-msg" style="display: none;">
+                  Your cart needs to have at least one ingredient.</p>
                 <div class="ingredient-field">
+
                 {% for c in cart_ings %}
-                    {% if c.ingredient.measure == '' and c.ingredient.quantity != '' %}
-                      <div class="{{ loop.index }}">
+                    {% if not c.ingredient.measure or c.ingredient.measure == '' %}
+                      {% if c.ingredient.quantity %}
+                        <div class="{{ loop.index }}">
+
+                            <!-- Ingredient Quantity -->
+                            <span> Qty: </span>
+                            <input type="text" class="qty" name="qty{{ loop.index }}" value="{{ c.ingredient.quantity }}" style="width: 50px;">
+
+                            <!-- Ingredient Item -->
+                            <span> Item: </span>
+                            <input type="text" class="item" name="item{{ loop.index }}" value="{{ c.ingredient.item }}">
+                            
+                            <!-- Delete Ingredient -->
+                            <button type="button" class="deleteing" name="{{ loop.index }}">
+                              <i class="fa fa-trash-o"></i>
+                            </button><br>
+
+                          </div> <!-- loop index div -->
+                      {% else %}
+                        <div class="{{ loop.index }}">
 
                           <!-- Ingredient Quantity -->
                           <span> Qty: </span>
-                          <input type="text" class="qty" name="qty{{ loop.index }}" value="{{ c.ingredient.quantity }}" style="width: 50px;">
+                          <input type="text" class="qty" name="qty{{ loop.index }}" style="width: 50px;">
 
                           <!-- Ingredient Item -->
                           <span> Item: </span>
                           <input type="text" class="item" name="item{{ loop.index }}" value="{{ c.ingredient.item }}">
                           
                           <!-- Delete Ingredient -->
-                          <button class="deleteing" name="del{{ loop.index }}">
+                          <button type="button" class="deleteing" name="{{ loop.index }}">
                             <i class="fa fa-trash-o"></i>
                           </button><br>
 
                         </div> <!-- loop index div -->
-                    {% else %}
-                      <div class="{{ loop.index }}">
-
-                        <!-- Ingredient Quantity -->
-                        <span> Qty: </span>
-                        <input type="text" class="qty" name="qty{{ loop.index }}" style="width: 50px;">
-
-                        <!-- Ingredient Item -->
-                        <span> Item: </span>
-                        <input type="text" class="item" name="item{{ loop.index }}" value="{{ c.ingredient.item }}">
-                        
-                        <!-- Delete Ingredient -->
-                        <button class="deleteing" name="del{{ loop.index }}">
-                          <i class="fa fa-trash-o"></i>
-                        </button><br>
-
-                    </div> <!-- loop index div -->
+                      {% endif %}
                     {% endif %}
                 {% endfor %}
               </div> <!-- div for ingredient-field -->
@@ -83,38 +95,48 @@
   <script>
 
   $(".deleteing").on('click', function(evt) {
-    evt.preventDefault();
-    //finds the index the ingredient to be delete
-    //removes all fields that have a class of that index
-    delIng = $(this).attr('name');
 
-    $("div").each(function() {
-      console.log(this);
-      if ($(this).hasClass(delIng)) {
-        this.remove();
-      }
+    // makes sure that there's still at least one ingredient field
+    if ($(".ingredient-field").children().length <= 1) {
 
-    });
+      $("#one-ing-msg").removeAttr('style');
 
+    } else {
+
+      //finds the index number of the ingredient to be deleted
+      //removes all fields that have a class of that index
+      delIng = $(this).attr('name');
+      console.log("this is delIng: " + delIng);
+
+      $("div").each(function() {
+        console.log(this);
+        if ($(this).hasClass(delIng)) {
+          this.remove();
+        }
+
+      });
+
+    }
   });
 
     $("#add-more").on('click', function() {
        // allows user to add more ingredients to recipe
 
+       //finds the integer of the last ingredient, and adds 1
+       latestIngredient = $(".ingredient-field").children().last().attr('class');
+       var index = parseInt(latestIngredient) + 1;
 
-        var new_ingredient_field = $("#template-input").clone();
+       //creates new ingredient field
+        var new_ingredient_field = $("#template-input").clone(true);
         new_ingredient_field.removeAttr('id').removeAttr('style');
-        new_ingredient_field.appendTo("#ingredient-section");
-
-        //finds the integer of the last ingredient, and adds 1
-        latestIngredient = $(".ingredient-field").children().last().attr('class');
-        index = parseInt(latestIngredient) + 1;
-
+        new_ingredient_field.appendTo(".ingredient-field");
 
        // this allows us make unique names for different ingredients
        $('.qty', new_ingredient_field).attr('name', 'qty' + index); 
        $('.item', new_ingredient_field).attr('name', 'item' + index); 
-       $('.deleteing'), new_ingredient_field.attr('name', 'del' + index);
+       $('.deleteing', new_ingredient_field).attr('name', index);
+       $('div', new_ingredient_field).attr('class', index);
+       $(new_ingredient_field).contents().unwrap();
 
        //limits the length of the cart
        if (index >= 50) {
