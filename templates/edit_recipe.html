@@ -42,9 +42,7 @@
 
 
             <h3> Instructions: </h3>
-            <textarea rows="5" cols="50" name="instructions" placeholder="Write your instructions here.">
-                {{ recipe.instructions }}
-            </textarea>
+            <textarea rows="5" cols="50" name="instructions" placeholder="Write your instructions here.">{{ recipe.instructions }}</textarea>
 
             <h3>Source: (optional) </h3>
             {% if recipe.source != '' %}

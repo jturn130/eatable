@@ -3,7 +3,7 @@
 
     {% if 'User' in session %}
         {% if session['User'] == userid %}
-
+            <br>
             <button><a href="/myrecipes/{{ userid }}/cart/{{ session['Cart'] }}/editcart">
                 <i class="fa fa-pencil"></i>&nbsp;&nbsp;&nbsp;Edit Cart
             </a></button><br>
@@ -18,22 +18,22 @@
             </a></button><br>
 
                 <h1>My Cart</h1>
-                    {% if cart_ings %}
+                    {% if cart_ings != [] %}
                         <ul>
                             {% for c in cart_ings %}
-                                {% if not c.ingredient.measure or c.ingredient.measure == '' %}
-                                    {% if c.ingredient.quantity %}
-                                        <li> {{ c.ingredient.quantity }} {{ c.ingredient.item }} </li>  
-                                    
-                                    {% else %}
-                                        <li> {{ c.ingredient.item }} </li>
-                                    {% endif %}
+                                {% if c.ingredient.quantity and c.ingredient.quantity != '' %}
+                                    {% if not c.ingredient.measure or c.ingredient.measure == '' %}
+
+                                        <li> {{ c.ingredient.quantity }} {{ c.ingredient.item }} </li>
+                                    {% endif %} 
+                                {% else %}
+                                    <li> {{ c.ingredient.item }} </li>
                                 {% endif %}
                             {% endfor %}
                         </ul>
                     {% else %}
                         <h3> You don't have any items in your cart yet. </h3>
-                {% endif %}
+                    {% endif %}
         {% endif %}
     {% else %}
 

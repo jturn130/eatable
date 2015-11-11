@@ -25,69 +25,72 @@
 
         <form action="/myrecipes/{{ userid }}/cart/{{ session['Cart'] }}/edit-confirm" method="POST" id="edit-ingredient-form">
 
-            <div id="ingredient-section">
-                <h3> Cart Items </h3>
+        <div id="ingredient-section">
+            <h3> Cart Items </h3>
 
-                <p id="one-ing-msg" style="display: none;">
-                  Your cart needs to have at least one ingredient.</p>
-                <div class="ingredient-field">
+            <p id="one-ing-msg" style="display: none;">
+              Your cart needs to have at least one ingredient.</p>
+            <ul>
+            <div class="ingredient-field">
+                {% if cart_ings != [] %}
+                        {% for c in cart_ings %}
+                            {% if c.ingredient.quantity and c.ingredient.quantity != '' %}
+                              {% if not c.ingredient.measure or c.ingredient.measure == '' %}
 
-                {% for c in cart_ings %}
-                    {% if not c.ingredient.measure or c.ingredient.measure == '' %}
-                      {% if c.ingredient.quantity %}
-                        <div class="{{ loop.index }}">
+                                <div class="{{ loop.index }}">
 
-                            <!-- Ingredient Quantity -->
-                            <span> Qty: </span>
-                            <input type="text" class="qty" name="qty{{ loop.index }}" value="{{ c.ingredient.quantity }}" style="width: 50px;">
+                                    <!-- Ingredient Quantity -->
+                                    <span> Qty: </span>
+                                    <input type="text" class="qty" name="qty{{ loop.index }}" value="{{ c.ingredient.quantity }}" style="width: 50px;">
 
-                            <!-- Ingredient Item -->
-                            <span> Item: </span>
-                            <input type="text" class="item" name="item{{ loop.index }}" value="{{ c.ingredient.item }}">
-                            
-                            <!-- Delete Ingredient -->
-                            <button type="button" class="deleteing" name="{{ loop.index }}">
-                              <i class="fa fa-trash-o"></i>
-                            </button><br>
+                                    <!-- Ingredient Item -->
+                                    <span> Item: </span>
+                                    <input type="text" class="item" name="item{{ loop.index }}" value="{{ c.ingredient.item }}">
+                                    
+                                    <!-- Delete Ingredient -->
+                                    <button type="button" class="deleteing" name="{{ loop.index }}">
+                                      <i class="fa fa-trash-o"></i>
+                                    </button><br>
 
-                          </div> <!-- loop index div -->
-                      {% else %}
-                        <div class="{{ loop.index }}">
+                                  </div> <!-- loop index div -->
+                                {% endif %} 
+                            {% else %}
+                                <div class="{{ loop.index }}">
 
-                          <!-- Ingredient Quantity -->
-                          <span> Qty: </span>
-                          <input type="text" class="qty" name="qty{{ loop.index }}" style="width: 50px;">
+                                  <!-- Ingredient Quantity -->
+                                  <span> Qty: </span>
+                                  <input type="text" class="qty" name="qty{{ loop.index }}" style="width: 50px;">
 
-                          <!-- Ingredient Item -->
-                          <span> Item: </span>
-                          <input type="text" class="item" name="item{{ loop.index }}" value="{{ c.ingredient.item }}">
-                          
-                          <!-- Delete Ingredient -->
-                          <button type="button" class="deleteing" name="{{ loop.index }}">
-                            <i class="fa fa-trash-o"></i>
-                          </button><br>
+                                  <!-- Ingredient Item -->
+                                  <span> Item: </span>
+                                  <input type="text" class="item" name="item{{ loop.index }}" value="{{ c.ingredient.item }}">
+                                  
+                                  <!-- Delete Ingredient -->
+                                  <button type="button" class="deleteing" name="{{ loop.index }}">
+                                    <i class="fa fa-trash-o"></i>
+                                  </button><br>
 
-                        </div> <!-- loop index div -->
-                      {% endif %}
-                    {% endif %}
-                {% endfor %}
-              </div> <!-- div for ingredient-field -->
+                                </div> <!-- loop index div -->
+                            {% endif %}
+                        {% endfor %}
+                      </div> <!-- div for ingredient-field -->
+                    </ul>
+                  </div> <!-- div for #ingredient-section -->
+        <button type="button" id="add-more">+ Add another ingredient</button><br>
+        <p id="cart-ingredient-msg" hidden>
+          You can't add any more ingredients to your cart. Baby steps.
+        </p>
 
-            </div> <!-- div for #ingredient-section -->
-
-
-            <button type="button" id="add-more">+ Add another ingredient</button><br>
-            <p id="cart-ingredient-msg" hidden>
-              You can't add any more ingredients to your cart. Baby steps.
-            </p>
-
-            
-            <!-- Submit edited form -->
-            <input type="submit" class="confirmcart" value="Submit Cart Changes">
+        
+        <!-- Submit edited form -->
+        <input type="submit" class="confirmcart" value="Submit Cart Changes">
         </form>
-    {% endif %}
+    {% else %}
+        <h3> You don't have any items in your cart yet. </h3>
+  {% endif %} <!-- endif that sees if cart has 0 ingredients -->
 {% else %}
-        <h1>You can't edit this recipe!!</h1>
+        <h1>You can't edit this cart!!</h1>
+{% endif %} <!-- end that deals with the right user being in the session -->
 {% endif %}
 {% endblock %}
 

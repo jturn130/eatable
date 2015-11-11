@@ -42,15 +42,12 @@ class User(db.Model):
         db.session.commit()
 
     @classmethod
-    def validate_email_password(cls, user_email, user_password):
+    def validate_email(cls, user_email):
         """Check if user email/password combination is correct."""
 
-        try:
-            user_login_info = cls.query.filter_by(email=user_email, password=user_password).one()
-            return user_login_info
+        user_login_info = User.query.filter_by(email=user_email).one()
 
-        except Exception, error:
-            print error
+        return user_login_info
 
     @classmethod
     def get_user_phone(cls, userid):
@@ -272,6 +269,7 @@ class Ingredient(db.Model):
             ings_dict[i].sort()
 
         ings_to_add = ings_dict.values()
+        print "this is ings to add:", ings_to_add
 
         return ings_to_add
 
@@ -292,10 +290,14 @@ class Ingredient(db.Model):
             db.session.add(new_ing)
             db.session.commit()
 
+            print new_ing
+
             new_cart_ing = Cart_Ingredient(ingredient_id=new_ing.ingredient_id, cart_id=cartid)
 
             db.session.add(new_cart_ing)
             db.session.commit()
+
+            print new_cart_ing
 
         return ings_to_add
 
@@ -517,6 +519,7 @@ class Cart_Ingredient(db.Model):
         """Get ingredients in a cart."""
 
         cart_ings = Cart_Ingredient.query.filter_by(cart_id=cartid).all()
+        print "this is cart ings inside class method: ", cart_ings
 
         return cart_ings
 

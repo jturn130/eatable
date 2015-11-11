@@ -42,6 +42,7 @@
                     },
                     password1: {
                         required: true,
+                        nowhitespace: true,
                         minlength: 6,
                         maxlength: 16
                     },
@@ -61,7 +62,8 @@
                         required: "We need a real life email address."
                       },
                       password1: {
-                        minlength: "Password must be at least 6 characters. You know, that whole security thing."
+                        minlength: "Password must be at least 6 characters. You know, that whole security thing.",
+                        nowhitespace: "Please remove whitespace characters from your password."
                       },
                       passwordcheck: {
                         equalTo: "Your passwords don't match. Type carefully."

@@ -14,6 +14,8 @@ from twilio.rest import TwilioRestClient
 
 import twilio.twiml
 
+from passlib.hash import sha256_crypt
+
 from model import User, Recipe, Ingredient, Recipe_Hashtag, Hashtag, Cart_Ingredient, Cart, connect_to_db, db
 
 
@@ -41,7 +43,7 @@ def create_account():
 
 
 @app.route('/signup-confirm', methods=["POST"])
-def confirm_account():
+def confirm_new_account():
     """Confirm new account"""
 
     user_email = request.form.get("email")
@@ -51,7 +53,8 @@ def confirm_account():
     confirmed_user = User.get_user_by_email(user_email)
 
     if not confirmed_user:
-        User.create_new_user(user_email, user_password, user_phone)
+        hash = sha256_crypt.encrypt(user_password)
+        User.create_new_user(user_email, hash, user_phone)
         flash("You successfully created an account! Please log in to get started.", "create_account")
     else:
         flash("You already have an account. Please sign in.", "account_already")
@@ -66,18 +69,30 @@ def confirm_user_login():
     user_email = request.form.get("email")
     user_password = request.form.get("password")
 
-    confirmed_user = User.validate_email_password(user_email, user_password)
+    try:
+        # checks if user exists
+        user = User.validate_email(user_email)
 
-    if confirmed_user:
-        userid = confirmed_user.user_id
-        session["User"] = userid
+        # get pw from db and compare it to user input
+        hash = user.password
 
-        if 'Cart' not in session:
-            new_cart = Cart.create_new_cart(userid)
-            session['Cart'] = new_cart.cart_id
-        return jsonify({"confirmed_user": True, "user_id": userid})
+        password_check = sha256_crypt.verify(user_password, hash)
 
-    else:
+        # if everything works, log user in
+        if password_check:
+
+            userid = user.user_id
+            session['User'] = userid
+
+            if 'Cart' not in session:
+                    new_cart = Cart.create_new_cart(userid)
+                    session['Cart'] = new_cart.cart_id
+
+            return jsonify({"confirmed_user": True, "user_id": userid})
+        else:
+            raise Exception
+
+    except Exception:
         return jsonify({"confirmed_user": False})
 
 
@@ -86,6 +101,7 @@ def logout_user():
     """Log out the user."""
 
     del session['User']
+    del session['Cart']
 
     flash("You are logged out.", "logged_out")
 
@@ -268,38 +284,42 @@ def create_new_recipe(userid):
 @app.route("/recipe-confirm", methods=["POST"])
 def add_new_recipe():
     """Add new recipe to the database."""
+    try:
+        ###### Recipe Table Section ######
+        user_id = session['User']
+        recipe_title = request.form.get("recipetitle")
+        instructions = request.form.get("instructions")
+        source = request.form.get("source")
 
-    ###### Recipe Table Section ######
-    user_id = session['User']
-    recipe_title = request.form.get("recipetitle")
-    instructions = request.form.get("instructions")
-    source = request.form.get("source")
+        new_recipe = Recipe.create_new_recipe(user_id, recipe_title, instructions, source)
+        recipe_id = new_recipe.recipe_id
 
-    new_recipe = Recipe.create_new_recipe(user_id, recipe_title, instructions, source)
-    recipe_id = new_recipe.recipe_id
+        ###### Ingredient Table Section ######
+        new_ingredient_count = Ingredient.get_ingredient_count(request.form)
+        ingredients_dict = Ingredient.get_ingredients_to_add(new_ingredient_count, request.form)
+        Ingredient.add_ingredient_to_recipe(new_ingredient_count, ingredients_dict, recipe_id)
 
-    ###### Ingredient Table Section ######
-    new_ingredient_count = Ingredient.get_ingredient_count(request.form)
-    ingredients_dict = Ingredient.get_ingredients_to_add(new_ingredient_count, request.form)
-    Ingredient.add_ingredient_to_recipe(new_ingredient_count, ingredients_dict, recipe_id)
+        ###### Hashtag Table Section ######
+        hashtags = request.form.get("hashtags")
 
-    ###### Hashtag Table Section ######
-    hashtags = request.form.get("hashtags")
+        # stardardizes format for hashtags
+        hashtag_list = re.sub('#', '', hashtags.lower()).split()
 
-    # stardardizes format for hashtags
-    hashtag_list = re.sub('#', '', hashtags.lower()).split()
+        hashtag_id_list = Hashtag.get_hashtag_id(hashtag_list)
 
-    hashtag_id_list = Hashtag.get_hashtag_id(hashtag_list)
+        ###### Recipe_Hashtag Table Section ######
+        Recipe_Hashtag.create_new_recipe_hashtag(recipe_id, hashtag_id_list)
 
-    ###### Recipe_Hashtag Table Section ######
-    Recipe_Hashtag.create_new_recipe_hashtag(recipe_id, hashtag_id_list)
+        ###### Tsvector Generation ######
+        Recipe.update_search_vector(recipe_id)
 
-    ###### Tsvector Generation ######
-    Recipe.update_search_vector(recipe_id)
+        flash("You have successfully created your recipe. Hooray!", "create_recipe")
 
-    flash("You have successfully created your recipe. Hooray!", "create_recipe")
+        return redirect("/myrecipes/%d" % user_id)
 
-    return redirect("/myrecipes/%d" % user_id)
+    except Exception:
+
+        return redirect("/")
 
 
 @app.route("/myrecipes/<int:userid>/recipe/<int:recipeid>/addtocart")
@@ -309,8 +329,8 @@ def add_recipe_to_cart(recipeid, userid):
     recipe_ingredients = Ingredient.get_recipe_ingredients(recipeid)
 
     for ingredient in recipe_ingredients:
-        Cart_Ingredient.create_new_cart_ingredient(session['Cart'], ingredient.ingredient_id)
-
+        cart_ing = Cart_Ingredient.create_new_cart_ingredient(session['Cart'], ingredient.ingredient_id)
+        print cart_ing
     flash("You have successfully added your recipe to your grocery cart.", "cart_add")
 
     return redirect("/myrecipes/%d/cart/%d" % (userid, session['Cart']))
@@ -321,6 +341,8 @@ def display_cart(userid, cartid):
     """Display items in a user's cart."""
 
     cart_ings = Cart_Ingredient.get_cart_ingredients(cartid)
+
+    print cart_ings
 
     return render_template("cart.html", userid=userid, cart_ings=cart_ings)
 
@@ -337,12 +359,14 @@ def edit_cart(userid, cartid):
 @app.route("/myrecipes/<int:userid>/cart/<int:cartid>/edit-confirm", methods=["POST"])
 def update_edited_cart(userid, cartid):
     """Updates the cart_ingredients table to reflect edited changes."""
+    print request.form
 
     # delete old cart ingredients
     Cart_Ingredient.delete_old_cart_ingredients(cartid)
 
     # get and format the new cart ingredients
     edited_cart_ings = Ingredient.get_edited_cart_ings(request.form)
+    print "this is edited cart ings: ", edited_cart_ings
 
     # add new cart ingredients to the ingredients table and cart_ingredients table
     Ingredient.add_edited_cart_ings_to_db(edited_cart_ings, cartid)

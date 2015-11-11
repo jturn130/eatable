@@ -149,15 +149,15 @@
     }
 
     function hideFlash() {
-        $(".flashes").hide();
+        $(".alert").hide();
     }
 
 
     $("#loginform").on("submit", confirmUserLogin);
 
 
-    // // Hide flashed messages after 5 seconds
-    // setTimeout(hideFlash, 5000);
+    // Hide flashed messages after 10 seconds
+    setTimeout(hideFlash, 10000);
 
 </script>
 {% block script %}
