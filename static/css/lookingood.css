@@ -1,0 +1,210 @@
+
+/*fonts*/
+@font-face {
+    font-family: 'ChunkFive';
+    src: url('/static/fonts/Chunkfive.otf');
+}
+
+@font-face {
+    font-family: 'Bitter-Bold';
+    src: url('/static/fonts/Bitter-Bold.otf');
+}
+
+@font-face {
+    font-family: 'Bitter-Regular';
+    src: url('/static/fonts/Bitter-Regular.otf');
+}
+
+/*navbar styling*/
+.container-fluid, .modal-header {
+    background-color: #81e6ae;
+}
+
+.navbar-default .navbar-brand, .navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:active,
+.navbar-default .navbar-brand:focus, .modal-header {
+    color: #2ba4a6;
+    font-family: 'ChunkFive';
+    font-size: 2.7em;
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 20px;
+}
+
+.navbar {
+        margin: 0;
+        border: 0;
+}
+
+.btn-primary, .btn-primary.active, .btn-primary.focus, .btn-primary:active, 
+.btn-primary:focus, .btn-primary:hover, .open >.dropdown-toggle.btn-primary,
+.btn.btn-info.btn-lg {
+    border-color: #2ba4a6;
+    background-color: #2ba4a6;
+    border-radius: 6px;
+}
+
+.dropdown-menu, .dropdown-menu>li>a {
+    background-color: #2ba4a6;
+    color: white;
+    text-align: center;
+}
+
+button.btn.btn-primary.dropdown-toggle, .btn.btn-info.btn-lg {
+    margin: 10px;
+    padding: 8px 15px 8px 15px;
+    vertical-align: middle;
+}
+
+.modal-dialog {
+    width: 30%;
+}
+
+.modal-title {
+    font-size: 1em;
+}
+
+.modal-header {
+    padding: 5px 10px 0 10px;
+}
+
+.modal-content {
+    text-align: center;
+}
+
+.login-welcome {
+    font-family: "Bitter-Regular";
+    color: #2ba4a6;
+}
+
+.signin-buttons {
+    background-color: #2ba4a6;
+    border: 0;
+}
+
+.fa.signin {
+    color: white;
+}
+
+#login-error {
+    color: #8e8e8e;
+    font: Helvetica;
+}
+
+
+/*footer*/
+.footsie {
+    background-color: #2ba4a6;
+    bottom: 0;
+    width: 100%;
+}
+
+.footer-text {
+    text-align: right;
+    color: white;
+    font-family: Helvetica;
+    margin: .75em .5em;
+    padding-right: 0;
+}
+
+.btn-group-vertical>.btn-group:after, .btn-group-vertical>.btn-group:before,
+.btn-toolbar:after, .btn-toolbar:before, .clearfix:after, .clearfix:before,
+.container-fluid:after, .container-fluid:before, .container:after, .container:before,
+.dl-horizontal dd:after, .dl-horizontal dd:before, .form-horizontal .form-group:after,
+.form-horizontal .form-group:before, .modal-footer:after, .modal-footer:before,
+.nav:after, .nav:before, .navbar-collapse:after, .navbar-collapse:before,
+.navbar-header:after, .navbar-header:before, .navbar:after, .navbar:before,
+.pager:after, .pager:before, .panel-body:after, .panel-body:before,
+.row:after, .row:before {
+    display: table;
+    content: " ";
+}
+
+.btn-group-vertical>.btn-group:after, .btn-toolbar:after, .clearfix:after,
+.container-fluid:after, .container:after, .dl-horizontal dd:after,
+.form-horizontal .form-group:after, .modal-footer:after, .nav:after,
+.navbar-collapse:after, .navbar-header:after, .navbar:after, .pager:after,
+.panel-body:after, .row:after {
+    clear: both;
+}
+
+
+/*homepage*/
+.jumbotron {
+    background: url("/static/images/table.jpg") center center;
+    background-size: cover;
+    text-align: center;
+    font-family: 'Bitter-Bold';
+    color: white;
+    margin: 0;
+    padding: 80px;
+}
+
+.jumbotron>h1 {
+    font-size: 80px;
+    margin: 0;
+}
+
+.jumbotron>hr {
+    border: 2.5px solid white;
+    width: 50%;
+    margin-top: 40px;
+}
+
+.get-started-button, .get-started-button:hover, .get-started-text, .get-started-text:hover {
+    background-color: #81e6ae;
+    color: white;
+    font-family: Helvetica;
+    border: 0;
+    border-radius: 18px;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.blue-title {
+    color: #2ba4a6;
+    font-family: 'Bitter-Regular';
+    text-align: center;
+    margin: 40px;
+    font-size: 50px;
+}
+
+.eatablelogo {
+    color: #2ba4a6;
+    font-family: 'ChunkFive';
+}
+
+.homepage-icons {
+    color: #2ba4a6;
+}
+
+table {
+    table-layout: fixed;
+    margin: 0 auto;
+    width: 100%
+}
+
+
+td {
+    width: 33%;
+    text-align: center;
+    padding: 0;
+    word-wrap: break-word;
+    font-family: "Bitter-Regular";
+    font-size: 20px;
+    /*margin: 0 auto;*/
+}
+
+.snippet {
+    background-color: transparent;
+    padding: 50px 15px 200px 15px;
+}
+
+i.fa.fa-book.fa-5x.homepage::before, i.fa.fa-users.fa-5x.homepage::before,
+i.fa.fa-shopping-cart.fa-5x.homepage::before {
+    background-color: #81e6ae;
+    padding: 30px;
+    border-radius: 50%;
+    margin: 80px 30px;
+}
+
+

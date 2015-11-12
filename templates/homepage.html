@@ -1,17 +1,38 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <div class="container-fluid" id="takerecipes">
-    
-        <h1 class="titletext"> Take your recipes wherever you go. </h1>
-            <h2 class="titletext"> ______________________ </h2>
-        
-        <div class="get-started">
-            <button class="get-started-button">
-                <h4><a class="get-started-text" href="/signup">Get Started</a></h4>
-            </button>
-        </div>
-
+<div class="container-fixed">
+  <div class="jumbotron">
+    <h1 class="titletext"> Take your recipes wherever you go. </h1>
+    <hr>
+    <!-- <h2 class="titletext"> ______________________ </h2> -->
+     <div class="get-started">
+        <button class="get-started-button green-white">
+            <h4><a class="get-started-text" href="/signup">Get Started</a></h4>
+        </button>
     </div>
+  </div>
+</div>
+
+<h1 class="blue-title"> With <span class="eatablelogo">eatable</span>, you can...</h1>
+<br><br>
+<div class="homepage-icons">
+    <table align="center">
+         <tr>
+             <td><i class="fa fa-book fa-5x homepage"></i></td>
+             <td><i class="fa fa-users fa-5x homepage"></i></td>
+             <td><i class="fa fa-shopping-cart fa-5x homepage"></i></td>
+        </tr>
+    </table>  
+
+    <table align="center">
+        <tr>
+            <td class="snippet">Store recipes from cookbooks, blogs, and family, all in one place.</td>
+            <td class="snippet">Easily search your recipe list and share with friends.</td>
+            <td class="snippet">Create a grocery list and have it texted to you.</td>
+        </tr>
+     </table>
+</div>
+
 
 {% endblock %}

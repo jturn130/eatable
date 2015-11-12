@@ -7,23 +7,7 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-
-    <style>
-        /*@font-face {
-            font-family: 'ChunkFive';
-            src: url('/static/fonts/Chunkfive.otf');
-        }
-
-        @font-face {
-            font-family: 'Bitter-Bold';
-            src: url('/static/fonts/Bitter-Bold.otf');
-        }
-
-        @font-face {
-            font-family: 'Bitter-Regular';
-            src: url('/static/fonts/Bitter-Regular.otf');
-        }*/
-    </style>
+    <link rel="stylesheet" href="/static/css/lookingood.css">
 </head>
 
 <body>
@@ -38,7 +22,7 @@
                     {% if 'User' in session %}
                         <!-- User settings -->
                         <div class="dropdown">
-                          <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><div id="settings"><i class='fa fa-gear'></i></div>&nbsp;&nbsp;Settings
+                          <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class='fa fa-gear'></i>&nbsp;&nbsp;&nbsp;Settings
                           <span class="caret"></span></button>
 
                           <ul class="dropdown-menu">
@@ -66,7 +50,7 @@
                     
                     {% else %}
                         <!-- Login window -->
-                        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Login</button>
+                        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">&nbsp;&nbsp;Login&nbsp;&nbsp;</button>
 
                         <!-- Modal-->
                         <div class="modal fade" id="myModal" role="dialog">
@@ -80,17 +64,17 @@
                               </div>
                               <div class="modal-body">
                                 <h2 class="login-welcome">Welcome Back!</h2>
-
+                                <br>
                                 <form action="/login-confirm" id="loginform" method="POST">
-                                    <button class="signup-icons"><i class="fa fa-envelope-o"></i></button>
-                                    <input type="text" id="loginemail" name='email' placeholder="Email address"><br><br>
+                                    <div class="same-size"><button class="signin-buttons"><i class="fa fa-envelope-o fa-lg signin"></i></button>
+                                    <input type="text" id="loginemail" name='email' placeholder="Email address"></div><br><br>
 
-                                    <button class="signup-icons"><i class="fa fa-key"></i></button>
+                                    <button class="signin-buttons"><i class="fa fa-key fa-lg signin"></i></button>
                                     <input type="password" id="loginpassword" name="password" placeholder="Password">
+                                    <br><br>
                                     <p id="login-error" hidden>Your username and password combination are not correct.</p>
 
-                                    <br><br><br>
-                                    <input type="submit" class="get-started-button"> 
+                                    <input type="submit" class="get-started-button" value="&nbsp;&nbsp;&nbsp;&nbsp;Submit&nbsp;&nbsp;&nbsp;&nbsp;"> 
                                 </form>
 
                               </div>
@@ -120,6 +104,14 @@
 
 
     {% block content %} put your content here {% endblock %}
+
+    <br><br><br>
+    <footer class="footsie">
+        <div class="container">
+            <p class="footer-text">Made with <i class="fa fa-heart"></i>, just like grandma's cookies.</p>
+        </div>
+    </footer>
+
 
 </body>
 <script>

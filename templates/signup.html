@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<div class="container">
 <h1 class="myrecipes">We're glad you're here</h1>
 <h3 class="tagline">Just a few short questions and you'll be good to go!</h3>
 <form action="/signup-confirm" id="signup" method="POST">
@@ -21,6 +22,7 @@
     </div> 
 
 </form>
+</div>
 {% endblock %}
 
 {% block script %}
