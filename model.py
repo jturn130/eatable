@@ -332,6 +332,19 @@ class Ingredient(db.Model):
 
         return ingredients
 
+    @classmethod
+    def get_ingredient_data(cls, userid):
+        QUERY = """
+        SELECT item, COUNT(item) FROM ingredients WHERE recipe_id IN
+        (SELECT recipe_id FROM recipes WHERE user_id = :userid)
+        GROUP BY item;
+        """
+
+        cursor = db.session.execute(QUERY, {'userid': userid})
+        ingredient_data = cursor.fetchall()
+
+        return ingredient_data
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 

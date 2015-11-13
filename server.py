@@ -424,6 +424,26 @@ def send_text():
 
     return redirect("/myrecipes/%d" % session['User'])
 
+
+@app.route("/myrecipes/<int:userid>/recipe-data")
+def show_recipe_data(userid):
+
+    return render_template("recipe_data.html", userid=userid)
+
+
+@app.route("/myrecipes/<int:userid>/recipe-data.json")
+def get_recipe_data(userid):
+
+    data = {"name": "flare", "children": []}
+
+    ingredient_data = Ingredient.get_ingredient_data(userid)
+    # print "ing data: ", ingredient_data
+
+    for i in ingredient_data:
+        data["children"].append({"name": i[0], "size": (int(i[1])*100)})
+
+    return jsonify(data)
+
 ################################################################################
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point

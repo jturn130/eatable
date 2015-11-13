@@ -3,31 +3,37 @@
 
     {% if 'User' in session %}
 
-        <h1 class="myrecipes">My Recipes</h1>
+        <h1 class="blue-title">My Recipes</h1>
 
         <!-- puts userid in a hidden input so javascript can access it later -->
         <input type="hidden" id="userinfo" value="{{ userid }}">
 
-        <!-- Add a new recipe -->
-        <button class="newrecipe">
-            <a href="/myrecipes/{{ userid }}/addrecipe"><div id="newrecipe"><i class="fa fa-plus">
-            </i>&nbsp;&nbsp;&nbsp;New Recipe</div></a>
-        </button>
+        <div class="recipe-options">
+            <!-- Add a new recipe -->
+            <button class="newrecipe">
+                <a href="/myrecipes/{{ userid }}/addrecipe"><div id="newrecipe"><i class="fa fa-plus">
+                </i>&nbsp;&nbsp;&nbsp;New Recipe</div></a>
+            </button>
 
-        <!-- Search recipes -->
-        <form id="searchform" action="/myrecipes/{{ userid }}/searchresults" method="GET">
-            <input type='text' id='searchbox' style="width: 300px;"
-             placeholder='Search by recipe title, ingredient, or #hashtag'>
-            <button type="submit" id='searchbutton'><i class='fa fa-search'></i></button>
-        </form>
+            <!-- Search recipes -->
+            <form id="searchform" action="/myrecipes/{{ userid }}/searchresults" method="GET">
+                <input type='text' id='searchbox' style="width: 400px;"
+                 placeholder='Search by recipe title, ingredient, or #hashtag'>
+                <button type="submit" id='searchbutton'><i class='fa fa-search'></i></button>
+            </form>
+        </div>
 
+        <br><br><br><br>
         <!-- List of user recipes -->
         <ul id="recipelist">
+            <h4 class="myrecipes">Recipe Title</h4>
+            <hr>
         {% for recipe in user_recipes %}
             <li>
                 <a href="/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}">
                     {{recipe.recipe_title}}
                 </a>
+                <hr>
             </li>
         {% endfor %} 
         </ul>

@@ -3,7 +3,7 @@
 
     {% if 'User' in session %}
         {% if session['User'] == userid %}
-            <a href="/myrecipes/{{ userid }}">
+            <a class="backtrack" href="/myrecipes/{{ userid }}">
                 <i class="fa fa-angle-double-left"></i>&nbsp;&nbsp;Back to My Recipes
             </a><br>
 
@@ -22,10 +22,10 @@
         {% endif %}
     {% endif %}
 
-    <h1>{{ recipe.recipe_title }}</h1>
+    <h1 class="blue-title">{{ recipe.recipe_title }}</h1>
 
-
-    <h3>Ingredients: </h3>
+    <div class="recipe-info">
+    <h3 class="blue-subtitle">Ingredients: </h3>
     <ul>
     <!-- Doesn't display empty ingredient fields -->
     <!-- Formats fields correctly depending on if they have prep notes -->
@@ -43,22 +43,23 @@
             {% endif %}
         {% endfor %} 
     </ul>
-
-    <h3>Instructions: </h3>
+    <br>
+    <h3 class="blue-subtitle">Instructions: </h3>
         <p style="white-space:pre-wrap;">{{ recipe.instructions }}</p>
 
-    {% if recipe.source != '' %}
-        <h3> Source: </h3>
+    {% if recipe.source and recipe.source != '' %}
+        <h3 class="blue-subtitle"> Source: </h3>
             <p id="recipe-source"> {{ recipe.source|urlize }} </p>
+            <br>
     {% endif %}
-
-    <h3> Hashtags: </h3>
+    <br>
+    <h3 class="blue-subtitle"> Hashtags: </h3>
         <p>
             {% for recipe_hashtag in recipe_hashtags %}
                 #{{recipe_hashtag.hashtags.name}}
             {% endfor %}
         </p>
-
+    </div>
 
 {% endblock %}
 {% block script %}
