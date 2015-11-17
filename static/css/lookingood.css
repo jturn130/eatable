@@ -140,7 +140,6 @@ button.btn.btn-primary.dropdown-toggle, .btn.btn-info.btn-lg {
     clear: both;
 }
 
-
 /*homepage*/
 .jumbotron {
     background: url("/static/images/table.jpg") center center;
@@ -215,9 +214,9 @@ td {
 i.fa.fa-book.fa-5x.homepage::before, i.fa.fa-users.fa-5x.homepage::before,
 i.fa.fa-shopping-cart.fa-5x.homepage::before {
     background-color: #81e6ae;
-    padding: 30px;
+    padding: .3em;
     border-radius: 50%;
-    margin: 80px 30px;
+    margin: .8em .3em;
 }
 
 
@@ -226,7 +225,7 @@ i.fa.fa-shopping-cart.fa-5x.homepage::before {
     padding: 5px 0;
 }
 
-#recipelist {
+.recipebox {
     color: #2ba4a6;
     margin: 0 auto;
     width: 60%;
@@ -240,16 +239,19 @@ i.fa.fa-shopping-cart.fa-5x.homepage::before {
     font-size: 1.2em;
 }
 
-li>hr {
+
+#recipelist>li>hr {
     border: 50% solid gray;
     margin: 7px;
 }
+
 
 .myrecipes {
     color: #2ba4a6;
     font-family: 'Bitter-Regular';
     width: 60%;
     font-size: 2em;
+    padding-left: 20px;
 }
 
 .recipe-options {

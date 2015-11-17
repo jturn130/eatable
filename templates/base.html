@@ -88,16 +88,16 @@
 
     {% with messages = get_flashed_messages() %}
       {% if messages %}
-        <div class="col-md-5 col-sm-6 col-sm-offset-3 col-xs-8 col-xs-offset-2 col-md-offset-0">
-            <div class="alert alert-success alert-dismissable" style="padding-right: 35px;">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                <ul class="flashes">
-                {% for message in messages %}
-                  <li>{{ message }}</li>
-                {% endfor %}
-                </ul>
-            </div>
+      <div class="container">
+        <div class="alert alert-success alert-dismissable" style="display: inline-block; width: 100%; margin: 0 auto;">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <ul class="flashes">
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
         </div>
+      </div>
       {% endif %}
     {% endwith %}
 

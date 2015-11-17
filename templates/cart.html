@@ -21,11 +21,8 @@
                     {% if cart_ings != [] %}
                         <ul>
                             {% for c in cart_ings %}
-                                {% if c.ingredient.quantity and c.ingredient.quantity != '' %}
-                                    {% if not c.ingredient.measure or c.ingredient.measure == '' %}
-
+                                {% if c.ingredient.measure == '' and c.ingredient.quantity != '' %}
                                         <li> {{ c.ingredient.quantity }} {{ c.ingredient.item }} </li>
-                                    {% endif %} 
                                 {% else %}
                                     <li> {{ c.ingredient.item }} </li>
                                 {% endif %}

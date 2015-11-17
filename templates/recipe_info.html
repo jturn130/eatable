@@ -47,10 +47,16 @@
     <h3 class="blue-subtitle">Instructions: </h3>
         <p style="white-space:pre-wrap;">{{ recipe.instructions }}</p>
 
-    {% if recipe.source and recipe.source != '' %}
-        <h3 class="blue-subtitle"> Source: </h3>
-            <p id="recipe-source"> {{ recipe.source|urlize }} </p>
-            <br>
+    {% if recipe.source%}
+        {% if recipe.source != "" %}
+            <h3 class="blue-subtitle"> Source: </h3>
+                {% if recipe.source|urlize %}
+                    <p id="recipe-source"> {{ recipe.source|urlize }} </p>
+                {% else %}
+                    <p id="recipe-source"> {{ recipe.source }} </p>
+                {% endif %}
+                <br>
+        {% endif %}
     {% endif %}
     <br>
     <h3 class="blue-subtitle"> Hashtags: </h3>

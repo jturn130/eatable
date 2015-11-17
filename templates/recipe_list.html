@@ -25,9 +25,10 @@
 
         <br><br><br><br>
         <!-- List of user recipes -->
-        <ul id="recipelist">
+        <div class="recipebox">
             <h4 class="myrecipes">Recipe Title</h4>
             <hr>
+        <ul id="recipelist">
         {% for recipe in user_recipes %}
             <li>
                 <a href="/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}">
@@ -37,6 +38,7 @@
             </li>
         {% endfor %} 
         </ul>
+    </div>
 
     {% endif %}
 {% endblock %}
@@ -67,7 +69,7 @@
                     
                 recipeListString = recipeListString + "<li><a href='/myrecipes/" + $("#userinfo").val() + 
                                    "/recipe/" + array[0][i][0] + "'>" + array[0][i][1]
-                                   + "</a></li>";
+                                   + "</a><hr></li>";
                 }
 
         $("#recipelist").html(recipeListString);

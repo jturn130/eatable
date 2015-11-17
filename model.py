@@ -11,6 +11,8 @@ db = SQLAlchemy()
 ##############################################################################
 # Model definitions
 
+
+############ User class ############
 class User(db.Model):
     """User of Eatable."""
 
@@ -26,7 +28,8 @@ class User(db.Model):
         """Use to see if an account with a given email address already exists."""
 
         try:
-            user_login_info = cls.query.filter_by(email=user_email).one()
+            user_login_info = User.query.filter_by(email=user_email).one()
+
             return user_login_info
 
         except Exception, error:
@@ -40,14 +43,6 @@ class User(db.Model):
 
         db.session.add(new_user)
         db.session.commit()
-
-    @classmethod
-    def validate_email(cls, user_email):
-        """Check if user email/password combination is correct."""
-
-        user_login_info = User.query.filter_by(email=user_email).one()
-
-        return user_login_info
 
     @classmethod
     def get_user_phone(cls, userid):
@@ -65,6 +60,7 @@ class User(db.Model):
         return "<User user_id=%d email=%s phone=%s>" % (self.user_id, self.email, self.mobile_phone)
 
 
+############ Recipe class ############
 class Recipe(db.Model):
     """Eatable recipe for a given user."""
 
@@ -119,6 +115,7 @@ class Recipe(db.Model):
 
     @classmethod
     def get_user_recipe_list(cls, userid):
+        """Get all recipes added by a given user."""
 
         QUERY = """
         SELECT recipe_id, recipe_title FROM recipes WHERE user_id = :userid ORDER BY recipe_title
@@ -166,6 +163,7 @@ class Recipe(db.Model):
         return "<Recipe recipe_id=% user_id=%d recipe_title=%s instructions=%s>" % (self.recipe_id, self.user_id, self.recipe_title, self.instructions)
 
 
+############ Ingredient class ############
 class Ingredient(db.Model):
     """Individual ingredient information for a given recipe."""
 
@@ -269,7 +267,6 @@ class Ingredient(db.Model):
             ings_dict[i].sort()
 
         ings_to_add = ings_dict.values()
-        print "this is ings to add:", ings_to_add
 
         return ings_to_add
 
@@ -290,14 +287,10 @@ class Ingredient(db.Model):
             db.session.add(new_ing)
             db.session.commit()
 
-            print new_ing
-
             new_cart_ing = Cart_Ingredient(ingredient_id=new_ing.ingredient_id, cart_id=cartid)
 
             db.session.add(new_cart_ing)
             db.session.commit()
-
-            print new_cart_ing
 
         return ings_to_add
 
@@ -332,25 +325,13 @@ class Ingredient(db.Model):
 
         return ingredients
 
-    @classmethod
-    def get_ingredient_data(cls, userid):
-        QUERY = """
-        SELECT item, COUNT(item) FROM ingredients WHERE recipe_id IN
-        (SELECT recipe_id FROM recipes WHERE user_id = :userid)
-        GROUP BY item;
-        """
-
-        cursor = db.session.execute(QUERY, {'userid': userid})
-        ingredient_data = cursor.fetchall()
-
-        return ingredient_data
-
     def __repr__(self):
         """Provide helpful representation when printed."""
 
         return "<Ingredient ingredient_id=%d recipe_id=%s quantity=%s measure=%s item=%s prep_notes=%s>" % (self.ingredient_id, self.recipe_id, self.quantity, self.measure, self.item, self.prep_notes)
 
 
+############ Recipe_Hashtag class ############
 class Recipe_Hashtag(db.Model):
     """Associates a hashtag with a specific recipe."""
 
@@ -420,6 +401,7 @@ class Recipe_Hashtag(db.Model):
         return "<Recipe_Hashtag recipe_hashtag_id=%d recipe_id=%d hashtag_id=%d>" % (self.recipe_hashtag_id, self.recipe_id, self.hashtag_id)
 
 
+############ Hashtag class ############
 class Hashtag(db.Model):
     """Where hashtags live."""
 
@@ -505,6 +487,7 @@ class Hashtag(db.Model):
         return "<Hashtag hashtag_id=%d name=%s>" % (self.hashtag_id, self.name)
 
 
+############ Cart_Ingredient class ############
 class Cart_Ingredient(db.Model):
     """Associates an ingredient with a user's cart."""
 
@@ -532,7 +515,6 @@ class Cart_Ingredient(db.Model):
         """Get ingredients in a cart."""
 
         cart_ings = Cart_Ingredient.query.filter_by(cart_id=cartid).all()
-        print "this is cart ings inside class method: ", cart_ings
 
         return cart_ings
 
@@ -551,6 +533,7 @@ class Cart_Ingredient(db.Model):
         return "<Cart_Ingredient cart_ingredient_id=%d cart_id=%d ingredient_id=%d>" % (self.cart_ingredient_id, self.cart_id, self.ingredient_id)
 
 
+############ Cart class ############
 class Cart(db.Model):
     """Cart for a given user."""
 
@@ -587,11 +570,13 @@ class Cart(db.Model):
 ##############################################################################
 # Helper functions
 
-def connect_to_db(app):
+def connect_to_db(app, eatabledata='postgresql://localhost/eatablefaker'):
+
+# def connect_to_db(app, eatabledata='postgresql://localhost/eatabledb'):
     """Connect the database to our Flask app."""
 
     #Switching the PostgreSQL
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/eatabledb'
+    app.config['SQLALCHEMY_DATABASE_URI'] = eatabledata
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
     db.init_app(app)
