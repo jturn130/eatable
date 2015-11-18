@@ -44,6 +44,18 @@ class User(db.Model):
         db.session.add(new_user)
         db.session.commit()
 
+        print "Successfully added new user with the email: %s" % user_email
+
+    @classmethod
+    def delete_user(cls, user_email):
+        """Delete a user from the db."""
+
+        User.query.filter_by(email=user_email).delete()
+
+        db.session.commit()
+
+        print "Successfully deleted user with the email: %s!" % user_email
+
     @classmethod
     def get_user_phone(cls, userid):
         """Get user phone number given user id."""
@@ -79,6 +91,7 @@ class Recipe(db.Model):
 
         db.session.add(new_recipe)
         db.session.commit()
+
         return new_recipe
 
     @classmethod
@@ -160,7 +173,7 @@ class Recipe(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Recipe recipe_id=% user_id=%d recipe_title=%s instructions=%s>" % (self.recipe_id, self.user_id, self.recipe_title, self.instructions)
+        return "<Recipe recipe_id=%d user_id=%d recipe_title=%s instructions=%s>" % (self.recipe_id, self.user_id, self.recipe_title, self.instructions)
 
 
 ############ Ingredient class ############
@@ -244,6 +257,7 @@ class Ingredient(db.Model):
 
             db.session.add(new_ingredient)
             db.session.commit()
+        print "You successfully added ingredients!"
 
     @classmethod
     def get_edited_cart_ings(cls, form):

@@ -18,29 +18,70 @@ Importing model.py for testing, connect to fake database:
     u'9084216628'
 
 
+    >>> User.create_new_user('wat@lol.com', 'lolwat', '9876543210')
+    Successfully added new user with the email: wat@lol.com
+
+
+    >>> User.delete_user('wat@lol.com')
+    Successfully deleted user with the email: wat@lol.com!
+
+
 /////// Recipe class tests ////////
-    >>> Recipe.run_search_query(1,'healthy')
-    [(16, u'Ratatouille', 0.607927), (30, u'Avocado Bean Salad', 0.607927), (31, u'Cajun Collard Greens', 0.607927), (35, u'Garlic Cauliflower "Mashed Potatoes"', 0.607927)]
+
+    >>> Recipe.update_search_vector(14)
+    <Recipe recipe_id=14 user_id=1 recipe_title=Tuscan Kale Stir Fry instructions=Saute all items in a frying pan. Start with mushrooms, then kale, and then heat the beans.>
+
+
+   >>> test = sorted(Recipe.run_search_query(1,'healthy'))
+   >>> test
+   [(16, u'Ratatouille', 0.607927), (30, u'Avocado Bean Salad', 0.607927), (31, u'Cajun Collard Greens', 0.607927), (35, u'Garlic Cauliflower "Mashed Potatoes"', 0.607927), (47, u'Watermelon Salad with Mint', 0.607927)]
+
 
     >>> Recipe.run_search_query(1,'asdkjhsdfhjkfgs')
     []
 
 
+    >>> Recipe.create_new_recipe(13, 'Cereal', 'Combine') # doctest: +ELLIPSIS
+    <Recipe...user_id=13 recipe_title=Cereal instructions=Combine>
+
+
+    >>> Recipe.delete_recipe(154908236)
+    0
+
+
+    >>> edited_recipe = Recipe.edit_recipe(14, 'Tuscan Kale Stir Fry', 'Saute all items in a frying pan. Start with mushrooms, then kale, and then heat the beans.', 'Moi')
+    >>> edited_recipe
+    <Recipe recipe_id=14 user_id=1 recipe_title=Tuscan Kale Stir Fry instructions=Saute all items in a frying pan. Start with mushrooms, then kale, and then heat the beans.>
+
+
     >>> Recipe.get_user_recipe_list(1)
-    [(30, u'Avocado Bean Salad'), (31, u'Cajun Collard Greens'), (32, u'Chocolate Chili'), (10, u'Couscous Salad'), (33, u'Dark Chocolate Pomegranate Bark'), (34, u'French Onion Soup'), (35, u'Garlic Cauliflower "Mashed Potatoes"'), (1, u'Hummus'), (2, u'Pineapple Fried Rice'), (16, u'Ratatouille'), (15, u'Stewy Shrimp with Tomatoes and White Beans'), (14, u'Tuscan Kale Stir Fry')]
+    [(30, u'Avocado Bean Salad'), (31, u'Cajun Collard Greens'), (32, u'Chocolate Chili'), (10, u'Couscous Salad'), (33, u'Dark Chocolate Pomegranate Bark'), (34, u'French Onion Soup'), (35, u'Garlic Cauliflower "Mashed Potatoes"'), (1, u'Hummus'), (2, u'Pineapple Fried Rice'), (16, u'Ratatouille'), (15, u'Stewy Shrimp with Tomatoes and White Beans'), (14, u'Tuscan Kale Stir Fry'), (47, u'Watermelon Salad with Mint')]
 
 
-<Recipe recipe_id= 2ser_id=1 recipe_title=Pineapple Fried Rice instructions=1. Heat coconut oil in a deep frying pan. 2. Add garlic and onion whites. 3. When garlic and onions are fragrant, add red pepper. Cook until soft. 4. Add in rice. When rice is coated in oil, add the pineapple. 5. When rice and pineapple are heated, add tofu and soy sauce. 6. When the tofu is heated, add the onion greens. You're done! >
+    >>> Recipe.get_recipe(14)
+    <Recipe recipe_id=14 user_id=1 recipe_title=Tuscan Kale Stir Fry instructions=Saute all items in a frying pan. Start with mushrooms, then kale, and then heat the beans.>
 
-/////// Recipe class tests ////////
+/////// Ingredient class tests ////////
+
+    >>> Ingredient.get_ingredient_count({'qty1': '1', 'measure1': 'cups', 'item1': 'olive oil', 'item2': 'salt', 'prepnotes2': 'to taste'})
+    2
+
+
+    >>> Ingredient.get_ingredients_to_add(10, {'qty1': '1', 'measure1': 'cups', 'item1': 'olive oil', 'item2': 'salt', 'prepnotes2': 'to taste', 'item3': 'pepper', 'item4': 'eggplant', 'item5': 'tomatoes', 'item6': 'carrots', 'item7': 'onions', 'item8': 'lentils', 'item9': 'fava beans', 'item10': 'lima beans'})
+    {1: ['olive oil', 'cups', '1'], 2: ['salt', 'to taste'], 3: ['pepper'], 4: ['eggplant'], 5: ['tomatoes'], 6: ['carrots'], 7: ['onions'], 8: ['lentils'], 9: ['fava beans'], 10: ['lima beans']}
+
 
     >>> Ingredient.get_recipe_ingredients(1)
     [<Ingredient ingredient_id=140 recipe_id=1 quantity=1 measure=can item=chickpeas prep_notes=drained and rinsed>, <Ingredient ingredient_id=141 recipe_id=1 quantity=1 measure= item=lemon prep_notes=juiced>, <Ingredient ingredient_id=142 recipe_id=1 quantity=1 measure=clove item=garlic prep_notes=minced>, <Ingredient ingredient_id=143 recipe_id=1 quantity= measure= item=olive oil prep_notes=to taste>]
 
 
+    >>> Ingredient.add_ingredient_to_recipe(2, {1: ['olive oil', 'cups', '', '1'], 2: ['salt', '', 'to taste', '']}, 43)
+    You successfully added ingredients!
+
+
     >>> get_ingredients = Ingredient.get_ingredients_by_user(1)
     >>> sorted(get_ingredients)
-    [(u'allspice',), (u'arugula',), (u'avocados',), (u'basil',), (u'bay leaf',), (u'beef broth',), (u'beef broth',), (u'bell peppers',), (u'black pepper',), (u'blackfish magic spice',), (u'brown rice',), (u'butter',), (u'butter or ghee',), (u'candied ginger',), (u'cauliflower',), (u'celery',), (u'chickpeas',), (u'chickpeas',), (u'chili powder',), (u'cocoa',), (u'coconut oil',), (u'coconut oil',), (u'collard greens',), (u'coriander',), (u'couscous',), (u'cucumber',), (u'dark chocolate',), (u'diced tomatoes',), (u'diced tomatoes',), (u'diced tomatoes',), (u'diced tomatoes',), (u'dijon mustard',), (u'dry white wine',), (u'eggplant',), (u'frozen corn',), (u'garlic',), (u'garlic',), (u'garlic',), (u'garlic',), (u'garlic',), (u'garlic',), (u'garlic',), (u'green onions',), (u'green onions',), (u'green pepper',), (u'ground beef',), (u'ground cumin',), (u'large shrimp',), (u'lemon',), (u'lemon juice',), (u'limes',), (u'medium tomatoes',), (u'mushrooms',), (u'nutmeg',), (u'olive oil',), (u'olive oil',), (u'olive oil',), (u'olive oil',), (u'olive oil',), (u'olive oil',), (u'olive oil',), (u'onion',), (u'onion',), (u'onions',), (u'oregano',), (u'oregano',), (u'parsley',), (u'pepper',), (u'pepper',), (u'pepper',), (u'pineapple',), (u'pomegranate',), (u'red pepper',), (u'red pepper flakes',), (u'roasted red peppers',), (u'salt',), (u'salt',), (u'salt',), (u'salt',), (u'salt',), (u'salt',), (u'sea salt',), (u'soy sauce',), (u'thyme',), (u'tofu',), (u'tomato paste',), (u'tuscan kale',), (u'water',), (u'white beans',), (u'yellow onions',), (u'zucchini',)]
+    [(u'allspice',), (u'arugula',), (u'avocados',), (u'basil',), (u'basil',), (u'bay leaf',), (u'beef broth',), (u'beef broth',), (u'bell peppers',), (u'black pepper',), (u'blackfish magic spice',), (u'brown rice',), (u'butter',), (u'butter or ghee',), (u'candied ginger',), (u'cauliflower',), (u'celery',), (u'chickpeas',), (u'chickpeas',), (u'chili powder',), (u'cocoa',), (u'coconut oil',), (u'coconut oil',), (u'collard greens',), (u'coriander',), (u'couscous',), (u'cucumber',), (u'dark chocolate',), (u'diced tomatoes',), (u'diced tomatoes',), (u'diced tomatoes',), (u'diced tomatoes',), (u'dijon mustard',), (u'dry white wine',), (u'eggplant',), (u'frozen corn',), (u'garlic',), (u'garlic',), (u'garlic',), (u'garlic',), (u'garlic',), (u'garlic',), (u'garlic',), (u'grape tomatoes',), (u'green onions',), (u'green onions',), (u'green pepper',), (u'ground beef',), (u'ground cumin',), (u'large shrimp',), (u'lemon',), (u'lemon juice',), (u'limes',), (u'medium tomatoes',), (u'mint',), (u'mushrooms',), (u'nutmeg',), (u'olive oil',), (u'olive oil',), (u'olive oil',), (u'olive oil',), (u'olive oil',), (u'olive oil',), (u'olive oil',), (u'olive oil',), (u'onion',), (u'onion',), (u'onions',), (u'oregano',), (u'oregano',), (u'parsley',), (u'pepper',), (u'pepper',), (u'pepper',), (u'pineapple',), (u'pomegranate',), (u'red pepper',), (u'red pepper flakes',), (u'roasted red peppers',), (u'salt',), (u'salt',), (u'salt',), (u'salt',), (u'salt',), (u'salt',), (u'salt',), (u'sea salt',), (u'soy sauce',), (u'thyme',), (u'tofu',), (u'tomato paste',), (u'tuscan kale',), (u'water',), (u'watermelon',), (u'white beans',), (u'white vinegar',), (u'yellow onions',), (u'zucchini',)]
 
 
 /////// Recipe_Hashtag class tests ////////
@@ -57,7 +98,7 @@ Importing model.py for testing, connect to fake database:
 
     >>> hashtag_recipes = Recipe_Hashtag.get_user_recipes_given_hashtag(1, 'healthy')
     >>> sorted(hashtag_recipes)
-    [(u'Avocado Bean Salad', 30), (u'Cajun Collard Greens', 31), (u'Garlic Cauliflower "Mashed Potatoes"', 35), (u'Ratatouille', 16)]
+    [(u'Avocado Bean Salad', 30), (u'Cajun Collard Greens', 31), (u'Garlic Cauliflower "Mashed Potatoes"', 35), (u'Ratatouille', 16), (u'Watermelon Salad with Mint', 47)]
 
 
 /////// Hashtag class tests ////////
@@ -65,6 +106,9 @@ Importing model.py for testing, connect to fake database:
     >>> get_hashtags = Hashtag.get_hashtags_by_user(1)
     >>> sorted(get_hashtags)
     [(u'avocado',), (u'cajun',), (u'chinese',), (u'chocolate',), (u'comfortfood',), (u'cool',), (u'dessert',), (u'doitdelicious',), (u'easy',), (u'healthy',), (u'kale',), (u'lunch',), (u'meat',), (u'mom',), (u'myown',), (u'paleo',), (u'pomegranate',), (u'seafood',), (u'shrimp',), (u'soup',), (u'stew',), (u'vegan',), (u'vegetarian',), (u'wine',)]
+
+    >>> Hashtag.query.filter_by(name='kale').one()
+    <Hashtag hashtag_id=8 name=kale>
 
 
 /////// Cart_Ingredient class tests ////////

@@ -284,6 +284,9 @@ def create_new_recipe(userid):
 @app.route("/recipe-confirm", methods=["POST"])
 def add_new_recipe():
     """Add new recipe to the database."""
+
+    print "this is request.form: ", request.form
+
     try:
         ###### Recipe Table Section ######
         user_id = session['User']
@@ -341,8 +344,6 @@ def display_cart(userid, cartid):
     """Display items in a user's cart."""
 
     cart_ings = Cart_Ingredient.get_cart_ingredients(cartid)
-
-    print cart_ings
 
     return render_template("cart.html", userid=userid, cart_ings=cart_ings)
 
