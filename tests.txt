@@ -84,6 +84,13 @@ Importing model.py for testing, connect to fake database:
     [(u'allspice',), (u'arugula',), (u'avocados',), (u'basil',), (u'basil',), (u'bay leaf',), (u'beef broth',), (u'beef broth',), (u'bell peppers',), (u'black pepper',), (u'blackfish magic spice',), (u'brown rice',), (u'butter',), (u'butter or ghee',), (u'candied ginger',), (u'cauliflower',), (u'celery',), (u'chickpeas',), (u'chickpeas',), (u'chili powder',), (u'cocoa',), (u'coconut oil',), (u'coconut oil',), (u'collard greens',), (u'coriander',), (u'couscous',), (u'cucumber',), (u'dark chocolate',), (u'diced tomatoes',), (u'diced tomatoes',), (u'diced tomatoes',), (u'diced tomatoes',), (u'dijon mustard',), (u'dry white wine',), (u'eggplant',), (u'frozen corn',), (u'garlic',), (u'garlic',), (u'garlic',), (u'garlic',), (u'garlic',), (u'garlic',), (u'garlic',), (u'grape tomatoes',), (u'green onions',), (u'green onions',), (u'green pepper',), (u'ground beef',), (u'ground cumin',), (u'large shrimp',), (u'lemon',), (u'lemon juice',), (u'limes',), (u'medium tomatoes',), (u'mint',), (u'mushrooms',), (u'nutmeg',), (u'olive oil',), (u'olive oil',), (u'olive oil',), (u'olive oil',), (u'olive oil',), (u'olive oil',), (u'olive oil',), (u'olive oil',), (u'onion',), (u'onion',), (u'onions',), (u'oregano',), (u'oregano',), (u'parsley',), (u'pepper',), (u'pepper',), (u'pepper',), (u'pineapple',), (u'pomegranate',), (u'red pepper',), (u'red pepper flakes',), (u'roasted red peppers',), (u'salt',), (u'salt',), (u'salt',), (u'salt',), (u'salt',), (u'salt',), (u'salt',), (u'sea salt',), (u'soy sauce',), (u'thyme',), (u'tofu',), (u'tomato paste',), (u'tuscan kale',), (u'water',), (u'watermelon',), (u'white beans',), (u'white vinegar',), (u'yellow onions',), (u'zucchini',)]
 
 
+    >>> sorted(Ingredient.get_edited_cart_ings({'qty1': '1', 'measure1': 'cups', 'item1': 'olive oil', 'item2': 'salt', 'prepnotes2': 'to taste', 'item3': 'pepper', 'item4': 'eggplant', 'item5': 'tomatoes', 'item6': 'carrots', 'item7': 'onions', 'item8': 'lentils', 'item9': 'fava beans', 'item10': 'lima beans', 'prepnotes10': 'drained'}))
+    [[['item1', 'olive oil'], ['measure1', 'cups'], ['qty1', '1']], [['item10', 'lima beans'], ['prepnotes10', 'drained']], [['item2', 'salt'], ['prepnotes2', 'to taste']], [['item3', 'pepper']], [['item4', 'eggplant']], [['item5', 'tomatoes']], [['item6', 'carrots']], [['item7', 'onions']], [['item8', 'lentils']], [['item9', 'fava beans']]]
+
+
+    >>> Ingredient.add_edited_cart_ings_to_db([[['item1', 'olive oil'], ['measure1', 'cups'], ['qty1', '1']], [['item10', 'lima beans'], ['prepnotes10', 'drained']], [['item2', 'salt'], ['prepnotes2', 'to taste']], [['item3', 'pepper']], [['item4', 'eggplant']], [['item5', 'tomatoes']], [['item6', 'carrots']], [['item7', 'onions']], [['item8', 'lentils']], [['item9', 'fava beans']], [['qty10', '3']]], 198)
+    [[['item1', 'olive oil'], ['measure1', 'cups'], ['qty1', '1']], [['item10', 'lima beans'], ['prepnotes10', 'drained']], [['item2', 'salt'], ['prepnotes2', 'to taste']], [['item3', 'pepper']], [['item4', 'eggplant']], [['item5', 'tomatoes']], [['item6', 'carrots']], [['item7', 'onions']], [['item8', 'lentils']], [['item9', 'fava beans']], [['qty10', '3']]]
+
 /////// Recipe_Hashtag class tests ////////
 
     >>> Recipe_Hashtag.get_recipe_hashtags(1)
@@ -101,22 +108,47 @@ Importing model.py for testing, connect to fake database:
     [(u'Avocado Bean Salad', 30), (u'Cajun Collard Greens', 31), (u'Garlic Cauliflower "Mashed Potatoes"', 35), (u'Ratatouille', 16), (u'Watermelon Salad with Mint', 47)]
 
 
+    >>> Recipe_Hashtag.create_new_recipe_hashtag(68, [8, 14, 2])
+    You successfully created a recipe hashtag!
+
+    >>> Recipe_Hashtag.delete_old_recipe_hashtags(68)
+    You successfully deleted this recipe's recipe_hashtags!
+
+
 /////// Hashtag class tests ////////
 
     >>> get_hashtags = Hashtag.get_hashtags_by_user(1)
     >>> sorted(get_hashtags)
     [(u'avocado',), (u'cajun',), (u'chinese',), (u'chocolate',), (u'comfortfood',), (u'cool',), (u'dessert',), (u'doitdelicious',), (u'easy',), (u'healthy',), (u'kale',), (u'lunch',), (u'meat',), (u'mom',), (u'myown',), (u'paleo',), (u'pomegranate',), (u'seafood',), (u'shrimp',), (u'soup',), (u'stew',), (u'vegan',), (u'vegetarian',), (u'wine',)]
 
+
     >>> Hashtag.query.filter_by(name='kale').one()
     <Hashtag hashtag_id=8 name=kale>
+
+
+    >>> Hashtag.get_hashtag_id(['kale', 'healthy', 'vegan'])
+    [8, 14, 2]
+
+    >>> Hashtag.get_hashtag_id(['testing123']) # doctest: +ELLIPSIS
+    [...]
+
+
+    >>> Hashtag.delete_hashtag_entry('testing123')
+    You successfully deleted this hashtag!
 
 
 /////// Cart_Ingredient class tests ////////
 
     >>> Cart_Ingredient.get_cart_ingredients(22)
-    [<Cart_Ingredient cart_ingredient_id=262 cart_id=22 ingredient_id=345>, <Cart_Ingredient cart_ingredient_id=263 cart_id=22 ingredient_id=346>, <Cart_Ingredient cart_ingredient_id=264 cart_id=22 ingredient_id=347>, <Cart_Ingredient cart_ingredient_id=265 cart_id=22 ingredient_id=348>, <Cart_Ingredient cart_ingredient_id=266 cart_id=22 ingredient_id=349>, <Cart_Ingredient cart_ingredient_id=267 cart_id=22 ingredient_id=350>, <Cart_Ingredient cart_ingredient_id=268 cart_id=22 ingredient_id=351>, <Cart_Ingredient cart_ingredient_id=269 cart_id=22 ingredient_id=352>, <Cart_Ingredient cart_ingredient_id=270 cart_id=22 ingredient_id=353>, <Cart_Ingredient cart_ingredient_id=271 cart_id=22 ingredient_id=354>, <Cart_Ingredient cart_ingredient_id=272 cart_id=22 ingredient_id=355>, <Cart_Ingredient cart_ingredient_id=273 cart_id=22 ingredient_id=356>, <Cart_Ingredient cart_ingredient_id=274 cart_id=22 ingredient_id=357>]
+    [<Cart_Ingredient cart_ingredient_id=275 cart_id=22 ingredient_id=438>, <Cart_Ingredient cart_ingredient_id=276 cart_id=22 ingredient_id=439>, <Cart_Ingredient cart_ingredient_id=277 cart_id=22 ingredient_id=440>, <Cart_Ingredient cart_ingredient_id=278 cart_id=22 ingredient_id=441>, <Cart_Ingredient cart_ingredient_id=279 cart_id=22 ingredient_id=442>, <Cart_Ingredient cart_ingredient_id=280 cart_id=22 ingredient_id=443>, <Cart_Ingredient cart_ingredient_id=281 cart_id=22 ingredient_id=444>, <Cart_Ingredient cart_ingredient_id=282 cart_id=22 ingredient_id=445>, <Cart_Ingredient cart_ingredient_id=283 cart_id=22 ingredient_id=446>, <Cart_Ingredient cart_ingredient_id=284 cart_id=22 ingredient_id=447>, <Cart_Ingredient cart_ingredient_id=285 cart_id=22 ingredient_id=448>, <Cart_Ingredient cart_ingredient_id=286 cart_id=22 ingredient_id=449>, <Cart_Ingredient cart_ingredient_id=287 cart_id=22 ingredient_id=450>]
 
 
+    >>> Cart_Ingredient.create_new_cart_ingredient(209,97) # doctest: +ELLIPSIS
+    <Cart_Ingredient ... cart_id=209 ingredient_id=97>
+
+
+    >>> Cart_Ingredient.delete_old_cart_ingredients(209)
+    You have successfully deleted the old cart ingredients
 
 /////// Cart class tests ////////
 

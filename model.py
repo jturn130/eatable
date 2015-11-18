@@ -368,6 +368,8 @@ class Recipe_Hashtag(db.Model):
             db.session.add(new_recipe_hashtag)
             db.session.commit()
 
+        print "You successfully created a recipe hashtag!"
+
     @classmethod
     def get_recipe_hashtags(cls, recipeid):
         """Get the recipe_hashtags given the recipe_id."""
@@ -389,9 +391,10 @@ class Recipe_Hashtag(db.Model):
     def delete_old_recipe_hashtags(cls, recipeid):
         """Delete the old recipe_hashtags when editing recipe."""
 
-        recipe_hashtags_to_delete = Recipe_Hashtag.query.filter_by(recipe_id=recipeid).delete()
+        Recipe_Hashtag.query.filter_by(recipe_id=recipeid).delete()
 
-        return recipe_hashtags_to_delete
+        db.session.commit()
+        print "You successfully deleted this recipe's recipe_hashtags!"
 
     @classmethod
     def get_user_recipes_given_hashtag(cls, userid, hashtag):
@@ -453,6 +456,14 @@ class Hashtag(db.Model):
                 hashtag_id_list.append(hashtag_id)
 
         return hashtag_id_list
+
+    @classmethod
+    def delete_hashtag_entry(cls, hashtag_name):
+
+        Hashtag.query.filter_by(name=hashtag_name).delete()
+
+        db.session.commit()
+        print "You successfully deleted this hashtag!"
 
     @classmethod
     def get_readable_hashtags(cls, hashtag_list):
@@ -536,10 +547,10 @@ class Cart_Ingredient(db.Model):
     def delete_old_cart_ingredients(cls, cartid):
         """Delete old cart ingredients after user has edited cart."""
 
-        deleted_cart_ingredients = Cart_Ingredient.query.filter_by(cart_id=cartid).delete()
+        Cart_Ingredient.query.filter_by(cart_id=cartid).delete()
 
         db.session.commit()
-        return deleted_cart_ingredients
+        print "You have successfully deleted the old cart ingredients"
 
     def __repr__(self):
         """Provide helpful representation when printed."""

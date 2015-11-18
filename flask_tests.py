@@ -184,6 +184,100 @@ class FlaskTests(unittest.TestCase):
         result = self.edit_cart(1, 22)
         self.assertIn('Edit Cart', result.data)
 
+    def new_recipe_confirm(self, userid, cartid):
+        with self.client.session_transaction() as sess:
+
+            sess['User'] = 14
+            sess['Cart'] = cartid
+
+        return self.client.post('/recipe-confirm',
+                                data={'qty1': '1', 'measure1': 'cups', 'item1': 'olive oil', 'prepnotes1': 'to taste', 'recipetitle': 'Test Recipe', 'instructions': 'Mix', 'source': 'Moi', 'hashtags': '#easy'},
+                                follow_redirects=True)
+
+    def test_new_recipe_confirm(self):
+        """Can a new recipe be added to the db?"""
+
+        result = self.new_recipe_confirm(14, 209)
+        self.assertIn('Hooray!', result.data)
+
+    def bad_recipe_confirm(self, userid, cartid):
+        with self.client.session_transaction() as sess:
+
+            sess['User'] = 14
+            sess['Cart'] = cartid
+
+        return self.client.post('/recipe-confirm',
+                                data={'qty1': 1, 'measure1': 'cups', 'item1': 'olive oil', 'prepnotes1': 'to taste', 'instructions': 'Mix', 'source': 'Moi', 'hashtags': '#easy'},
+                                follow_redirects=True)
+
+    def test_bad_recipe_confirm(self):
+        """Does a bad attempt at adding a recipe redirect to the homepage?"""
+
+        result = self.bad_recipe_confirm(14, 209)
+        self.assertIn('Take your recipes', result.data)
+
+    def recipe_edit_confirm(self, userid, cartid, recipeid):
+        with self.client.session_transaction() as sess:
+
+            sess['User'] = userid
+            sess['Cart'] = cartid
+
+        return self.client.post('/myrecipes/%d/recipe/%d/edit-confirm' % (userid, recipeid),
+                                data={'qty1': '1', 'measure1': 'cups', 'item1': 'olive oil', 'prepnotes1': 'to taste', 'recipetitle': 'Test Recipe', 'instructions': 'Mix', 'source': 'Moi', 'hashtags': '#easy'},
+                                follow_redirects=True)
+
+    def test_recipe_edit_confirm(self):
+        """Can an edited recipe be updated in the db?"""
+
+        result = self.recipe_edit_confirm(14, 209, 74)
+        self.assertIn('You have successfully edited your recipe', result.data)
+
+    def add_a_recipe_to_cart(self, recipeid, userid, cartid):
+        Cart_Ingredient.query.filter_by(cart_id=cartid).delete()
+
+        with self.client.session_transaction() as sess:
+
+            sess['User'] = userid
+            sess['Cart'] = cartid
+
+        return self.client.get('/myrecipes/%d/recipe/%d/addtocart' % (userid, recipeid), follow_redirects=True)
+
+    def test_add_a_recipe_to_cart(self):
+        """Can you add a recipe's ingredients to your grocery cart?"""
+
+        result = self.add_a_recipe_to_cart(68, 14, 209)
+        self.assertIn('added your recipe to your grocery cart.', result.data)
+
+    def edited_cart_update(self, userid, cartid):
+            with self.client.session_transaction() as sess:
+
+                sess['User'] = userid
+                sess['Cart'] = cartid
+
+            return self.client.post('/myrecipes/%d/cart/%d/edit-confirm' % (userid, cartid),
+                                    data={'qty1': '1', 'item1': 'olive oil', 'item2': 'salt', 'item3': 'pepper', 'item4': 'eggplant', 'item5': 'tomatoes', 'item6': 'carrots', 'item7': 'onions', 'item8': 'lentils', 'item9': 'fava beans', 'item10': 'lima beans'},
+                                    follow_redirects=True)
+
+    def test_edited_cart_update(self):
+        """Can a user successfully edit their grocery cart?"""
+
+        result = self.edited_cart_update(14, 209)
+        self.assertIn('My Cart', result.data)
+
+    def cart_delete(self, userid, cartid):
+        with self.client.session_transaction() as sess:
+
+            sess['User'] = userid
+
+        return self.client.get('/myrecipes/%d/cart/%d/deletecart' % (userid, cartid), follow_redirects=True)
+
+    def test_cart_delete(self):
+        """Can a user successfully create a new cart?"""
+
+        result = self.cart_delete(14, 209)
+        self.assertIn('Parting is such sweet sorrow', result.data)
+
+
 ################################################################################
 
 if __name__ == '__main__':
