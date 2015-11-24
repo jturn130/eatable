@@ -1,3 +1,4 @@
+**This file tests all of my class methods**
 
 Importing model.py for testing, connect to fake database:
 

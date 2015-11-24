@@ -9,24 +9,24 @@
              <div>
                 <!-- Ingredient Quantity -->
                  <span> Qty: </span>
-                 <input type="text" class="qty" name="qty" style="width: 50px;">
+                 <input type="text" class="cartqty" name="qty" style="width: 50px;">
                  
                  <!-- Ingredient Item -->
                  <span> Item: </span> 
-                 <input type="text" class="item" name="item">
+                 <input type="text" class="cartitem" name="item">
 
                  <!-- Delete Ingredient -->
-                 <button type="button" class="deleteing" name="del"><i class="fa fa-trash-o"></i></button><br>
+                 <button type="button" class="deleteing" name="del"><i class="fa fa-trash-o trash-ing"></i></button><hr style="margin: 5px 0; visibility:hidden;" />
              </div>
          </div> 
 
 
-        <h1> Edit Cart </h1>
+        <h1 class="blue-title"> Edit Cart </h1>
 
         <form action="/myrecipes/{{ userid }}/cart/{{ session['Cart'] }}/edit-confirm" method="POST" id="edit-ingredient-form">
 
         <div id="ingredient-section">
-            <h3> Cart Items </h3>
+            <h3 class="blue-subtitle"> Cart Items </h3>
 
             <p id="one-ing-msg" style="display: none;">
               Your cart needs to have at least one ingredient.</p>
@@ -40,16 +40,16 @@
 
                                     <!-- Ingredient Quantity -->
                                     <span> Qty: </span>
-                                    <input type="text" class="qty" name="qty{{ loop.index }}" value="{{ c.ingredient.quantity }}" style="width: 50px;">
+                                    <input type="text" class="cartqty" name="qty{{ loop.index }}" value="{{ c.ingredient.quantity }}" style="width: 50px;">
 
                                     <!-- Ingredient Item -->
                                     <span> Item: </span>
-                                    <input type="text" class="item" name="item{{ loop.index }}" value="{{ c.ingredient.item }}">
+                                    <input type="text" class="cartitem" name="item{{ loop.index }}" value="{{ c.ingredient.item }}">
                                     
                                     <!-- Delete Ingredient -->
                                     <button type="button" class="deleteing" name="{{ loop.index }}">
-                                      <i class="fa fa-trash-o"></i>
-                                    </button><br>
+                                      <i class="fa fa-trash-o trash-ing"></i>
+                                    </button><hr style="margin: 5px 0; visibility:hidden;" />
 
                                   </div> <!-- loop index div -->
                             {% else %}
@@ -57,16 +57,16 @@
 
                                   <!-- Ingredient Quantity -->
                                   <span> Qty: </span>
-                                  <input type="text" class="qty" name="qty{{ loop.index }}" style="width: 50px;">
+                                  <input type="text" class="cartqty" name="qty{{ loop.index }}" style="width: 50px;">
 
                                   <!-- Ingredient Item -->
                                   <span> Item: </span>
-                                  <input type="text" class="item" name="item{{ loop.index }}" value="{{ c.ingredient.item }}">
+                                  <input type="text" class="cartitem" name="item{{ loop.index }}" value="{{ c.ingredient.item }}">
                                   
                                   <!-- Delete Ingredient -->
                                   <button type="button" class="deleteing" name="{{ loop.index }}">
-                                    <i class="fa fa-trash-o"></i>
-                                  </button><br>
+                                    <i class="fa fa-trash-o trash-ing"></i>
+                                  </button><hr style="margin: 5px 0; visibility:hidden;" />
 
                                 </div> <!-- loop index div -->
                             {% endif %}
@@ -74,14 +74,14 @@
                       </div> <!-- div for ingredient-field -->
                     </ul>
                   </div> <!-- div for #ingredient-section -->
-        <button type="button" id="add-more">+ Add another ingredient</button><br>
+        <div class="center-button"><button type="button" id="add-more">+ Add another ingredient</button></div><br><br><br>
         <p id="cart-ingredient-msg" hidden>
           You can't add any more ingredients to your cart. Baby steps.
         </p>
 
         
         <!-- Submit edited form -->
-        <input type="submit" class="confirmcart" value="Submit Cart Changes">
+        <div class="center-button"><input type="submit" class="confirmcart" value="Submit Cart Changes"></div>
         </form>
     {% else %}
         <h3> You don't have any items in your cart yet. </h3>
@@ -133,8 +133,8 @@
         new_ingredient_field.appendTo(".ingredient-field");
 
        // this allows us make unique names for different ingredients
-       $('.qty', new_ingredient_field).attr('name', 'qty' + index); 
-       $('.item', new_ingredient_field).attr('name', 'item' + index); 
+       $('.cartqty', new_ingredient_field).attr('name', 'qty' + index); 
+       $('.cartitem', new_ingredient_field).attr('name', 'item' + index); 
        $('.deleteing', new_ingredient_field).attr('name', index);
        $('div', new_ingredient_field).attr('class', index);
        $(new_ingredient_field).contents().unwrap();

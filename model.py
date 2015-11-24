@@ -339,6 +339,23 @@ class Ingredient(db.Model):
 
         return ingredients
 
+    @classmethod
+    def get_ingredient_counts_by_user(cls, userid):
+        """Get a list of ingredients and how often they appear in a user's account."""
+
+        QUERY = """
+                SELECT item, COUNT(item)
+                FROM ingredients
+                WHERE recipe_id IN (SELECT recipe_id FROM recipes WHERE user_id= :userid)
+                GROUP BY item
+                ORDER BY COUNT(item) DESC
+                """
+
+        cursor = db.session.execute(QUERY, {'userid': userid})
+        ingredients_count = cursor.fetchall()
+
+        return ingredients_count
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 

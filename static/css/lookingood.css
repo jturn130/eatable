@@ -76,7 +76,7 @@ button.btn.btn-primary.dropdown-toggle, .btn.btn-info.btn-lg {
     color: #2ba4a6;
 }
 
-.signin-buttons {
+.signin-buttons, .deleteing {
     background-color: #2ba4a6;
     border: 0;
     width: 30px;
@@ -85,7 +85,7 @@ button.btn.btn-primary.dropdown-toggle, .btn.btn-info.btn-lg {
     border-radius: 2px;
 }
 
-.fa.signin, .fa-search {
+.fa.signin, .fa-search, .signup-icon, .trash-ing {
     color: white;
     display: inline;
 }
@@ -105,17 +105,28 @@ button.btn.btn-primary.dropdown-toggle, .btn.btn-info.btn-lg {
 
 
 /*footer*/
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin: 0 0 3em;
+}
+
 .footsie {
+    position: absolute;
     background-color: #2ba4a6;
     bottom: 0;
     width: 100%;
+    height: 3em;
 }
 
 .footer-text {
     text-align: right;
     color: white;
     font-family: Helvetica;
-    margin: .75em .5em;
+    margin: .75em .25em;
     padding-right: 0;
 }
 
@@ -163,7 +174,7 @@ button.btn.btn-primary.dropdown-toggle, .btn.btn-info.btn-lg {
 }
 
 .get-started-button, .get-started-button:hover, .get-started-text,
-.get-started-text:hover, .newrecipe, #newrecipe, #add-more, .confirmrecipe {
+.get-started-text:hover, .newrecipe, #newrecipe, .confirmrecipe, .confirmcart {
     background-color: #81e6ae;
     color: white;
     font-family: Helvetica;
@@ -219,6 +230,50 @@ i.fa.fa-shopping-cart.fa-5x.homepage::before {
     margin: .8em .3em;
 }
 
+/*signup page styling*/
+.tagline {
+    color: #2ba4a6;
+    font-family: 'Bitter-Regular';
+    font-size: 1.7em;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+input.signup {
+    width: 80%;
+    height: 30px;
+    display: inline;
+    margin: 0 auto;
+}
+
+.signup-field {
+    margin: 0 auto;
+    padding: 0;
+    display: inline;
+}
+
+#signup {
+    margin: 0 auto;
+    width: 50%;
+}
+
+.signup-form {
+    width: 100%;
+    margin: 0 auto;
+    display: inline;
+}
+
+#signup-submit {
+    padding: 8px 20px;
+    font-size: 1em;
+    margin: 0 auto;
+}
+
+#email-error, #password1-error, #passwordcheck-error, #phone-error,
+#recipetitle-error, #instructions-error, #hashtags-error {
+    color: #8e8e8e;
+    display: block;
+}
 
 /*recipe home styling*/
 #newrecipe, #add-more, .confirmrecipe {
@@ -333,7 +388,7 @@ i.fa.fa-shopping-cart.fa-5x.homepage::before {
 
 /*add new recipe styling*/
 #new-recipe-form, .recipe-info {
-    width: 90%;
+    width: 80%;
     margin: 0 auto;
 }
 
@@ -354,17 +409,130 @@ i.fa.fa-shopping-cart.fa-5x.homepage::before {
     padding: 2em;
 }
 
-/*recipe data*/
-
-svg {
-    width: 100%;
-    height: 50%;
+#new-recipe-form>h5, #edit-recipe-form>h5 {
+    color: #8e8e8e;
 }
 
-circle {
-    fill: #81e6ae;
+/*recipe info styling*/
+
+.recipe-info-menu>br {
+    display: none;
 }
 
-circle:hover {
-    fill: #2ba4a6;
+.recipe-action, .recipe-action>a, .cart-action, .cart-action>a {
+    background-color: white;
+    border-color: #81e6ae;
+    border-radius: 18px;
+    border: 3px solid;
+    color: #81e6ae;
+    font-family: Helvetica;
+    font-size: .7em;
+    padding: 4px 8px;
 }
+
+.recipe-action>a, .cart-action>a {
+    border: none;
+    padding: 0;
+    font-size: 1em;
+}
+
+.button-line, .button-line>tbody, .button-line>tr {
+    white-space: normal;
+    float: right;
+    margin-right: 5px;
+}
+
+
+.backtrack {
+    margin: 1em 0 0 0;
+    padding: 2em 5px 0 5px;
+    font-size: 1.2em;
+}
+
+.recipe-info>ul, .recipe-info>p {
+    color: #8e8e8e;
+    font-size: 1.2em;
+}
+
+#recipe-info-title {
+    padding-top: .4em; 
+}
+
+
+/*edit recipe styling*/
+
+
+
+
+/*cart styling*/
+.cart-list {
+    color: #8e8e8e;
+    font-size: 1.2em;
+    width: 50%;
+    margin: 0 auto;
+}
+
+/*edit cart styling*/
+
+#ingredient-section {
+    font-size: 1.1em;
+    width: 50%;
+    margin: 0 auto;    
+}
+
+.ingredient-field {
+    color: #2ba4a6;
+    font-family: 'Bitter-Regular';
+}
+
+.cartitem, .cartqty{
+    color: black;
+    font-family: Helvetica;
+}
+
+#add-more {
+    margin: 0 auto;
+    padding: 6px 12px;
+    text-align: center;
+    border-radius: 3px;
+    border: none; 
+    color: white;
+    background-color: #2ba4a6;
+}
+
+#edit-ingredient-form {
+    margin: 0 auto;
+}
+
+.confirmcart {
+    padding: 7px 14px;
+    font-size: 1.2em;
+    margin: 0 auto;
+}
+
+.center-button {
+    text-align: center;
+}
+
+#edit-recipe-form {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.edit-recipe-ingredient-field {
+    color: #2ba4a6;
+    font-family: 'Bitter-Regular';
+    font-size: 1.1em;
+}
+
+.edit-recipe-ingredient-field>input {
+    color: black;
+    font-family: Helvetica;
+    margin-right: .3em;
+}
+
+#submit-recipe-edit {
+    padding: 6px 12px;
+    font-size: 1.3em;
+}
+

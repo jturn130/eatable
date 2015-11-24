@@ -3,65 +3,65 @@
 
 {% if 'User' in session %}
     {% if session['User'] == userid %}
-        <a href="/myrecipes/{{ userid }}"> Back to My Recipes </a><br>
+        <a class="backtrack" href="/myrecipes/{{ userid }}"><i class="fa fa-angle-double-left"></i>&nbsp;&nbsp;Back to My Recipes </a><br>
 
         <div id="template-input" style="display: none;">
          <!-- This is the ingredient prototype that will duplicate when the user clicks on the "Add another ingredient" button -->
-             <div>
+             <div class="edit-recipe-ingredient-field">
                  Qty: <input type="text" class="qty" name="qty" style="width: 50px;">
                  Measure: <input type="text" class="measure" name="measure">
                  Item: <input type="text" class="item" name="item">
-                 Prep Notes: <input type="text" class="prepnotes" name="prepnotes">
+                 Prep Notes: <input type="text" class="prepnotes" name="prepnotes"><br><br>
              </div>
          </div> 
 
 
-        <h1> Edit recipe </h1>
+        <h1 class="blue-title"> Edit recipe </h1>
 
         <form action="/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}/edit-confirm" method="POST" id="edit-recipe-form">
-            <h3> Recipe Title: </h3> <input type="text" name="recipetitle" value="{{ recipe.recipe_title }}" style="width: 300px;"><br><br>
+            <h3 class="blue-subtitle"> Recipe Title: </h3> <input type="text" name="recipetitle" value="{{ recipe.recipe_title }}" style="width: 300px;"><br><br>
 
-            <div id="ingredient-section">
-                <h3> Ingredients: </h3>
+            <div id="edit-ingredient-section">
+                <h3 class="blue-subtitle"> Ingredients: </h3>
 
                 {% for ingredient in ingredients %}
                     {% if ingredient.item != '' %}
-                        <div class="ingredient-field">
+                        <div class="edit-recipe-ingredient-field">
                             Qty: <input type="text" class="qty" name="qty{{ loop.index }}" value="{{ ingredient.quantity }}" style="width: 50px;">
                             Measure: <input type="text" class="measure" name="measure{{ loop.index }}" value="{{ ingredient.measure }}">
                             Item: <input type="text" class="item" name="item{{ loop.index }}" value="{{ ingredient.item }}">
-                            Prep Notes: <input type="text" class="prepnotes" name="prepnotes{{ loop.index }}" value="{{ ingredient.prep_notes }}">
-                        </div> <!-- div for ingredient-field -->  
+                            Prep Notes: <input type="text" class="prepnotes" name="prepnotes{{ loop.index }}" value="{{ ingredient.prep_notes }}"><br><br>
+                        </div> <!-- div for edit-recipe-ingredient-field -->  
                     {% endif %}
                 {% endfor %}
-            </div> <!-- div for #ingredient-section -->
+            </div> <!-- div for #edit-ingredient-section -->
 
 
             <button type="button" id="add-more">+ Add another ingredient</button>
-            <p id="ingredient-msg" hidden>You can't any more ingredients. Find something easier to cook!</p>
+            <p id="ingredient-msg" hidden>You can't any more ingredients. Find something easier to cook!</p><br><br>
 
 
-            <h3> Instructions: </h3>
-            <textarea rows="5" cols="50" name="instructions" placeholder="Write your instructions here.">{{ recipe.instructions }}</textarea>
+            <h3 class="blue-subtitle"> Instructions: </h3>
+            <textarea rows="5" cols="50" name="instructions" placeholder="Write your instructions here.">{{ recipe.instructions }}</textarea><br><br>
 
-            <h3>Source: (optional) </h3>
+            <h3 class="blue-subtitle">Source: (optional) </h3>
             {% if recipe.source != '' %}
                 <input type="text" style="width: 300px;" placeholder="i.e. Mom, The Joy of Cooking, allrecipes.com" value="{{ recipe.source }}" name="recipesource">
             {% else %}
                 <input type="text" style="width: 300px;" placeholder="i.e. Mom, The Joy of Cooking, allrecipes.com" name="recipesource">
             {% endif %}
 
-            <h3>Hashtags: </h3>
+            <br><br><h3 class="blue-subtitle">Hashtags: </h3>
             <h5>All tags must start with '#'. Please separate hashtags with spaces.</h5>
-            <input type="text" name="hashtags" style="width: 400px;" value="{{ recreated_hashtag_input }}"><br><br>
+            <input type="text" name="hashtags" style="width: 400px;" value="{{ recreated_hashtag_input }}"><br><br><br>
             
 
             <!-- Submit edited form -->
-            <input type="submit" class="confirmrecipe" value="Submit Changes">
+            <input type="submit" id="submit-recipe-edit" class="confirmrecipe" value="Submit Changes">
         </form>
     {% endif %}
 {% else %}
-        <h1>You can't edit this recipe!!</h1>
+        <h1 class="blue-title">You can't edit this recipe!!</h1>
 {% endif %}
 {% endblock %}
 
@@ -129,8 +129,8 @@
 
             var new_ingredient_field = $("#template-input").clone();
             new_ingredient_field.removeAttr('id').removeAttr('style');
-            new_ingredient_field.appendTo("#ingredient-section");
-            index = $("#ingredient-section").children().length-1;
+            new_ingredient_field.appendTo("#edit-ingredient-section");
+            index = $("#edit-ingredient-section").children().length-1;
 
            // this allows us make unique names for different ingredients
            $('.qty', new_ingredient_field).attr('name', 'qty' + index); 

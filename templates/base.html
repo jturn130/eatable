@@ -50,7 +50,7 @@
                     
                     {% else %}
                         <!-- Login window -->
-                        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">&nbsp;&nbsp;Login&nbsp;&nbsp;</button>
+                        <button type="button" id="loginbutton" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">&nbsp;&nbsp;Login&nbsp;&nbsp;</button>
 
                         <!-- Modal-->
                         <div class="modal fade" id="myModal" role="dialog">
@@ -74,7 +74,7 @@
                                     <br><br>
                                     <p id="login-error" hidden>Your username and password combination are not correct.</p>
 
-                                    <input type="submit" class="get-started-button" value="&nbsp;&nbsp;&nbsp;&nbsp;Submit&nbsp;&nbsp;&nbsp;&nbsp;"> 
+                                    <input type="submit" id="sign-in-submit" class="get-started-button" value="&nbsp;&nbsp;&nbsp;&nbsp;Submit&nbsp;&nbsp;&nbsp;&nbsp;"> 
                                 </form>
 
                               </div>

@@ -3,6 +3,7 @@ from server import app
 import server
 import unittest
 import doctest
+from flask import Flask
 
 
 def load_tests(loader, tests, ignore):
@@ -20,7 +21,7 @@ class FlaskTests(unittest.TestCase):
         # Get the Flask test client
         self.client = app.test_client()
 
-        # secret key to access session
+        # Create secret key to access session
         app.secret_key = "ABC"
 
         # Connect to fake database
@@ -48,10 +49,10 @@ class FlaskTests(unittest.TestCase):
     def test_signup_confirm(self):
         """Can you sign up for a new account?"""
 
-        result = self.signup('boringbeans@cool.com', 'coolbeans', '5551234567')
+        result = self.signup('boringbeanies@cool.com', 'coolbeans', '5551234567')
 
         self.assertIn("You successfully created an account", result.data)
-        User.query.filter_by(email='boringbeans@cool.com').delete()
+        User.query.filter_by(email='boringbeanies@cool.com').delete()
         db.session.commit()
 
     def test_signup_confirm_again(self):
@@ -276,6 +277,20 @@ class FlaskTests(unittest.TestCase):
 
         result = self.cart_delete(14, 209)
         self.assertIn('Parting is such sweet sorrow', result.data)
+
+    def twilio(self, userid, cartid):
+        with self.client.session_transaction() as sess:
+
+            sess['User'] = userid
+            sess['Cart'] = cartid
+
+        return self.client.get('/sms', follow_redirects=True)
+
+    def test_twilio(self):
+        """Will the user get redirected after their SMS is sent?"""
+
+        result = self.twilio(1, 22)
+        self.assertIn('My Recipes', result.data)
 
 
 ################################################################################

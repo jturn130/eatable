@@ -18,14 +18,97 @@ from passlib.hash import sha256_crypt
 
 from model import User, Recipe, Ingredient, Recipe_Hashtag, Hashtag, Cart_Ingredient, Cart, connect_to_db, db
 
+from flask_restful import Resource, Api
 
 app = Flask(__name__)
+api = Api(app)
 
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = "ABC"
 
 # Raises an error if you use an undefined variable in Jinja2
 app.jinja_env.undefined = StrictUndefined
+
+##########################################################################
+# API Classes
+
+
+class IdentifyUser(Resource):
+    def get_user_id(self, email):
+        """Get a user's userid given their email address."""
+        print "before: ", email
+        email = re.sub('%40', '@', email)
+        print "after: ", email
+
+        user = User.get_user_by_email(email)
+
+        return {user.user_id: user.email}
+
+
+class UserRecipe(Resource):
+    def get(self, userid):
+        """Get a list of user recipes. Returns JSON as {recipe_id: recipe_title}."""
+
+        user_recipes = Recipe.get_user_recipe_list(userid)
+
+        recipes_dict = {}
+
+        for r in user_recipes:
+            recipes_dict[r[0]] = r[1]
+        return recipes_dict
+
+
+class UserIngredient(Resource):
+    def get(self, userid):
+        """
+        Get a list of user ingredients and the number of times they appear
+        in a user's recipes.
+
+        Returns JSON as {ingredient_name: count}
+        """
+
+        user_ings = Ingredient.get_ingredient_counts_by_user(userid)
+
+        ingredients_dict = {}
+
+        for i in user_ings:
+            ingredients_dict[i[0]] = i[1]
+
+        return ingredients_dict
+
+
+class UserHashtag(Resource):
+    def get(self, userid):
+        """Get a list of all of a user's hashtags."""
+
+        user_tags = Hashtag.get_hashtags_by_user(userid)
+
+        tags_list = [t[0] for t in user_tags]
+
+        return {'hashtags': tags_list}
+
+
+class Search(Resource):
+    def get(self, userid, query):
+        """Returns a list of relevant recipes given a query."""
+
+        search_results = Recipe.run_search_query(userid, query)
+
+        search_dict = {}
+
+        for s in search_results:
+            search_dict[s[0]] = [s[1], s[2]]
+
+        return search_dict
+
+api.add_resource(IdentifyUser, '/api/users/<string:email>')
+api.add_resource(Search, '/api/recipes/<int:userid>/search/<string:query>')
+api.add_resource(UserRecipe, '/api/recipes/<int:userid>')
+api.add_resource(UserIngredient, '/api/ingredients/<int:userid>')
+api.add_resource(UserHashtag, '/api/hashtags/<int:userid>')
+
+##########################################################################
+# Routes
 
 
 @app.route('/')
@@ -78,7 +161,7 @@ def confirm_user_login():
 
         password_check = sha256_crypt.verify(user_password, hash)
 
-        # if everything works, log user in
+        # if everything works, log user in and create a cart
         if password_check:
 
             userid = user.user_id
@@ -148,7 +231,7 @@ def get_search_results(userid):
 
 @app.route("/myrecipes/<int:userid>/recipe/<int:recipeid>")
 def display_recipe(userid, recipeid):
-    """Retrieves recipe data from db for display."""
+    """Retrieves an individual recipe from db for display."""
 
     recipe = Recipe.get_recipe(recipeid)
 
@@ -285,8 +368,6 @@ def create_new_recipe(userid):
 def add_new_recipe():
     """Add new recipe to the database."""
 
-    print "this is request.form: ", request.form
-
     try:
         ###### Recipe Table Section ######
         user_id = session['User']
@@ -332,8 +413,8 @@ def add_recipe_to_cart(recipeid, userid):
     recipe_ingredients = Ingredient.get_recipe_ingredients(recipeid)
 
     for ingredient in recipe_ingredients:
-        cart_ing = Cart_Ingredient.create_new_cart_ingredient(session['Cart'], ingredient.ingredient_id)
-        print cart_ing
+        Cart_Ingredient.create_new_cart_ingredient(session['Cart'], ingredient.ingredient_id)
+
     flash("You have successfully added your recipe to your grocery cart.", "cart_add")
 
     return redirect("/myrecipes/%d/cart/%d" % (userid, session['Cart']))
@@ -359,15 +440,13 @@ def edit_cart(userid, cartid):
 
 @app.route("/myrecipes/<int:userid>/cart/<int:cartid>/edit-confirm", methods=["POST"])
 def update_edited_cart(userid, cartid):
-    """Updates the cart_ingredients table to reflect edited changes."""
-    print request.form
+    """Update the cart_ingredients table to reflect edited changes."""
 
     # delete old cart ingredients
     Cart_Ingredient.delete_old_cart_ingredients(cartid)
 
     # get and format the new cart ingredients
     edited_cart_ings = Ingredient.get_edited_cart_ings(request.form)
-    print "this is edited cart ings: ", edited_cart_ings
 
     # add new cart ingredients to the ingredients table and cart_ingredients table
     Ingredient.add_edited_cart_ings_to_db(edited_cart_ings, cartid)
@@ -435,6 +514,6 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # Use the DebugToolbar
-    DebugToolbarExtension(app)
+    # DebugToolbarExtension(app)
 
     app.run()

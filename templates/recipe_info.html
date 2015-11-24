@@ -3,26 +3,30 @@
 
     {% if 'User' in session %}
         {% if session['User'] == userid %}
+        <div class="recipe-info-menu">
             <a class="backtrack" href="/myrecipes/{{ userid }}">
                 <i class="fa fa-angle-double-left"></i>&nbsp;&nbsp;Back to My Recipes
-            </a><br>
+            </a>
+            <table class="button-line" style="white-space: normal;">
+            <tr>
+                <td class="button-div edit-recipe"><button class="recipe-action"><a href="/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}/edit">
+                    <i class="fa fa-pencil"></i>&nbsp;&nbsp;&nbsp;Edit Recipe
+                </a></button></td><br>
 
-            <button><a href="/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}/edit">
-                <i class="fa fa-pencil"></i>&nbsp;&nbsp;&nbsp;Edit Recipe
-            </a></button><br>
+                <td class="button-div delete-recipe"><button id="deleterecipe" class="recipe-action">
+                    <i class="fa fa-trash-o"></i>&nbsp;&nbsp;&nbsp;Delete Recipe
+                </button></td><br>
 
-            <button id="deleterecipe">
-                <i class="fa fa-trash-o"></i>&nbsp;&nbsp;&nbsp;Delete Recipe
-            </button><br>
-
-            <button id="cartadd"><a href="/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}/addtocart">
-                <i class="fa fa-plus"></i>&nbsp;&nbsp;&nbsp;Add to Cart
-            </a></button><br>
-
+                <td class="button-div add-to-cart"><button id="cartadd" class="recipe-action"><a href="/myrecipes/{{ userid }}/recipe/{{ recipe.recipe_id }}/addtocart">
+                    <i class="fa fa-plus"></i>&nbsp;&nbsp;&nbsp;Add to Cart
+                </a></button></td><br>
+            <tr>
+            </table>
+        </div>
         {% endif %}
     {% endif %}
 
-    <h1 class="blue-title">{{ recipe.recipe_title }}</h1>
+    <h1 id="recipe-info-title" class="blue-title">{{ recipe.recipe_title }}</h1>
 
     <div class="recipe-info">
     <h3 class="blue-subtitle">Ingredients: </h3>

@@ -2,23 +2,23 @@
 {% block content %}
 
 <div class="container">
-<h1 class="myrecipes">We're glad you're here</h1>
+<h1 class="blue-title">We're glad you're here.</h1>
 <h3 class="tagline">Just a few short questions and you'll be good to go!</h3>
 <form action="/signup-confirm" id="signup" method="POST">
     <div class='signup-form'>
-        <button class="signup-icons" ><i class="fa fa-envelope-o"></i></button>
+        <button class="signin-buttons" ><i class="fa fa-envelope-o signup-icon"></i></button>
         <input type="text" class="signup" id="email" name='email' placeholder="Email address"><br><br>
 
-        <button class="signup-icons"><i class="fa fa-key"></i></button>
-        <input type="password" class="signup" id="password1" name="password1" placeholder="Password"><br>
+        <button class="signin-buttons"><i class="fa fa-key signup-icon"></i></button>
+        <input type="password" class="signup" id="password1" name="password1" placeholder="Password"><br><br>
                 
-        <button class="signup-icons" ><i class="fa fa-plus"></i></button>
-        <input type="password" class="signup" id="passwordcheck" name="passwordcheck" placeholder="Confirm Password"><br>
+        <button class="signin-buttons" ><i class="fa fa-plus signup-icon"></i></button>
+        <input type="password" class="signup" id="passwordcheck" name="passwordcheck" placeholder="Confirm Password"><br><br>
 
-        <button class="signup-icons" ><i class="fa fa-mobile-phone"></i></button>
-        <input type="text" class="signup" id="phone" name='phone' placeholder="Mobile Phone"><br><br>
+        <button class="signin-buttons" ><i class="fa fa-mobile-phone fa-lg signup-icon"></i></button>
+        <input type="text" class="signup" id="phone" name='phone' placeholder="Mobile Phone"><br><br><br>
 
-        <h4><input type="submit" value="Let's Get Cooking" class="get-started-button"></h4>
+        <input type="submit" value="Let's Get Cooking" id="signup-submit" class="get-started-button">
     </div> 
 
 </form>
