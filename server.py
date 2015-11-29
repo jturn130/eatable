@@ -34,11 +34,8 @@ app.jinja_env.undefined = StrictUndefined
 
 
 class IdentifyUser(Resource):
-    def get_user_id(self, email):
+    def get(self, email):
         """Get a user's userid given their email address."""
-        print "before: ", email
-        email = re.sub('%40', '@', email)
-        print "after: ", email
 
         user = User.get_user_by_email(email)
 
@@ -89,10 +86,14 @@ class UserHashtag(Resource):
 
 
 class Search(Resource):
-    def get(self, userid, query):
-        """Returns a list of relevant recipes given a query."""
+    def get(self, query):
+        """
+        Get a list of relevant recipes given a query.
 
-        search_results = Recipe.run_search_query(userid, query)
+        Returns JSON as {recipe id: [recipe title, relevance ranking]}
+        """
+
+        search_results = Recipe.run_api_search_query(query)
 
         search_dict = {}
 
@@ -102,13 +103,20 @@ class Search(Resource):
         return search_dict
 
 api.add_resource(IdentifyUser, '/api/users/<string:email>')
-api.add_resource(Search, '/api/recipes/<int:userid>/search/<string:query>')
+api.add_resource(Search, '/api/recipes/search/<string:query>')
 api.add_resource(UserRecipe, '/api/recipes/<int:userid>')
 api.add_resource(UserIngredient, '/api/ingredients/<int:userid>')
 api.add_resource(UserHashtag, '/api/hashtags/<int:userid>')
 
 ##########################################################################
 # Routes
+
+
+@app.route("/developers")
+def display_developer_info():
+    """Learn about the eatable API."""
+
+    return render_template("api.html")
 
 
 @app.route('/')
@@ -189,6 +197,40 @@ def logout_user():
     flash("You are logged out.", "logged_out")
 
     return redirect("/")
+
+
+@app.route("/editprofile/<int:userid>")
+def display_edit_profile_options(userid):
+    """Get user info and display it so user can edit."""
+
+    editeduser = User.get_user_by_id(userid)
+
+    return render_template("edit_profile.html", editeduser=editeduser)
+
+
+@app.route("/edit-profile-confirm/<int:userid>", methods=["POST"])
+def confirm_profile_edits(userid):
+    """Update the db to reflect user changes to profile."""
+
+    # Gets form data
+    user_email = request.form.get("email")
+    user_password = request.form.get("password1")
+    user_phone = request.form.get("phone")
+
+    # Check if user changed password
+    if user_password and user_password != "":
+        # If yes, hashes password
+        hash = sha256_crypt.encrypt(user_password)
+
+        # Updates the db
+        User.update_user_and_pw(userid, user_email, hash, user_phone)
+    else:
+        # If no, updates everything else
+        User.update_user(userid, user_email, user_phone)
+
+    flash("Your profile edits have been saved", "edit_profile")
+
+    return redirect("/myrecipes/%d" % userid)
 
 
 @app.route("/myrecipes/<int:userid>")
@@ -373,7 +415,7 @@ def add_new_recipe():
         user_id = session['User']
         recipe_title = request.form.get("recipetitle")
         instructions = request.form.get("instructions")
-        source = request.form.get("source")
+        source = request.form.get("recipesource")
 
         new_recipe = Recipe.create_new_recipe(user_id, recipe_title, instructions, source)
         recipe_id = new_recipe.recipe_id
@@ -509,11 +551,11 @@ def send_text():
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
     # that we invoke the DebugToolbarExtension
-    # app.debug = True
+    app.debug = True
 
     connect_to_db(app)
 
     # Use the DebugToolbar
-    # DebugToolbarExtension(app)
+    DebugToolbarExtension(app)
 
     app.run()

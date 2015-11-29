@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if 'User' in session %}
+    {% if session['User'] == editeduser.user_id %}
+
+    <div class="container">
+    <h1 class="blue-title">Edit Profile</h1>
+    <h3 class="tagline">The times they are a changin'.</h3>
+    <form action="/edit-profile-confirm/{{ editeduser.user_id }}" id="editprofile" method="POST">
+        <div class='signup-form'>
+            <button class="signin-buttons" ><i class="fa fa-envelope-o signup-icon"></i></button>
+            <input type="text" class="signup" id="email" name='email' value="{{ editeduser.email }}"><br><br>
+
+            <button class="signin-buttons"><i class="fa fa-key signup-icon"></i></button>
+            <input type="password" class="signup" id="password1" name="password1" placeholder="Enter a new password if desired"><br><br>
+                    
+            <button class="signin-buttons" ><i class="fa fa-plus signup-icon"></i></button>
+            <input type="password" class="signup" id="passwordcheck" name="passwordcheck" placeholder="Confirm new password"><br><br>
+
+            <button class="signin-buttons" ><i class="fa fa-mobile-phone fa-lg signup-icon"></i></button>
+            <input type="text" class="signup" id="phone" name='phone' value="{{ editeduser.mobile_phone }}"><br><br><br>
+
+            <input type="submit" value="Submit Changes" id="edit-profile-submit" class="get-started-button">
+        </div> 
+
+    </form>
+    </div>
+
+    {% else %}
+        <h1>You are not authorized to view this page</h1>
+    {% endif %}
+{% endif %}
+{% endblock %}
+
+{% block script %}
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/additional-methods.min.js"></script>
+    <script>
+
+        // When browser is ready
+        $(function() {
+
+            // Setup form validation on the signup form element
+            $("#editprofile").validate({
+
+              // Specify validation rules 
+              rules: {
+                    email: {
+                      required: true,
+                      email: true
+                    },
+                    password1: {
+                        nowhitespace: true,
+                        minlength: 6,
+                        maxlength: 16
+                    },
+                    passwordcheck: {
+                        equalTo: "#password1"
+                    },
+                    phone: {
+                        required: true,
+                        phoneUS: true
+                    }
+                },
+
+                // Specify validation error messages
+                messages: {
+                      email: {
+                        required: "We need a real life email address."
+                      },
+                      password1: {
+                        minlength: "Password must be at least 6 characters. You know, that whole security thing.",
+                        nowhitespace: "Please remove whitespace characters from your password."
+                      },
+                      passwordcheck: {
+                        equalTo: "Your passwords don't match. Type carefully."
+                      },
+                      phone: {
+                          phoneUS: "Don't be a troll. Enter a valid US phone number.",
+                          required: "Please enter a mobile phone number so you can do cool things later."
+                      }
+                },
+
+                submitHandler: function(form) {
+                    form.submit();
+                }
+
+            });
+        });
+
+    </script>
+{% endblock %}

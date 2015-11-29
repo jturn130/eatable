@@ -36,6 +36,39 @@ class User(db.Model):
             print error
 
     @classmethod
+    def get_user_by_id(cls, userid):
+        """Get user info given user id."""
+
+        user = User.query.filter_by(user_id=userid).one()
+
+        return user
+
+    @classmethod
+    def update_user_and_pw(cls, userid, user_email, user_password, user_phone):
+        """Edit user info and pw in the db."""
+
+        user_to_edit = User.query.filter_by(user_id=userid).one()
+
+        user_to_edit.email = user_email
+        user_to_edit.password = user_password
+        user_to_edit.mobile_phone = user_phone
+
+        db.session.commit()
+        return user_to_edit
+
+    @classmethod
+    def update_user(cls, userid, user_email, user_phone):
+        """Edit user info in the db."""
+
+        user_to_edit = User.query.filter_by(user_id=userid).one()
+
+        user_to_edit.email = user_email
+        user_to_edit.mobile_phone = user_phone
+
+        db.session.commit()
+        return user_to_edit
+
+    @classmethod
     def create_new_user(cls, user_email, user_password, user_phone):
         """Add a new user to the database."""
 
@@ -122,6 +155,21 @@ class Recipe(db.Model):
         """
 
         cursor = db.session.execute(QUERY, {'userid': userid, 'searchquery': searchquery})
+        search_recipes = cursor.fetchall()
+
+        return search_recipes
+
+    @classmethod
+    def run_api_search_query(cls, searchquery):
+        """Search recipes from ALL users."""
+
+        QUERY = """
+        SELECT recipe_id, recipe_title, ts_rank(searchdata, to_tsquery('english', :searchquery)) as rank FROM recipes
+        WHERE searchdata @@ to_tsquery('english', :searchquery)
+        ORDER BY rank DESC
+        """
+
+        cursor = db.session.execute(QUERY, {'searchquery': searchquery})
         search_recipes = cursor.fetchall()
 
         return search_recipes
@@ -612,12 +660,10 @@ class Cart(db.Model):
 ##############################################################################
 # Helper functions
 
-def connect_to_db(app, eatabledata='postgresql://localhost/eatablefaker'):
-
-# def connect_to_db(app, eatabledata='postgresql://localhost/eatabledb'):
+def connect_to_db(app, eatabledata='postgresql://localhost/eatabledb'):
     """Connect the database to our Flask app."""
 
-    #Switching the PostgreSQL
+    #Switching to PostgreSQL
     app.config['SQLALCHEMY_DATABASE_URI'] = eatabledata
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app

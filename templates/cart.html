@@ -20,21 +20,24 @@
             </a></button><br></td>
         </tr>
         </table>
-                <h1 class="blue-title">My Cart</h1>
+            <div class="recipebox cartbox">
+                <h1 class="blue-title cart-title">My Cart</h1>
+                <hr>
                     {% if cart_ings != [] %}
                         <ul class="cart-list">
                             {% for c in cart_ings %}
                                 {% if c.ingredient.measure == '' and c.ingredient.quantity != '' %}
-                                        <li> {{ c.ingredient.quantity }} {{ c.ingredient.item }} </li>
+                                        <li>{{ c.ingredient.quantity }} {{ c.ingredient.item }}<hr></li>
                                 {% else %}
-                                    <li> {{ c.ingredient.item }} </li>
+                                    <li>{{ c.ingredient.item }}<hr></li>
                                 {% endif %}
                             {% endfor %}
                         </ul>
                     {% else %}
                         <h3> You don't have any items in your cart yet. </h3>
                     {% endif %}
-        {% endif %}
+            {% endif %}
+            </div>
     {% else %}
 
         <h1>You are not authorized to view this page. Mind your own beeswax!</h1>

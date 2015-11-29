@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fixed">
+  <div class="api-jumbo">
+    <h1 class="titletext api-title"> Cater to your users' tastes. </h1>
+    <br>
+     <div class="get-started">
+        <button class="get-started-button green-white">
+            <h4><!-- <a class="get-started-text" href="/signup"> -->Get an API Key<!-- </a> --></h4>
+        </button>
+    </div>
+  </div>
+</div>
+<h1 class="blue-title"> With the <span class="eatablelogo">eatable</span> API, you can...</h1>
+<br><br>
+<div class="homepage-icons">
+    <table align="center">
+         <tr>
+             <td><i class="fa fa-thumbs-o-up fa-5x homepage"></i></td>
+             <td><i class="fa fa-shopping-cart fa-5x homepage"></i></td>
+             <td><i class="fa fa-search fa-5x homepage"></i></td>
+        </tr>
+    </table>  
+
+    <table align="center">
+        <tr>
+            <td class="snippet">Know your users' preferences by getting their most common ingredients and hashtags.</td>
+            <td class="snippet">View a user's grocery cart and recipes so you know what they're shopping for.</td>
+            <td class="snippet">Search our database of recipes for some inspiration.</td>
+        </tr>
+     </table>
+</div>
+{% endblock %}

@@ -51,15 +51,11 @@
     <h3 class="blue-subtitle">Instructions: </h3>
         <p style="white-space:pre-wrap;">{{ recipe.instructions }}</p>
 
-    {% if recipe.source%}
+    {% if recipe.source %}
         {% if recipe.source != "" %}
+            <br>
             <h3 class="blue-subtitle"> Source: </h3>
-                {% if recipe.source|urlize %}
-                    <p id="recipe-source"> {{ recipe.source|urlize }} </p>
-                {% else %}
-                    <p id="recipe-source"> {{ recipe.source }} </p>
-                {% endif %}
-                <br>
+                    <p id="recipe-source"> {{ recipe.source | urlize }} </p>
         {% endif %}
     {% endif %}
     <br>

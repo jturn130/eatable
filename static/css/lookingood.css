@@ -197,7 +197,8 @@ body {
     font-family: 'ChunkFive';
 }
 
-.homepage-icons {
+.homepage-icons, .fa.fa-shopping-cart.fa-5x.homepage, .fa.fa-thumbs-o-up.fa-5x.homepage,
+.fa.fa-search.fa-5x.homepage {
     color: #2ba4a6;
 }
 
@@ -223,7 +224,8 @@ td {
 }
 
 i.fa.fa-book.fa-5x.homepage::before, i.fa.fa-users.fa-5x.homepage::before,
-i.fa.fa-shopping-cart.fa-5x.homepage::before {
+i.fa.fa-shopping-cart.fa-5x.homepage::before, i.fa.fa-search.fa-5x.homepage::before,
+i.fa.fa-thumbs-o-up.fa-5x.homepage::before {
     background-color: #81e6ae;
     padding: .3em;
     border-radius: 50%;
@@ -252,7 +254,7 @@ input.signup {
     display: inline;
 }
 
-#signup {
+#signup, #editprofile {
     margin: 0 auto;
     width: 50%;
 }
@@ -459,30 +461,52 @@ input.signup {
 }
 
 
-/*edit recipe styling*/
-
-
-
-
 /*cart styling*/
+.cart-title {
+    margin: 0;
+    margin-top: .5em;
+}
+
+.cartbox {
+    margin-top: 7em;
+    width: 60%;
+}
+
 .cart-list {
     color: #8e8e8e;
     font-size: 1.2em;
-    width: 50%;
-    margin: 0 auto;
+    width: 100%;
+    margin: 0;
 }
+
+.cart-list>li>hr {
+    margin: .5em;
+    width: 100%;
+}
+
 
 /*edit cart styling*/
 
 #ingredient-section {
     font-size: 1.1em;
-    width: 50%;
-    margin: 0 auto;    
+    width: 100%;
 }
+
+#cart-ings {
+    font-size: 1.1em;
+    width: 35%;
+    margin: 0 auto;
+}
+
+#cart-ings>ul {
+    padding-left: 0;
+}
+
 
 .ingredient-field {
     color: #2ba4a6;
     font-family: 'Bitter-Regular';
+    margin: 0 auto;
 }
 
 .cartitem, .cartqty{
@@ -536,3 +560,23 @@ input.signup {
     font-size: 1.3em;
 }
 
+
+/*api styling*/
+
+.api-jumbo {
+    background: url("/static/images/berries.jpg") center center;
+    background-size: cover;
+    text-align: center;
+    font-family: 'Bitter-Bold';
+    color: white;
+    margin: 0;
+    padding: 150px;
+}
+
+h1.titletext.api-title {
+    font-size: 6em;
+}
+
+.api-info {
+    color: #2ba4a6;
+}
