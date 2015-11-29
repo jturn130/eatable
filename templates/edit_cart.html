@@ -34,7 +34,7 @@
             <div class="ingredient-field">
                 {% if cart_ings != [] %}
                         {% for c in cart_ings %}
-                            {% if c.ingredient.measure == '' and c.ingredient.quantity != '' %}
+                            {% if c.ingredient.measure is none and c.ingredient.quantity is not none %}
 
                                 <div class="{{ loop.index }}">
 

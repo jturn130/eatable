@@ -27,6 +27,18 @@ Importing model.py for testing, connect to fake database:
     Successfully deleted user with the email: wat@lol.com!
 
 
+    >>> User.get_user_by_id(14) # doctest: +ELLIPSIS
+    <User user_id=14 email=test@testing.com...>
+
+
+    >>> User.update_user_and_pw(14, 'test@testing.com', '$5$rounds=535000$cgxfY0PJbOO0AY5U$8xz5fYCui4sFCQi2rXLnQ7JOXQNHm9uq5hG3OD1sFs2', '5551234567')
+    <User user_id=14 email=test@testing.com phone=5551234567>
+
+
+    >>> User.update_user(14, 'test@testing.com', '5551234567')
+    <User user_id=14 email=test@testing.com phone=5551234567>
+
+
 /////// Recipe class tests ////////
 
     >>> Recipe.update_search_vector(14)

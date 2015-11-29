@@ -526,7 +526,7 @@ def send_text():
 
     # formats the cart ingredients
     for c in cart_ings:
-        if c.ingredient.measure == '' and c.ingredient.quantity != '':
+        if c.ingredient.measure is None and c.ingredient.quantity is not None:
             cart_text += '\n + ' + c.ingredient.quantity + ' ' + c.ingredient.item
         else:
             cart_text += '\n + ' + c.ingredient.item

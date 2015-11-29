@@ -30,6 +30,62 @@ class FlaskTests(unittest.TestCase):
         app.config['TESTING'] = True
 
     ################################
+    # API tests
+
+    def get_identify_user(self, email):
+        return self.client.get("/api/users/%s" % email)
+
+    def test_get_identify_user(self):
+        """Can you use the API to get someone's user id?"""
+
+        result = self.get_identify_user('jturn130@gmail.com')
+        self.assertIn("1", result.data)
+
+    def get_user_recipes(self, userid):
+        return self.client.get("/api/recipes/%d" % userid)
+
+    def test_get_user_recipes(self):
+        """Can you use the API to get a user's recipes?"""
+
+        result = self.get_user_recipes(1)
+        self.assertIn("Pineapple Fried Rice", result.data)
+
+    def get_user_ingredients(self, userid):
+        return self.client.get("/api/ingredients/%d" % userid)
+
+    def test_get_user_ingredients(self):
+        """Can you use the API to get a user's ingredients?"""
+
+        result = self.get_user_ingredients(1)
+        self.assertIn("garlic", result.data)
+
+    def get_user_hashtags(self, userid):
+        return self.client.get("/api/hashtags/%d" % userid)
+
+    def test_get_user_hashtags(self):
+        """Can you use the API to get a user's hashtags?"""
+
+        result = self.get_user_hashtags(1)
+        self.assertIn("myown", result.data)
+
+    def get_complete_search(self, query):
+        return self.client.get("/api/recipes/search/%s" % query)
+
+    def test_get_complete_search(self):
+        """Can you use the API to get a list of recipes given a search query?"""
+
+        result = self.get_complete_search("chinese")
+        self.assertIn("Pineapple Fried Rice", result.data)
+
+    ################################
+    # Route tests
+
+    def test_api_home(self):
+        """Does the API homepage load correctly?"""
+
+        result = self.client.get('/developers')
+        self.assertIn('Cater', result.data)
+
     def test_homepage(self):
         """Does the homepage load correctly?"""
 
@@ -82,6 +138,48 @@ class FlaskTests(unittest.TestCase):
 
         result = self.login('test@testing.com', '80dqhj')
         self.assertIn('"confirmed_user": false', result.data)
+
+    def display_edit_profile(self, userid):
+        return self.client.get("/editprofile/%d" % userid)
+
+    def test_display_edit_profle(self):
+        """Can the edit profile page be successfully displayed?"""
+
+        self.login('test@testing.com', 'jinja2')
+        result = self.display_edit_profile(14)
+        self.assertIn('test@testing.com', result.data)
+
+    def profile_edit_confirm(self, userid, cartid):
+        with self.client.session_transaction() as sess:
+
+            sess['User'] = userid
+            sess['Cart'] = cartid
+
+        return self.client.post('/edit-profile-confirm/%d' % userid,
+                                data={'email': 'test@testing.com', 'password1': "", 'phone': '5551234567'},
+                                follow_redirects=True)
+
+    def test_profile_edit_confirm(self):
+        """Can an edited profile be updated in the db?"""
+
+        result = self.profile_edit_confirm(14, 22)
+        self.assertIn('Your profile edits have been saved', result.data)
+
+    def password_edit_confirm(self, userid, cartid):
+            with self.client.session_transaction() as sess:
+
+                sess['User'] = userid
+                sess['Cart'] = cartid
+
+            return self.client.post('/edit-profile-confirm/%d' % userid,
+                                    data={'email': 'test@testing.com', 'password1': "jinja2", 'phone': '5551234567'},
+                                    follow_redirects=True)
+
+    def test_password_edit_confirm(self):
+        """Can an edited password be updated in the db?"""
+
+        result = self.password_edit_confirm(14, 22)
+        self.assertIn('Your profile edits have been saved', result.data)
 
     def recipe_home(self, userid):
         return self.client.get("/myrecipes/%d" % userid)

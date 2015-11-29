@@ -26,7 +26,7 @@
                     {% if cart_ings != [] %}
                         <ul class="cart-list">
                             {% for c in cart_ings %}
-                                {% if c.ingredient.measure == '' and c.ingredient.quantity != '' %}
+                                {% if c.ingredient.measure is none and c.ingredient.quantity is not none %}
                                         <li>{{ c.ingredient.quantity }} {{ c.ingredient.item }}<hr></li>
                                 {% else %}
                                     <li>{{ c.ingredient.item }}<hr></li>
