@@ -56,7 +56,11 @@ Eatable makes cooking simple by allowing users to store all of their recipes in 
 
 ###### Adding a recipe's ingredients to your cart can be done with a click. The recipe's ingredients are added to an association table in my database, and displayed with Jinja.
 
-![Add to Cart](http://g.recordit.co/HxhuRMiEGd.gif)  
+![Add to Cart](http://g.recordit.co/HxhuRMiEGd.gif)
+
+###### Eatable can send a text with your grocery list via the Twilio API.
+
+![Cart SMS](https://raw.githubusercontent.com/jturn130/eatable/master/static/images/iphone.jpg)  
 
 ## For Developers: The Eatable API
 
