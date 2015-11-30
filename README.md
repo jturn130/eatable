@@ -22,6 +22,20 @@ Eatable makes cooking simple by allowing users to store all of their recipes in 
 
 ![data model](https://raw.githubusercontent.com/jturn130/eatable/master/static/images/data_model.png)  
 
+## How to Run the Eatable Flask App
+
+  * Set up and activate a python virtualenv, and install all dependencies:
+    * `pip install -r requirements.txt`
+  * Make sure you have PostgreSQL running. Create a new database in psql named *eatabledb*:
+    * `psql`
+    * `CREATE DATABASE eatabledb;`
+  * Create the tables in your database:
+    * `python -i model.py`
+    * While in interactive mode, create tables: `db.create_all()`
+  * Now, quit interactive mode. Start up the flask server:
+    * `python server.py`
+  * Go to localhost:5000 to see the web app
+
 
 ## How to Use Eatable
 
@@ -29,7 +43,7 @@ Eatable makes cooking simple by allowing users to store all of their recipes in 
 
 ![Homepage](http://g.recordit.co/9wie3PhF4f.gif)  
   
-  
+
 ###### Search your recipes based on a recipe title, ingredient, or hashtag. The typeahead.js plugin will make suggestions for you. Your search triggers an AJAX request, which quickly displays ranked results thanks to PostgreSQL's powerful search features.
 
 ![Search feature](http://g.recordit.co/eCmFjl5lyk.gif)  
@@ -49,23 +63,28 @@ Eatable makes cooking simple by allowing users to store all of their recipes in 
 Eatable isn't just for the home chef—businesses can leverage these features with the Eatable API. Thanks to the API, companies can tailor their products and services, as they have their customers' taste preferences at their fingertips.
 
 ###### Get a user's ID given their email address
-You want: `/api/users/<string:email>`
-Returns JSON: `{user.user_id: user.email}`
+You want: `/api/users/<string:email>`  
+
+Returns JSON: `{user_id: user.email}`
 
 ###### Get a list of user recipes
-You want: `/api/recipes/<int:userid>`
+You want: `/api/recipes/<int:userid>`  
+
 Returns JSON: `{recipe_id: recipe_title}`
 
 ###### Get a list of user ingredients
-You want: `/api/ingredients/<int:userid>`
+You want: `/api/ingredients/<int:userid>`  
+
 Returns JSON: `{ingredient_name: count}`
 
 ###### Get a list of user hashtags
-You want: `/api/hashtags/<int:userid>`
+You want: `/api/hashtags/<int:userid>`  
+
 Returns JSON: `{'hashtags': [tags_list]}`
 
 ###### Get a list of relevant recipes given a search query\s\s
-You want: `/api/recipes/search/<string:query>`
+You want: `/api/recipes/search/<string:query>`  
+
 Returns JSON: `{recipe id: [recipe title, relevance ranking]}`
 
 ## Version 2.0
