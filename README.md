@@ -3,7 +3,6 @@
 Eatable makes cooking simple by allowing users to store all of their recipes in one place. With Eatable's hashtag feature, users can easily organize, search, and share their recipes without sifting through cookbooks or food blog links. Users can also create a Grocery List from their recipe ingredients, and then have that list texted to them.
 
 ## Technology Stack
----
 
 - PostgreSQL
 - SQLAlchemy
@@ -20,12 +19,10 @@ Eatable makes cooking simple by allowing users to store all of their recipes in 
 - Twilio API
 
 ## Data Model
----
 
 ![data model](https://raw.githubusercontent.com/jturn130/eatable/master/static/images/data_model.jpg)
 
 ## How to Use Eatable
----
 
 Eatable has an intuitive, clean UI
 
@@ -44,7 +41,6 @@ Adding a recipe's ingredients to your cart can be done with a click. The recipe'
 ![Add to Cart](http://g.recordit.co/HxhuRMiEGd.gif)
 
 ## For Developers: The Eatable API
----
 
 Eatable isn't just for the home chef—businesses can leverage these features with the Eatable API. Thanks to the API, companies can tailor their products and services, as they have their customers' taste preferences at their fingertips.
 
@@ -74,5 +70,4 @@ Coming soon...
 Machine learning feature that recommends new recipes around the web, given the recipes a user has already inputted.
 
 ## About the Author
----
 Justine Turnbull is an avid chef and software engineer based in San Francisco, CA. You can learn more about her on [LinkedIn](https://www.linkedin.com/in/justineturnbull).
