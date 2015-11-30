@@ -20,25 +20,33 @@ Eatable makes cooking simple by allowing users to store all of their recipes in 
 
 ## Data Model
 
-![data model](https://raw.githubusercontent.com/jturn130/eatable/master/static/images/data_model.jpg)
+![data model](https://raw.githubusercontent.com/jturn130/eatable/master/static/images/data_model.jpg)  
+
 
 ## How to Use Eatable
 
 Eatable has an intuitive, clean UI
 
-![Homepage](http://g.recordit.co/9wie3PhF4f.gif)
+![Homepage](http://g.recordit.co/9wie3PhF4f.gif)  
+
+
 
 Search your recipes based on a recipe title, ingredient, or hashtag. The typeahead.js plugin will make suggestions for you. Your search triggers an AJAX request, which quickly displays ranked results thanks to PostgreSQL's powerful search features.
 
-![Search feature](http://g.recordit.co/eCmFjl5lyk.gif)
+![Search feature](http://g.recordit.co/eCmFjl5lyk.gif)  
+
+
 
 Adding a recipe is simple. Include as many ingredients as you want--the fields just get duplicated with Javascript's `clone()` method.
 
-![Add a recipe](http://g.recordit.co/pp5BndH1m1.gif)
+![Add a recipe](http://g.recordit.co/pp5BndH1m1.gif)  
+
+
 
 Adding a recipe's ingredients to your cart can be done with a click. The recipe's ingredients are added to an association table in my database, and displayed with Jinja.
 
-![Add to Cart](http://g.recordit.co/HxhuRMiEGd.gif)
+![Add to Cart](http://g.recordit.co/HxhuRMiEGd.gif)  
+
 
 ## For Developers: The Eatable API
 
