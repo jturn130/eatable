@@ -108,6 +108,10 @@ Machine learning feature that recommends new recipes around the web, given the r
     * `python server.py`
   * Go to localhost:5000 to see the web app
 
+## Bugs
+
+Eatable has 98% test coverage, as per the Coverage.py library. If you notice a problem with this app, please report it.
+
 ## Data Model
 
 ![data model](https://raw.githubusercontent.com/jturn130/eatable/master/static/images/data_model.png)  
